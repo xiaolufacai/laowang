@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .login-container {
+            width: 400px;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .captcha-img {
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="login-container">
+        <el-form :model="loginForm" ref="loginFormRef" label-width="80px" :rules="rules">
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="loginForm.username" placeholder="请输入用户名" clearable></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+                <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" show-password clearable></el-input>
+            </el-form-item>
+            <el-form-item label="验证码" prop="captcha">
+                <el-row :gutter="10" align="middle">
+                    <el-col :span="14">
+                        <el-input v-model="loginForm.captcha" placeholder="请输入验证码" clearable></el-input>
+                    </el-col>
+                    <el-col :span="10">
+                        <img :src="captchaSrc" class="captcha-img" @click="refreshCaptcha" title="点击刷新" alt="验证码">
+                    </el-col>
+                </el-row>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitLogin" block>立即登录</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                loginForm: {
+                    username: '',
+                    password: '',
+                    captcha: ''
+                },
+                captchaSrc: '/admin/verify/code',
+                rules: {
+                    username: [
+                        { required: true, message: '请输入用户名', trigger: 'blur' }
+                    ],
+                    password: [
+                        { required: true, message: '请输入密码', trigger: 'blur' }
+                    ],
+                    captcha: [
+                        { required: true, message: '请输入验证码', trigger: 'blur' }
+                    ]
+                }
+            };
+        },
+        methods: {
+            refreshCaptcha() {
+                this.captchaSrc = `/admin/verify/code?d=${Math.random()}`;
+            },
+            submitLogin() {
+                this.$refs.loginFormRef.validate(valid => {
+                    if (valid) {
+                        axios.post('/admin/login/login', this.loginForm)
+                            .then(response => {
+                                if (response.data.code === 0) {
+                                    this.$message.success('登录成功');
+                                    window.location.href = '/admin/index/index';
+                                } else {
+                                    this.$message.error(response.data.msg);
+                                    this.refreshCaptcha();
+                                }
+                            })
+                            .catch(error => {
+                                this.$message.error('请求失败，请稍后重试');
+                            });
+                    } else {
+                        this.$message.error('请填写完整的表单信息');
+                    }
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

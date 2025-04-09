@@ -1,0 +1,316 @@
+{include file="/layout/header" /}
+
+<div id="app" style="background-color: #ffffff">
+    <el-container>
+        <el-header style="text-align: right; font-size: 12px">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item>
+                    <el-select v-model="formInline.app" @change="select" placeholder="APP">
+                        <el-option
+                                v-for="(item,index) in apps"
+                                :key="index"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="handleAdd">新增配置</el-button>
+                </el-form-item>
+            </el-form>
+        </el-header>
+
+        <el-main>
+            <el-table
+                    :data="tableData"
+                    border
+                    style="width: 851px">
+                <el-table-column
+                        align="center"
+                        prop="vip_txt"
+                        label="会员类型"
+                        width="150">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="new_price"
+                        label="现价"
+                        width="150">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="old_price"
+                        label="原价"
+                        width="150">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="corner_text"
+                        label="角标文案"
+                        width="300">
+                </el-table-column>
+                <el-table-column align="center" label="操作" width="100">
+                    <template slot-scope="scope">
+                        <el-button
+                                size="mini"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)">删除
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-main>
+
+        <!-- Form Modal -->
+        <el-dialog :visible.sync="formVisible" title="新增配置" width="40%">
+            <el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
+                <el-form-item label="会员类型" prop="vip">
+                    <el-select v-model="ruleForm.vip" placeholder="会员类型">
+                        <el-option
+                                v-for="(index, key) in vips"
+                                :key="key"
+                                :label="index"
+                                :value="key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="会员现价" prop="new_price">
+                    <el-input v-model="ruleForm.new_price" placeholder="请输入价格"></el-input>
+                </el-form-item>
+                <el-form-item label="会员原价" prop="old_price">
+                    <el-input v-model="ruleForm.old_price" placeholder="请输入价格"></el-input>
+                </el-form-item>
+                <el-form-item label="角标文案" prop="corner_text">
+                    <el-input v-model="ruleForm.corner_text" placeholder="请输入文案"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="handleCancel">取消</el-button>
+                    <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+    </el-container>
+</div>
+
+<style>
+    .diy-el-form {
+        background-color: #fff;
+    }
+    .demo-form-inline {
+        margin-top: 10px;
+    }
+    .el-header {
+        background-color: #e7ebf0;
+        color: #333;
+        line-height: 60px;
+    }
+    .el-aside {
+        color: #333;
+    }
+</style>
+
+<script type="module">
+
+    const initForm = {
+        vip: '',
+        new_price: '',
+        old_price: '',
+        id: 0,
+        corner_text: '',
+        app_id: 0
+    }
+    const _initForm = Object.assign({}, initForm);
+    Object.freeze(_initForm);
+
+    var Main = {
+        data() {
+            return {
+                formInline: {
+                    app: {}
+                },
+                ruleForm: initForm,
+                rules: {
+                    vip: [{ required: true, message: '请选择渠道', trigger: 'change' }],
+                    new_price: [{ required: true, message: '请输入现价', trigger: 'change' }],
+                    old_price: [{ required: true, message: '请输入原价', trigger: 'change' }],
+                    corner_text: [{ required: true, message: '请输入角标文案', trigger: 'change' }]
+                },
+                formVisible: false,
+                apps: [],
+                vips: [],
+                tableData: [
+                    //     {
+                    //     channel: 'APPLE',
+                    //     version_no: 1,
+                    //     version_name: '1.0.012',
+                    //     list: '上架',
+                    //     status: '通过',
+                    // }
+                ]
+            }
+        },
+        created: function () {
+            // 获取所有APP
+            this.getApps()
+        },
+        methods: {
+            handleEdit(index, obj) {
+                console.log(obj)
+                this.formVisible = true;
+                this.getVips()
+                this.ruleForm.vip = obj.vip
+                this.ruleForm.id = obj.id
+                this.ruleForm.new_price = obj.new_price
+                this.ruleForm.old_price = obj.old_price
+                this.ruleForm.app_id = obj.app_id
+                this.ruleForm.corner_text = obj.corner_text
+            },
+            handleAdd() {
+                this.formVisible = true;
+                this.getVips()
+            },
+            handleCancel() {
+                this.formVisible = false; // 关闭表单弹窗
+                this.ruleForm = {...initForm};  // 重置 ruleForm 为初始值
+                console.log( this.ruleForm)
+                this.$refs['ruleForm'].resetFields(); // 清空表单字段
+            },
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios.post('/admin/price/addVip', this.ruleForm)
+                            .then(response => {
+                                const data = response.data;
+                                const code = data.code;
+                                if (code === 0) {
+                                    this.$message.success('应用新增成功!');
+                                    this.formVisible = false;
+                                    this.ruleForm = {..._initForm}
+                                    this.$refs[formName].resetFields();
+                                    this.getApps();
+                                } else {
+                                    this.$message.error(data.message);
+                                }
+
+                            })
+                            .catch(error => {
+                                this.$message.error('提交失败');
+                            });
+                    } else {
+                        this.$message.error('表单验证失败，请检查输入的内容');
+                        return false;
+                    }
+                });
+            },
+            getApps() {
+                let _this = this
+                axios.get('/admin/app/apps', {})
+                    .then(response => {
+                        const data = response.data.data
+                        const code = response.data.code
+                        if (code !== 0) {
+                            _this.apps = [];
+                        } else {
+                            _this.apps = data;
+                            if (_this.apps.length > 0) {
+                                // 设置默认选择的应用
+                                let index = _this.apps.length - 1
+                                _this.formInline.app = _this.apps[index];
+                                _this.ruleForm.app_id = _this.apps[index].id
+                                _this.getAppVips(_this.apps[index].id);
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    })
+            },
+            getVips() {
+                let _this = this
+                axios.get('/admin/price/vips', {})
+                    .then(response => {
+                        const data = response.data.data
+                        const code = response.data.code
+                        if (code !== 0) {
+                            _this.vips = [];
+                        } else {
+                            _this.vips = data;
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    })
+            },
+            getAppVips(id) {
+                let _this = this;
+                axios.get('/admin/price/appVips', {
+                    params: { app_id: id }
+                })
+                    .then(response => {
+                        const data = response.data.data;
+                        const code = response.data.code;
+                        if (code !== 0) {
+                            _this.tableData = [];
+                        } else {
+                            _this.tableData = data;
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    });
+            },
+            select(id) {
+                this.getVips(id)
+                this.ruleForm.app_id = id;
+                this.getAppVips(id)
+            },
+            handleDelete(index, row) {
+                // 弹出确认框
+                this.$confirm('是否确认删除该记录?', '提示', {
+                    confirmButtonText: '删除',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    // 执行删除操作
+                    this.deleteRecord(row);  // 假设 row.id 是记录的唯一标识
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            // 删除记录
+            deleteRecord(obj) {
+                axios.post('/admin/price/delete', { id: obj.id })
+                    .then(response => {
+                        if (response.data.code === 0) {
+                            this.$message.success('删除成功!');
+                            // 刷新表格数据
+                            this.getAppVips(obj.app_id);
+                        } else {
+                            this.$message.error('删除失败!');
+                        }
+                    })
+                    .catch(error => {
+                        this.$message.error('网络错误，请稍后重试');
+                    });
+            },
+        },
+        computed: {
+        }
+    }
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+</script>
+
+{include file="/layout/footer" /}

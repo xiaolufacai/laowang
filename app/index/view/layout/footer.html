@@ -1,0 +1,64 @@
+
+<!--End 头部信息-->
+
+</main>
+<!--End 页面主要内容-->
+</div>
+</div>
+
+<script type="text/javascript" src="/static/admin/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/admin/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/admin/js/perfect-scrollbar.min.js"></script>
+<script type="text/javascript" src="/static/admin/js/main.min.js"></script>
+<script>
+    document.getElementById('reset-password-btn').addEventListener('click', function() {
+        // 获取表单字段值
+        var oldPw = document.getElementById('recipient-name').value;
+        var newPw = document.getElementById('new-pw').value;
+        var reNewPw = document.getElementById('re-new-pw').value;
+
+        // 验证新密码和确认密码是否一致
+        if (newPw !== reNewPw) {
+            alert("新密码和确认密码不一致！");
+            return;
+        }
+
+        // 获取当前用户名（你可以根据实际情况修改这个方法）
+        var username = ''; // 替换为实际的当前用户名
+
+        // 构建请求数据对象
+        var data = {
+            username: username,
+            old_pw: oldPw,
+            new_pw: newPw
+        };
+
+        // 发送请求使用 fetch API
+        fetch('/admin/index/resetPassword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // 设置请求头为 JSON 格式
+                'X-Requested-With': 'XMLHttpRequest' // 防止普通浏览器的请求
+            },
+            body: JSON.stringify(data) // 将数据对象转为 JSON 字符串
+        })
+            .then(response => response.json()) // 解析响应为 JSON
+            .then(data => {
+                // 处理响应
+                if (data.code === 200) {
+                    alert("密码修改成功！");
+                    // 可以选择清空表单或关闭弹窗等操作
+                    document.getElementById('reset-password-form').reset();
+                    $('#exampleModal').modal('hide');
+                } else {
+                    alert(data.message || '密码修改失败，请重试。');
+                }
+            })
+            .catch(error => {
+                console.error('请求错误：', error);
+                alert('请求失败，请稍后再试。');
+            });
+    });
+</script>
+</body>
+</html>

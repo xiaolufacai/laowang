@@ -4,7 +4,7 @@
 <div id="app" style="background-color: #ffffff">
     <el-container style="height: 100vh;">
         <el-header style="text-align: right; font-size: 12px; height: 60px; line-height: 60px;">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline" style="z-index: 20000;">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline" :style="z-index: 20000;">
                 <el-form-item>
                     <el-select v-model="formInline.app" @change="select" placeholder="APP">
                         <el-option
@@ -23,7 +23,7 @@
             <el-tabs v-model="activeTab">
                 <!-- 用户协议 Tab -->
                 <el-tab-pane label="用户协议" name="userAgreement">
-                    <el-form :model="formData" label-width="100px" style="height: 100%;">
+                    <el-form :model="formData" label-width="100px" :style="height: 100%;">
                         <el-form-item label="用户协议">
                             <div ref="userAgreementEditor" style="height: 100%;"></div>
                         </el-form-item>

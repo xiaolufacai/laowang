@@ -2,6 +2,7 @@
 namespace app\index\controller;
 
 
+use app\common\model\User;
 use app\IndexBaseController;
 use think\facade\Session;
 use think\facade\View;
@@ -15,8 +16,9 @@ class Index
         var_dump($request->user);
     }
 
-    public function users()
+    public function user(Request $request)
     {
-        echo 234542;
+        $user = User::where(['id' => $request->user['uid']]);
+        return \json(['code' => 1, 'message' => 'OK', 'data' => ['user' => $user]]);
     }
 }

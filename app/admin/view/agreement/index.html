@@ -19,15 +19,15 @@
             </el-form>
         </el-header>
 
-        <el-main>
-            <el-row>
-                <el-col :span="12" style="padding-right: 20px;"> <!-- 设置右侧间距 -->
-                    <h3>用户协议</h3>
-                    <div ref="userAgreementEditor" style="height: 300px;"></div> <!-- 设置高度以便展示 -->
+        <el-main style="display: flex; flex-direction: column; height: calc(100vh - 60px);">
+            <el-row style="flex: 1; display: flex; flex-direction: row; padding: 20px 0;">
+                <el-col :span="12" style="padding-right: 20px; height: 100%; display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 10px;">用户协议</h3>
+                    <div ref="userAgreementEditor" style="flex: 1; height: 100%;"></div> <!-- 用户协议编辑器 -->
                 </el-col>
-                <el-col :span="12" style="padding-left: 20px;"> <!-- 设置左侧间距 -->
-                    <h3>隐私协议</h3>
-                    <div ref="privacyAgreementEditor" style="height: 300px;"></div> <!-- 设置高度以便展示 -->
+                <el-col :span="12" style="padding-left: 20px; height: 100%; display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 10px;">隐私协议</h3>
+                    <div ref="privacyAgreementEditor" style="flex: 1; height: 100%;"></div> <!-- 隐私协议编辑器 -->
                 </el-col>
             </el-row>
         </el-main>
@@ -49,15 +49,8 @@
     .el-aside {
         color: #333;
     }
-    /* 增加编辑器之间的间隔 */
-    .el-row {
-        margin-top: 20px;
-    }
-    .el-col {
-        padding: 0 20px; /* 左右间隔 */
-    }
     h3 {
-        margin-bottom: 10px;  /* 为标题增加间距 */
+        margin-bottom: 10px; /* 为标题增加间距 */
     }
 </style>
 

@@ -32,7 +32,7 @@
 
                 <!-- 隐私协议 Tab -->
                 <el-tab-pane label="隐私协议" name="privacyAgreement">
-                    <el-form :model="formData" label-width="100px">
+                    <el-form :model="formData1" label-width="100px">
                         <el-form-item label="隐私协议">
                             <div ref="privacyAgreementEditor" style="height: 100%;"></div>
                         </el-form-item>
@@ -101,6 +101,10 @@
                     userAgreement: '',  // 用户协议内容
                     privacyAgreement: ''  // 隐私协议内容
                 },
+                formData1: {
+                    userAgreement: '',  // 用户协议内容
+                    privacyAgreement: ''  // 隐私协议内容
+                },
                 apps: [],
             }
         },
@@ -108,7 +112,10 @@
             this.getApps();  // 获取所有应用数据
         },
         mounted() {
-            this.initEditor();  // 初始化编辑器
+            this.$nextTick(() => {
+                // 确保 editor 已经渲染
+                this.initEditor();
+            });
         },
         methods: {
             getApps() {

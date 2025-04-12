@@ -4,7 +4,7 @@
 <div id="app" style="background-color: #ffffff">
     <el-container style="height: 100vh;">
         <el-header style="text-align: right; font-size: 12px; height: 60px; line-height: 60px;">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline" style="z-index: 20000000;">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline" style="z-index: 20000;">
                 <el-form-item>
                     <el-select v-model="formInline.app" @change="select" placeholder="APP">
                         <el-option
@@ -156,6 +156,8 @@
                 const editorContainerUserAgreement = this.editorUserAgreement.$el;  // 获取编辑器的容器
                 editorContainerUserAgreement.style.zIndex = '1';  // 设置 z-index 为 1
                 editorContainerUserAgreement.style.height = '700px';  // 设置高度为 700px
+                editorContainerUserAgreement.style.overflowY = 'auto';  // 如果内容超出，显示滚动条
+
 
                 // 初始化隐私协议的编辑器
                 this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
@@ -165,6 +167,8 @@
                 const editorContainerPrivacyAgreement = this.editorPrivacyAgreement.$el;
                 editorContainerPrivacyAgreement.style.zIndex = '1';
                 editorContainerPrivacyAgreement.style.height = '700px';  // 设置高度为 700px
+                editorContainerPrivacyAgreement.style.overflowY = 'auto';  // 如果内容超出，显示滚动条
+
             },
             submitForm() {
                 // 获取富文本内容

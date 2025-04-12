@@ -1,53 +1,35 @@
 <?php
-declare (strict_types=1);
 
-namespace app\admin\service;
+namespace app\index\service;
 
 
+use app\middleware\JWTAuthMiddleware;
+use Firebase\JWT\JWT;
 use think\db\exception\DbException;
 use think\facade\Db;
 
 class UserService
 {
-
-
     /**
-     * 查询用户列表
+     * 生成token
      *
-     * @param int|null $appId
-     * @param int|null $id
-     * @param int $page 当前页数
-     * @param int $pageSize 每页条数
-     *
-     * @return array 查询结果，包含分页数据和总数
-     * @throws DbException
+     * @param $clientId
+     * @return string
      */
-    public static function users($appId, $id, $page = 1, $pageSize = 10): array
+    public static function token($clientId): string
     {
-        // 基本查询构建
-        $query = Db::name('user');
-
-        // 根据传入的 app_id 和 id 添加查询条件
-        if ($appId) {
-            $query->where('app_id', $appId);
-        }
-
-        if ($id) {
-            $query->where('id', $id);
-        }
-
-        // 查询分页数据
-        $orders = $query->paginate((int)$pageSize, false, ['page' => $page]);
-
-        // 获取总数
-        $total = $orders->total();
-
-        // 返回分页数据和总数
-        return [
-            'data'         => $orders->items(),
-            'total'        => $total,
-            'current_page' => $orders->currentPage(),
-            'last_page'    => $orders->lastPage(),
+        // 生成 JWT token
+        $issuedAt = time();
+        $expirationTime = $issuedAt + 7 * 24 * 60 * 60;  // 7天后过期
+        $payload = [
+            'iss'       => 'laowang-publisher-issuer',      // 发行者
+            'aud'       => 'laowang-user-audience',    // 用户
+            'iat'       => $issuedAt,          // 发布时间
+            'exp'       => $expirationTime,    // 过期时间
+            'client_id' => $clientId,    // 用户的设备ID
         ];
+
+        // 使用 HS256 算法生成 JWT token
+        return JWT::encode($payload, JWTAuthMiddleware::KEY, 'HS256');
     }
 }

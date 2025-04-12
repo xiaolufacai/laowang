@@ -16,7 +16,10 @@ class JWTAuthMiddleware
 
     public function handle($request, Closure $next)
     {
-        var_dump($request->url());die();
+        $url = $request->url();
+        if ($url == '/index/login/login') {
+            return $next($request);
+        }
         // 获取请求头中的 token
         $token = Request::header('Authorization');
         if (!$token) {

@@ -3,6 +3,7 @@
 namespace app\index\service;
 
 
+use app\common\model\User;
 use app\middleware\JWTAuthMiddleware;
 use Firebase\JWT\JWT;
 use think\db\exception\DbException;

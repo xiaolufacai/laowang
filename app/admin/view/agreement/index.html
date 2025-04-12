@@ -1,6 +1,6 @@
 {include file="/layout/header" /}
 
-<!-- Vue 2 + Quill 富文本编辑器 -->
+<!-- Vue 2 + wangEditor 富文本编辑器 -->
 <div id="app" style="background-color: #ffffff">
     <el-container>
         <el-header style="text-align: right; font-size: 12px">
@@ -23,11 +23,11 @@
             <el-row>
                 <el-col :span="12">
                     <h3>用户协议</h3>
-                    <quill-editor v-model="userAgreement" :options="editorOptions" />
+                    <div ref="userAgreementEditor"></div> <!-- 为用户协议创建一个空的 div -->
                 </el-col>
                 <el-col :span="12">
                     <h3>隐私协议</h3>
-                    <quill-editor v-model="privacyAgreement" :options="editorOptions" />
+                    <div ref="privacyAgreementEditor"></div> <!-- 为隐私协议创建一个空的 div -->
                 </el-col>
             </el-row>
         </el-main>
@@ -52,10 +52,9 @@
 </style>
 
 <script type="module">
-    import VueQuillEditor from 'https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.6/dist/vue-quill-editor.js';  // Vue2 版本的 Quill 编辑器
 
-    // 注册 VueQuillEditor 作为全局组件
-    Vue.component('quill-editor', VueQuillEditor);
+    // 引入 wangEditor 和 vue-wangeditor
+    import wangEditor from 'https://cdn.jsdelivr.net/npm/wangeditor@4.6.14/dist/wangEditor.min.js';  // wangEditor 编辑器
 
     const initForm = {
         name: '',
@@ -87,16 +86,15 @@
                 ruleForm: initForm,
                 formVisible: false,
                 apps: [],
-                userAgreement: '',  // 用户协议富文本
-                privacyAgreement: '',  // 隐私协议富文本
-                editorOptions: {
-                    theme: 'snow',  // 富文本编辑器主题
-                    placeholder: '在此输入协议内容...',  // 协议内容占位符
-                }
+                userAgreement: '',  // 用户协议内容
+                privacyAgreement: '',  // 隐私协议内容
             }
         },
         created: function () {
             this.getApps();  // 获取所有应用数据
+        },
+        mounted() {
+            this.initEditor();  // 初始化编辑器
         },
         methods: {
             getApps() {
@@ -139,7 +137,20 @@
                     // 更新富文本内容
                     this.userAgreement = value.user_agreement || '';
                     this.privacyAgreement = value.privacy_agreement || '';
+
+                    // 更新编辑器内容
+                    this.editorUserAgreement.txt.html(this.userAgreement);  // 设置用户协议的内容
+                    this.editorPrivacyAgreement.txt.html(this.privacyAgreement);  // 设置隐私协议的内容
                 }
+            },
+            initEditor() {
+                // 初始化用户协议的编辑器
+                this.editorUserAgreement = new wangEditor(this.$refs.userAgreementEditor);
+                this.editorUserAgreement.create();
+
+                // 初始化隐私协议的编辑器
+                this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
+                this.editorPrivacyAgreement.create();
             }
         },
         computed: {

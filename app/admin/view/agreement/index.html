@@ -83,15 +83,6 @@
                 formInline: {
                     app: {}
                 },
-                tableObject: {
-                    '包名': '',
-                    'coding仓库地址': "",
-                    '打包平台地址': "",
-                    '广告id': "",
-                    '友盟id': "",
-                    '微信id': "",
-                    'appld': ""
-                },
                 formData: {
                     userAgreement: '',  // 用户协议内容
                     privacyAgreement: ''  // 隐私协议内容
@@ -133,15 +124,6 @@
             select(id) {
                 let value = this.apps.find(item => item.id === id);
                 if (value) {
-                    this.tableObject = {
-                        '包名': value.name,
-                        'coding仓库地址': value.repository,
-                        '打包平台地址': value.package_url,
-                        '广告ID': value.ad_id,
-                        '友盟ID': value.ym_id,
-                        '微信ID': value.wx_id,
-                        'APP ID': value.app_id
-                    };
 
                     // 更新富文本内容
                     this.formData.userAgreement = value.user_agreement || '';

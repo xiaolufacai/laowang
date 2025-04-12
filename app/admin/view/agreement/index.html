@@ -4,6 +4,7 @@
 <div id="app" style="background-color: #ffffff">
     <el-container style="height: 100vh;">
         <el-header style="text-align: right; font-size: 12px; height: 60px; line-height: 60px;">
+            包名
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item>
                     <el-select v-model="formInline.app" @change="select" placeholder="APP">
@@ -19,19 +20,16 @@
         </el-header>
 
         <el-main style="display: flex; flex-direction: column; flex-grow: 1; padding: 0;">
-            <el-form ref="form" :model="ruleForm" label-width="80px">
-                <el-form-item label="活动形式">
-                    <el-input  ref="userAgreementEditor" type="textarea" v-model="ruleForm.userAgreement"></el-input>
-                </el-form-item>
-
-                <el-form-item label="活动形式">
-                    <el-input  ref="privacyAgreementEditor" type="textarea" v-model="ruleForm.privacyAgreement"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="onSubmit">立即创建</el-button>
-                    <el-button>取消</el-button>
-                </el-form-item>
-            </el-form>
+            <el-tabs v-model="activeTab" style="flex-grow: 1;">
+                <el-tab-pane label="用户协议" name="userAgreement">
+                    <!-- 用户协议编辑器 -->
+                    <div ref="userAgreementEditor" style="height: 100%;"></div>
+                </el-tab-pane>
+                <el-tab-pane label="隐私协议" name="privacyAgreement">
+                    <!-- 隐私协议编辑器 -->
+                    <div ref="privacyAgreementEditor" style="height: 100%;"></div>
+                </el-tab-pane>
+            </el-tabs>
         </el-main>
     </el-container>
 </div>
@@ -62,8 +60,12 @@
 <script type="module">
 
     const initForm = {
-        userAgreement: '',
-        privacyAgreement: '',
+        name: '',
+        repository: '',
+        package_url: '',
+        ad_id: '',
+        ym_id: '',
+        wx_id: '',
         app_id: ''
     }
     const _initForm = Object.assign({}, initForm);
@@ -89,6 +91,7 @@
                 apps: [],
                 userAgreement: '',  // 用户协议内容
                 privacyAgreement: '',  // 隐私协议内容
+                activeTab: 'userAgreement',  // 当前激活的标签页
             }
         },
         created: function () {
@@ -140,8 +143,11 @@
                     this.privacyAgreement = value.privacy_agreement || '';
 
                     // 更新编辑器内容
-                    this.editorUserAgreement.txt.html(this.userAgreement);  // 设置用户协议的内容
-                    this.editorPrivacyAgreement.txt.html(this.privacyAgreement);  // 设置隐私协议的内容
+                    if (this.activeTab === 'userAgreement') {
+                        this.editorUserAgreement.txt.html(this.userAgreement);  // 设置用户协议的内容
+                    } else {
+                        this.editorPrivacyAgreement.txt.html(this.privacyAgreement);  // 设置隐私协议的内容
+                    }
                 }
             },
             initEditor() {
@@ -152,6 +158,24 @@
                 // 初始化隐私协议的编辑器
                 this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
                 this.editorPrivacyAgreement.create();
+            },
+            saveContent() {
+                // 获取当前标签页的富文本内容并保存
+                if (this.activeTab === 'userAgreement') {
+                    this.userAgreement = this.editorUserAgreement.txt.html();
+                    // 保存用户协议到后端（例如通过 API）
+                    console.log('保存用户协议:', this.userAgreement);
+                } else if (this.activeTab === 'privacyAgreement') {
+                    this.privacyAgreement = this.editorPrivacyAgreement.txt.html();
+                    // 保存隐私协议到后端（例如通过 API）
+                    console.log('保存隐私协议:', this.privacyAgreement);
+                }
+            }
+        },
+        watch: {
+            activeTab(newTab) {
+                // 切换标签时保存当前编辑器内容
+                this.saveContent();
             }
         },
         computed: {

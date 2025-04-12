@@ -17,7 +17,7 @@ class UserService
     {
         $data = Request::post();
         // 必须要有 client_id 才能进行判断
-        if (isset($data['client_id'])) {
+        if (!empty($data['client_id'])) {
             // 查找是否已经存在该 client_id 的记录
             $user = User::where('client_id', $data['client_id'])->find();
 

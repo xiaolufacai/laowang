@@ -4,10 +4,9 @@
 <div id="app" style="background-color: #ffffff">
     <el-container style="height: 100vh;">
         <el-header style="text-align: right; font-size: 12px; height: 60px; line-height: 60px;">
-            包名
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item>
-                    <el-select v-model="formInline.app" @change="select" placeholder="APP">
+                    <el-select v-model="formInline.app" @change="select" placeholder="APP" style="z-index: 9999999999">
                         <el-option
                                 v-for="(item, index) in apps"
                                 :key="index"

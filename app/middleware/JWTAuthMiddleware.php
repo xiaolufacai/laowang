@@ -15,6 +15,7 @@ class JWTAuthMiddleware
 
     public function handle($request, Closure $next)
     {
+        var_dump(234230);die();
         // 获取请求头中的 token
         $token = Request::header('Authorization');
         if (!$token) {

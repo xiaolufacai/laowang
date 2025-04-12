@@ -6,25 +6,16 @@ namespace app\index\controller;
 use app\IndexBaseController;
 use app\middleware\JWTAuthMiddleware;
 use Firebase\JWT\JWT;
-use think\captcha\facade\Captcha;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\facade\Session;
 use think\facade\Request;
-use think\facade\Validate;
 use think\response\Json;
 
-class Login extends IndexBaseController
+class Login
 {
 
     /**
      * 登录
      *
      * @return Json
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
     public function login(): Json
     {

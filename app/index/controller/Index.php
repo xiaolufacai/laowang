@@ -12,4 +12,8 @@ use think\Request;
 class Index extends IndexBaseController
 {
 
+    public function index()
+    {
+        
+    }
 }

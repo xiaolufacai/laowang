@@ -40,7 +40,8 @@ class UserService
                 // 如果没有记录，进行新增操作
                 $data['create_time'] = date('Y-m-d H:i:s');
                 $data['update_time'] = date('Y-m-d H:i:s');
-                User::create($data);
+                // 进行新增
+                $user = User::create($data);
             }
             return ['error' => 0, 'message' => 'OK', 'data' => ['uid' => $user->id]];
         } else {

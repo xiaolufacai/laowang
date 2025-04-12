@@ -9,11 +9,11 @@ use think\facade\Session;
 use think\facade\View;
 use think\Request;
 
-class Index extends IndexBaseController
+class Index
 {
 
     public function index()
     {
-        
+        echo 12211;
     }
 }

@@ -20,25 +20,7 @@
 
         <el-main>
             <!-- Tabs 标签页 -->
-            <el-tabs v-model="activeTab">
-                <!-- 用户协议 Tab -->
-                <el-tab-pane label="用户协议" name="userAgreement">
-                    <el-form :model="formData" label-width="100px" >
-                        <el-form-item label="用户协议">
-                            <div ref="userAgreementEditor" style="height: 100%;"></div>
-                        </el-form-item>
-                    </el-form>
-                </el-tab-pane>
 
-                <!-- 隐私协议 Tab -->
-                <el-tab-pane label="隐私协议" name="privacyAgreement">
-                    <el-form :model="formData1" label-width="100px">
-                        <el-form-item label="隐私协议">
-                            <div ref="privacyAgreementEditor" style="height: 100%;"></div>
-                        </el-form-item>
-                    </el-form>
-                </el-tab-pane>
-            </el-tabs>
 
             <!-- 提交按钮 -->
             <el-form-item>

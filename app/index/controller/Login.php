@@ -29,8 +29,8 @@ class Login
         $issuedAt = time();
         $expirationTime = $issuedAt + 7 * 24 * 60 * 60;  // 7天后过期
         $payload = [
-            'iss'       => 'your-issuer',      // 发行者
-            'aud'       => 'your-audience',    // 用户
+            'iss'       => 'laowang-publisher-issuer',      // 发行者
+            'aud'       => 'laowang-user-audience',    // 用户
             'iat'       => $issuedAt,          // 发布时间
             'exp'       => $expirationTime,    // 过期时间
             'client_id' => $clientId,    // 用户的设备ID

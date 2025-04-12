@@ -26,8 +26,8 @@ class JWTAuthMiddleware
 
         try {
             // 解码 JWT
-            $headers = ['HS256'];
-            $decoded = JWT::decode($token, self::KEY, $headers);
+            $headers = new stdClass();
+            $decoded = JWT::decode($token, new Key(self::KEY, 'HS256'), $headers);
             // 将解码后的信息放入请求中，方便后续使用
             $request->user = (array) $decoded;
         } catch (\Exception $e) {

@@ -18,7 +18,7 @@ class JWTAuthMiddleware
         // 获取请求头中的 token
         $token = Request::header('Authorization');
         if (!$token) {
-            return json(['code' => -1, 'message' => '请登录', 'data' => (object)[]])
+            return json(['code' => -1, 'message' => '请登录', 'data' => (object)[]]);
         }
 
         // 去掉 token 前面的 Bearer 字符串

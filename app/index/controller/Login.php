@@ -20,14 +20,12 @@ class Login
      */
     public function login(): Json
     {
-        // 获取设备ID
-        $clientId = Request::param('client_id');
-        if (!$clientId) {
-            return \json(['code' => 1, 'message' => '客户端错误', 'data' => (object)[]]);
+        $res = UserService::create();
+        if ($res['error']) {
+            // 返回生成的 token
+            return \json(['code' => 1, 'message' => $res['message'], 'data' => $res]);
         }
-
-        $jwt = UserService::token($clientId);
-        // 返回生成的 token
-        return \json(['code' => 0, 'message' => 'OK', 'data' => ['token' => $jwt]]);
+        $jwt = UserService::token($res['data']['uid']);
+        return \json(['code' => 1, 'message' => $res['message'], 'data' => ['token' => $jwt]]);
     }
 }

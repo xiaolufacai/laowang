@@ -14,9 +14,6 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item>
-                    <el-button @click="openFormModal">新增应用</el-button>
-                </el-form-item>
             </el-form>
         </el-header>
 
@@ -36,35 +33,6 @@
         </el-main>
 
         <!-- Form Modal -->
-        <el-dialog :visible.sync="formVisible" title="新增应用" width="60%">
-            <el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
-                <el-form-item label="包名称" prop="name">
-                    <el-input v-model="ruleForm.name" placeholder="请输入包名称"></el-input>
-                </el-form-item>
-                <el-form-item label="仓库地址" prop="repository">
-                    <el-input v-model="ruleForm.repository" placeholder="请输入仓库地址"></el-input>
-                </el-form-item>
-                <el-form-item label="打包平台地址" prop="package_url">
-                    <el-input v-model="ruleForm.package_url" placeholder="请输入打包平台地址"></el-input>
-                </el-form-item>
-                <el-form-item label="广告ID" prop="ad_id">
-                    <el-input v-model="ruleForm.ad_id" type="textarea" rows="4"  placeholder="请输入广告ID"></el-input>
-                </el-form-item>
-                <el-form-item label="友盟ID" prop="ym_id">
-                    <el-input v-model="ruleForm.ym_id" placeholder="请输入友盟ID"></el-input>
-                </el-form-item>
-                <el-form-item label="微信ID" prop="wx_id">
-                    <el-input v-model="ruleForm.wx_id" placeholder="请输入微信ID"></el-input>
-                </el-form-item>
-                <el-form-item label="APP ID" prop="app_id">
-                    <el-input v-model="ruleForm.app_id" placeholder="请输入APP ID"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button @click="formVisible = false">取消</el-button>
-                    <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
     </el-container>
 </div>
 
@@ -105,25 +73,7 @@
                 formInline: {
                     app: {}
                 },
-                tableObject: {
-                    '包名': '',
-                    'coding仓库地址': "",
-                    '打包平台地址': "",
-                    '广告id': "",
-                    '友盟id': "",
-                    '微信id': "",
-                    'appld': ""
-                },
                 ruleForm: initForm,
-                rules: {
-                    name: [{ required: true, message: '请输入包名称', trigger: 'change' }],
-                    repository: [{ required: true, message: '请输入仓库地址', trigger: 'change' }],
-                    package_url: [{ required: true, message: '请输入打包平台地址', trigger: 'change' }],
-                    ad_id: [{ required: true, message: '请输入广告ID', trigger: 'change' }],
-                    ym_id: [{ required: true, message: '请输入友盟ID', trigger: 'change' }],
-                    wx_id: [{ required: true, message: '请输入微信ID', trigger: 'change' }],
-                    app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }]
-                },
                 formVisible: false,
                 apps: [],
             }
@@ -133,29 +83,6 @@
             this.getApps()
         },
         methods: {
-            openFormModal() {
-                this.formVisible = true;
-            },
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        axios.post('/admin/app/add', this.ruleForm)
-                            .then(response => {
-                                this.$message.success('应用新增成功!');
-                                this.formVisible = false;
-                                this.ruleForm = {..._initForm}
-                                this.$refs[formName].resetFields();
-                                this.getApps();
-                            })
-                            .catch(error => {
-                                this.$message.error('提交失败');
-                            });
-                    } else {
-                        this.$message.error('表单验证失败，请检查输入的内容');
-                        return false;
-                    }
-                });
-            },
             getApps() {
                 let _this = this
                 axios.get('/admin/app/apps', {})
@@ -181,22 +108,6 @@
                         });
                     })
             },
-            select(id) {
-                let value = this.apps.find(item => item.id === id);
-                // 当选择的app发生变化时，更新tableObject
-                if (value) {
-                    // 假设选择的app对象中包含了更新tableObject所需的字段
-                    this.tableObject = {
-                        '包名': value.name,  // 根据你的app数据调整字段
-                        'coding仓库地址': value.repository,
-                        '打包平台地址': value.package_url,
-                        '广告ID': value.ad_id,
-                        '友盟ID': value.ym_id,
-                        '微信ID': value.wx_id,
-                        'APP ID': value.app_id
-                    };
-                }
-            }
         },
         computed: {
             transformedData() {

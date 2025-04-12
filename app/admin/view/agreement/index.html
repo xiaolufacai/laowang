@@ -1,13 +1,15 @@
 {include file="/layout/header" /}
 
+<!-- Vue 2 + Quill 富文本编辑器 -->
 <div id="app" style="background-color: #ffffff">
     <el-container>
         <el-header style="text-align: right; font-size: 12px">
+            包名
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item>
                     <el-select v-model="formInline.app" @change="select" placeholder="APP">
                         <el-option
-                                v-for="(item,index) in apps"
+                                v-for="(item, index) in apps"
                                 :key="index"
                                 :label="item.name"
                                 :value="item.id">
@@ -18,21 +20,17 @@
         </el-header>
 
         <el-main>
-            <el-table :data="transformedData" border :show-header="false">
-                <el-table-column prop="field" width="200">
-                    <template #default="scope">
-                        <div class="cell">{{ scope.row.field }}</div>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="value">
-                    <template #default="scope">
-                        <div class="cell">{{ scope.row.value }}</div>
-                    </template>
-                </el-table-column>
-            </el-table>
+            <el-row>
+                <el-col :span="12">
+                    <h3>用户协议</h3>
+                    <quill-editor v-model="userAgreement" :options="editorOptions" />
+                </el-col>
+                <el-col :span="12">
+                    <h3>隐私协议</h3>
+                    <quill-editor v-model="privacyAgreement" :options="editorOptions" />
+                </el-col>
+            </el-row>
         </el-main>
-
-        <!-- Form Modal -->
     </el-container>
 </div>
 
@@ -54,6 +52,9 @@
 </style>
 
 <script type="module">
+    import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js';  // 引入 Vue 2
+    import axios from 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js';  // 引入 axios
+    import { quillEditor } from 'https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.6/dist/vue-quill-editor.min.js';  // 引入 Quill 编辑器
 
     const initForm = {
         name: '',
@@ -68,6 +69,9 @@
     Object.freeze(_initForm);
 
     var Main = {
+        components: {
+            quillEditor,  // 注册 Quill 编辑器组件
+        },
         data() {
             return {
                 formInline: {
@@ -85,26 +89,30 @@
                 ruleForm: initForm,
                 formVisible: false,
                 apps: [],
+                userAgreement: '',  // 用户协议富文本
+                privacyAgreement: '',  // 隐私协议富文本
+                editorOptions: {
+                    theme: 'snow',  // 富文本编辑器主题
+                    placeholder: '在此输入协议内容...',  // 协议内容占位符
+                }
             }
         },
         created: function () {
-            // 获取所有APP
-            this.getApps()
+            this.getApps();  // 获取所有应用数据
         },
         methods: {
             getApps() {
-                let _this = this
+                let _this = this;
                 axios.get('/admin/app/apps', {})
                     .then(response => {
-                        const data = response.data.data
-                        const code = response.data.code
+                        const data = response.data.data;
+                        const code = response.data.code;
                         if (code !== 0) {
                             _this.apps = [];
                         } else {
                             _this.apps = data;
                             if (_this.apps.length > 0) {
-                                // 设置默认选择的应用
-                                let index = _this.apps.length - 1
+                                let index = _this.apps.length - 1;
                                 _this.formInline.app = _this.apps[index];
                                 _this.select(_this.apps[index].id);
                             }
@@ -119,11 +127,9 @@
             },
             select(id) {
                 let value = this.apps.find(item => item.id === id);
-                // 当选择的app发生变化时，更新tableObject
                 if (value) {
-                    // 假设选择的app对象中包含了更新tableObject所需的字段
                     this.tableObject = {
-                        '包名': value.name,  // 根据你的app数据调整字段
+                        '包名': value.name,
                         'coding仓库地址': value.repository,
                         '打包平台地址': value.package_url,
                         '广告ID': value.ad_id,
@@ -131,6 +137,10 @@
                         '微信ID': value.wx_id,
                         'APP ID': value.app_id
                     };
+
+                    // 更新富文本内容
+                    this.userAgreement = value.user_agreement || '';
+                    this.privacyAgreement = value.privacy_agreement || '';
                 }
             }
         },
@@ -143,8 +153,9 @@
             }
         }
     }
-    var Ctor = Vue.extend(Main)
-    new Ctor().$mount('#app')
+
+    var Ctor = Vue.extend(Main);
+    new Ctor().$mount('#app');
 </script>
 
 {include file="/layout/footer" /}

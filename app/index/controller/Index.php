@@ -10,8 +10,8 @@ use think\Request;
 class Index
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        echo 12211;
+        var_dump($request->user);
     }
 }

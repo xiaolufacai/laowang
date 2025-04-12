@@ -14,4 +14,9 @@ class Index
     {
         var_dump($request->user);
     }
+
+    public function users()
+    {
+        echo 234542;
+    }
 }

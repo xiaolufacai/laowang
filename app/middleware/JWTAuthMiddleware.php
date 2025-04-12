@@ -18,7 +18,7 @@ class JWTAuthMiddleware
         // 获取请求头中的 token
         $token = Request::header('Authorization');
         if (!$token) {
-            throw new ValidateException('Token is required');
+            return json(['code' => -1, 'message' => '请登录', 'data' => (object)[]])
         }
 
         // 去掉 token 前面的 Bearer 字符串
@@ -31,7 +31,7 @@ class JWTAuthMiddleware
             // 将解码后的信息放入请求中，方便后续使用
             $request->user = (array) $decoded;
         } catch (\Exception $e) {
-            throw new ValidateException('Invalid token');
+            return json(['code' => -2, 'message' => '登陆超时', 'data' => (object)[]]);
         }
 
         return $next($request);

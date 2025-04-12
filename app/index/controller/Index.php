@@ -18,6 +18,7 @@ class Index
 
     public function user(Request $request)
     {
+        var_dump($request->user['uid']);die();
         $user = User::where(['id' => $request->user['uid']]);
         return \json(['code' => 1, 'message' => 'OK', 'data' => ['user' => $user]]);
     }

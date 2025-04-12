@@ -152,9 +152,19 @@
                 this.editorUserAgreement = new wangEditor(this.$refs.userAgreementEditor);
                 this.editorUserAgreement.create();
 
+                // 获取编辑器容器并设置 z-index 和 height
+                const editorContainerUserAgreement = this.editorUserAgreement.$el;  // 获取编辑器的容器
+                editorContainerUserAgreement.style.zIndex = '1';  // 设置 z-index 为 1
+                editorContainerUserAgreement.style.height = '700px';  // 设置高度为 700px
+
                 // 初始化隐私协议的编辑器
                 this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
                 this.editorPrivacyAgreement.create();
+
+                // 获取隐私协议编辑器容器并设置 z-index 和 height
+                const editorContainerPrivacyAgreement = this.editorPrivacyAgreement.$el;
+                editorContainerPrivacyAgreement.style.zIndex = '1';
+                editorContainerPrivacyAgreement.style.height = '700px';  // 设置高度为 700px
             },
             submitForm() {
                 // 获取富文本内容

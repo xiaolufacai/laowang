@@ -18,41 +18,10 @@
             </el-form>
         </el-header>
 
-        <el-main>
-            <!-- Tabs 标签页 -->
-
-
-            <!-- 提交按钮 -->
-            <el-form-item>
-                <el-button type="primary" @click="submitForm">提交修改</el-button>
-            </el-form-item>
-        </el-main>
     </el-container>
 </div>
 
 <style>
-    .diy-el-form {
-        background-color: #fff;
-    }
-    .demo-form-inline {
-        margin-top: 10px;
-        z-index: 2;  /* 保证 select 不被富文本编辑器遮挡 */
-    }
-    .el-header {
-        background-color: #e7ebf0;
-        color: #333;
-        line-height: 60px;
-        z-index: 2;  /* 保证 header 不被遮挡 */
-    }
-    .el-main {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        height: calc(100% - 60px);  /* 使 main 占据剩余空间 */
-    }
-    h3 {
-        margin-bottom: 10px; /* 为标题增加间距 */
-    }
 </style>
 
 <!-- 引入 wangEditor -->
@@ -133,8 +102,8 @@
                     this.formData.privacyAgreement = value.privacy_agreement || '';
 
                     // 更新编辑器内容
-                    this.editorUserAgreement.txt.html(this.formData.userAgreement);
-                    this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
+                    // this.editorUserAgreement.txt.html(this.formData.userAgreement);
+                    // this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
                 }
             },
             initEditor() {

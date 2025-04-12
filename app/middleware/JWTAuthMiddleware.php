@@ -16,6 +16,14 @@ class JWTAuthMiddleware
 
     public function handle($request, Closure $next)
     {
+        // 获取当前模块/控制器/方法
+        $controller = strtolower($request->controller());
+
+        // 排除 login 控制器
+        if ($controller === 'login') {
+            return $next($request);
+        }
+
         // 获取请求头中的 token
         $token = Request::header('Authorization');
         if (!$token) {

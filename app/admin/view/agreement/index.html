@@ -20,7 +20,7 @@
 
         <el-main>
             <!-- Tabs 标签页 -->
-            <el-tabs v-model="activeTab" >
+            <el-tabs v-model="activeTab">
                 <!-- 用户协议 Tab -->
                 <el-tab-pane label="用户协议" name="userAgreement">
                     <el-form :model="formData" label-width="100px" style="height: 100%;">
@@ -138,13 +138,14 @@
             select(id) {
                 let value = this.apps.find(item => item.id === id);
                 if (value) {
+                    this.formInline.app = id;  // Store only the ID
                     // 更新富文本内容
                     this.formData.userAgreement = value.user_agreement || '';
                     this.formData.privacyAgreement = value.privacy_agreement || '';
 
                     // 更新编辑器内容
-                    this.editorUserAgreement.txt.html(this.formData.userAgreement);  // 设置用户协议的内容
-                    this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);  // 设置隐私协议的内容
+                    this.editorUserAgreement.txt.html(this.formData.userAgreement);
+                    this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
                 }
             },
             initEditor() {
@@ -177,6 +178,7 @@
 
                 // 提交数据
                 axios.post('/admin/app/update-agreements', {
+                    app_id: this.formInline.app,  // Add app ID to the request
                     userAgreement: this.formData.userAgreement,
                     privacyAgreement: this.formData.privacyAgreement
                 })

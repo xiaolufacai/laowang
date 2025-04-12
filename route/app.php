@@ -19,6 +19,6 @@ Route::group('index', function () {
     Route::get('index', 'index/index/index');
     Route::get('users', 'index/index/users');
     // 其他路由...
-})->middleware(\app\middleware\JWTAuthMiddleware::class);
+});
 
 Route::post('/login', 'index/login/login');

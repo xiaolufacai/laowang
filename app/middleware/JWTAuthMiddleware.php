@@ -4,6 +4,7 @@
 namespace app\middleware;
 
 use Closure;
+use Firebase\JWT\Key;
 use think\facade\Request;
 use Firebase\JWT\JWT;
 use think\exception\ValidateException;

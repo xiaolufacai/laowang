@@ -15,7 +15,7 @@ Route::get('think', function () {
 });
 
 // index模块下，除了 login 外，其他都加上 jwt 中间件
-Route::group(function () {
-    Route::get('index', 'index/index/index');
-    // 其他路由...
-})->middleware(\app\middleware\JWTAuthMiddleware::class);
+//Route::group(function () {
+//    Route::get('index', 'index/index/index');
+//    // 其他路由...
+//})->middleware(\app\middleware\JWTAuthMiddleware::class);

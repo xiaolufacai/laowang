@@ -52,7 +52,13 @@
 </style>
 
 <script type="module">
-    import { quillEditor } from 'https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.6/dist/vue-quill-editor.min.js';  // 引入 Quill 编辑器
+
+    // 引入 Quill 和 vue-quill-editor 通过 CDN
+    import { Quill } from 'https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js';  // Quill 富文本编辑器
+    import VueQuillEditor from 'https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.6/dist/vue-quill-editor.min.js';  // Vue2 版本的 Quill 编辑器
+
+    // 注册 VueQuillEditor 作为全局组件
+    Vue.component('quill-editor', VueQuillEditor);
 
     const initForm = {
         name: '',
@@ -67,9 +73,6 @@
     Object.freeze(_initForm);
 
     var Main = {
-        components: {
-            quillEditor,  // 注册 Quill 编辑器组件
-        },
         data() {
             return {
                 formInline: {

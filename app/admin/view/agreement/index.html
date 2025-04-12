@@ -4,7 +4,7 @@
 <div id="app" style="background-color: #ffffff">
     <el-container style="height: 100vh;">
         <el-header style="text-align: right; font-size: 12px; height: 60px; line-height: 60px;">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline" :style="z-index: 20000;">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline" >
                 <el-form-item>
                     <el-select v-model="formInline.app" @change="select" placeholder="APP">
                         <el-option

@@ -21,13 +21,13 @@
 
         <el-main>
             <el-row>
-                <el-col :span="12">
+                <el-col :span="12" style="padding-right: 20px;"> <!-- 设置右侧间距 -->
                     <h3>用户协议</h3>
-                    <div ref="userAgreementEditor"></div> <!-- 为用户协议创建一个空的 div -->
+                    <div ref="userAgreementEditor" style="height: 300px;"></div> <!-- 设置高度以便展示 -->
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" style="padding-left: 20px;"> <!-- 设置左侧间距 -->
                     <h3>隐私协议</h3>
-                    <div ref="privacyAgreementEditor"></div> <!-- 为隐私协议创建一个空的 div -->
+                    <div ref="privacyAgreementEditor" style="height: 300px;"></div> <!-- 设置高度以便展示 -->
                 </el-col>
             </el-row>
         </el-main>
@@ -49,14 +49,22 @@
     .el-aside {
         color: #333;
     }
+    /* 增加编辑器之间的间隔 */
+    .el-row {
+        margin-top: 20px;
+    }
+    .el-col {
+        padding: 0 20px; /* 左右间隔 */
+    }
+    h3 {
+        margin-bottom: 10px;  /* 为标题增加间距 */
+    }
 </style>
 
 <!-- 引入 wangEditor -->
 <script src="https://cdn.jsdelivr.net/npm/wangeditor@4.6.14/dist/wangEditor.min.js"></script>
 
 <script type="module">
-    // import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js';  // 引入 Vue 2
-    // import axios from 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js';  // 引入 axios
 
     const initForm = {
         name: '',

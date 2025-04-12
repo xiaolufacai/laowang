@@ -23,7 +23,7 @@ class Login
         $res = UserService::create();
         if ($res['error']) {
             // 返回生成的 token
-            return \json(['code' => 1, 'message' => $res['message'], 'data' => $res]);
+            return \json(['code' => 1, 'message' => $res['message'], 'data' => $res['data']]);
         }
         $jwt = UserService::token($res['data']['uid']);
         return \json(['code' => 1, 'message' => $res['message'], 'data' => ['token' => $jwt]]);

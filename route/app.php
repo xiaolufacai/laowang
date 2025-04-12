@@ -20,4 +20,4 @@ Route::group(function () {
     // 其他路由...
 })->middleware(\app\middleware\JWTAuthMiddleware::class);
 
-Route::post('login', 'index/login/login');
+Route::post('/login', 'index/login/login');

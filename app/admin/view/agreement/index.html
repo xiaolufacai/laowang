@@ -4,7 +4,7 @@
 <div id="app" style="background-color: #ffffff">
     <el-container style="height: 100vh;">
         <el-header style="text-align: right; font-size: 12px; height: 60px; line-height: 60px;">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline" >
+            <el-form :inline="true" :model="formInline" class="demo-form-inline" :style="z-index: 20000;">
                 <el-form-item>
                     <el-select v-model="formInline.app" @change="select" placeholder="APP">
                         <el-option
@@ -20,12 +20,35 @@
 
         <el-main>
             <!-- Tabs 标签页 -->
+            <el-tabs v-model="activeTab">
+                <!-- 用户协议 Tab -->
+                <el-tab-pane label="用户协议" name="userAgreement">
+                    <el-form :model="formData" label-width="100px" >
+                        <el-form-item label="用户协议">
+                            <div ref="userAgreementEditor" style="height: 100%;"></div>
+                        </el-form-item>
+                        <!-- 提交按钮 -->
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm">提交修改</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+
+                <!-- 隐私协议 Tab -->
+                <el-tab-pane label="隐私协议" name="privacyAgreement">
+                    <el-form :model="formData" label-width="100px">
+                        <el-form-item label="隐私协议">
+                            <div ref="privacyAgreementEditor" style="height: 100%;"></div>
+                        </el-form-item>
+                        <!-- 提交按钮 -->
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm">提交修改</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+            </el-tabs>
 
 
-            <!-- 提交按钮 -->
-            <el-form-item>
-                <el-button type="primary" @click="submitForm">提交修改</el-button>
-            </el-form-item>
         </el-main>
     </el-container>
 </div>
@@ -83,10 +106,6 @@
                     userAgreement: '',  // 用户协议内容
                     privacyAgreement: ''  // 隐私协议内容
                 },
-                formData1: {
-                    userAgreement: '',  // 用户协议内容
-                    privacyAgreement: ''  // 隐私协议内容
-                },
                 apps: [],
             }
         },
@@ -94,10 +113,7 @@
             this.getApps();  // 获取所有应用数据
         },
         mounted() {
-            this.$nextTick(() => {
-                // 确保 editor 已经渲染
-                // this.initEditor();
-            });
+            this.initEditor();  // 初始化编辑器
         },
         methods: {
             getApps() {
@@ -133,8 +149,8 @@
                     this.formData.privacyAgreement = value.privacy_agreement || '';
 
                     // 更新编辑器内容
-                    // this.editorUserAgreement.txt.html(this.formData.userAgreement);
-                    // this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
+                    this.editorUserAgreement.txt.html(this.formData.userAgreement);
+                    this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
                 }
             },
             initEditor() {

@@ -18,7 +18,7 @@ class JWTAuthMiddleware
     {
         // 获取当前模块/控制器/方法
         $controller = strtolower($request->controller());
-
+        var_dump($controller);die();
         // 排除 login 控制器
         if ($controller === 'login') {
             return $next($request);

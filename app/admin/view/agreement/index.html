@@ -19,19 +19,19 @@
         </el-header>
 
         <el-main style="display: flex; flex-direction: column; flex-grow: 1; padding: 0;">
-            <!-- 使用 flex 布局确保编辑器填充剩余空间 -->
-            <el-row style="flex: 1; display: flex; padding: 0;">
-                <el-col :span="12" style="padding-right: 20px; height: 100%; display: flex; flex-direction: column;">
-                    <h3 style="margin-bottom: 10px;">用户协议</h3>
-                    <!-- 设置编辑器容器占满剩余空间 -->
-                    <div ref="userAgreementEditor" style="flex: 1; height: 100%;"></div>
-                </el-col>
-                <el-col :span="12" style="padding-left: 20px; height: 100%; display: flex; flex-direction: column;">
-                    <h3 style="margin-bottom: 10px;">隐私协议</h3>
-                    <!-- 设置编辑器容器占满剩余空间 -->
-                    <div ref="privacyAgreementEditor" style="flex: 1; height: 100%;"></div>
-                </el-col>
-            </el-row>
+            <el-form ref="form" :model="ruleForm" label-width="80px">
+                <el-form-item label="活动形式">
+                    <el-input  ref="userAgreementEditor" type="textarea" v-model="ruleForm.userAgreement"></el-input>
+                </el-form-item>
+
+                <el-form-item label="活动形式">
+                    <el-input  ref="privacyAgreementEditor" type="textarea" v-model="ruleForm.privacyAgreement"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                    <el-button>取消</el-button>
+                </el-form-item>
+            </el-form>
         </el-main>
     </el-container>
 </div>
@@ -62,12 +62,8 @@
 <script type="module">
 
     const initForm = {
-        name: '',
-        repository: '',
-        package_url: '',
-        ad_id: '',
-        ym_id: '',
-        wx_id: '',
+        userAgreement: '',
+        privacyAgreement: '',
         app_id: ''
     }
     const _initForm = Object.assign({}, initForm);

@@ -18,7 +18,41 @@
             </el-form>
         </el-header>
 
+        <el-main>
+            <template>
+                <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
+                    <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+                    <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+                    <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+                    <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+                </el-tabs>
+            </template>
+            <!-- Tabs 标签页 -->
+            <el-tabs v-model="activeTab">
+                <!-- 用户协议 Tab -->
+                <el-tab-pane label="用户协议" name="userAgreement">
+                    <el-form :model="formData" label-width="100px" style="height: 100%;">
+                        <el-form-item label="用户协议">
+                            <div ref="userAgreementEditor" style="height: 100%;"></div>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
 
+                <!-- 隐私协议 Tab -->
+                <el-tab-pane label="隐私协议" name="privacyAgreement">
+                    <el-form :model="formData" label-width="100px">
+                        <el-form-item label="隐私协议">
+                            <div ref="privacyAgreementEditor" style="height: 100%;"></div>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+            </el-tabs>
+
+            <!-- 提交按钮 -->
+            <el-form-item>
+                <el-button type="primary" @click="submitForm">提交修改</el-button>
+            </el-form-item>
+        </el-main>
     </el-container>
 </div>
 
@@ -102,12 +136,12 @@
                             }
                         }
                     })
-                    .catch(function (error) {
-                        _this.$message({
-                            message: '数据获取失败',
-                            type: 'error'
-                        });
-                    })
+                    // .catch(function (error) {
+                    //     _this.$message({
+                    //         message: '数据获取失败',
+                    //         type: 'error'
+                    //     });
+                    // })
             },
             select(id) {
                 let value = this.apps.find(item => item.id === id);

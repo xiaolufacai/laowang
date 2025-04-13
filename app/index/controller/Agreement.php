@@ -1,4 +1,5 @@
 <?php
+
 namespace app\index\controller;
 
 
@@ -12,14 +13,8 @@ use think\facade\View;
 use think\Request;
 use think\response\Json;
 
-class Index
+class Agreement
 {
-
-    public function index(Request $request)
-    {
-        var_dump($request->user);
-    }
-
     /**
      * @param Request $request
      * @return Json
@@ -27,9 +22,10 @@ class Index
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function user(Request $request)
+    public function agreement(Request $request)
     {
-        $user = User::where(['id' => $request->user['uid']])->find();
-        return \json(['code' => 1, 'message' => 'OK', 'data' => ['user' => $user]]);
+        $appId = $request->param('app_id');
+        $agreement = \app\common\model\Agreement::where(['app_id' => $appId])->find();
+        return \json(['code' => 1, 'message' => 'OK', 'data' => ['agreement' => $agreement]]);
     }
 }

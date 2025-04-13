@@ -187,7 +187,6 @@
                 })
                     .then(response => {
                         if (response.data.code === 0) {
-                            alert(1111)
                             this.$message.success('修改成功');
                         } else {
                             this.$message.error(response.data.msg || '修改失败');

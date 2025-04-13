@@ -182,8 +182,8 @@
                 // 提交数据
                 axios.post('/admin/agreement/update', {
                     app_id: this.formInline.app,
-                    userAgreement: userAgreement,
-                    privacyAgreement: privacyAgreement
+                    user_agreement: userAgreement,
+                    privacy_agreement: privacyAgreement
                 })
                     .then(response => {
                         if (response.data.code === 0) {

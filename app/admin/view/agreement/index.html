@@ -115,6 +115,31 @@
             });
         },
         methods: {
+            getApps() {
+                let _this = this
+                axios.get('/admin/app/apps', {})
+                    .then(response => {
+                        const data = response.data.data
+                        const code = response.data.code
+                        if (code !== 0) {
+                            _this.apps = [];
+                        } else {
+                            _this.apps = data;
+                            if (_this.apps.length > 0) {
+                                // 设置默认选择的应用
+                                let index = _this.apps.length - 1
+                                _this.formInline.app = _this.apps[index];
+                                _this.select(_this.apps[index].id);
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    })
+            },
             initEditor() {
                 // 初始化用户协议的编辑器
                 this.editorUserAgreement = new wangEditor(this.$refs.userAgreementEditor);

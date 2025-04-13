@@ -23,7 +23,7 @@
             <el-tabs v-model="activeTab">
                 <!-- 用户协议 Tab -->
                 <el-tab-pane label="用户协议" name="userAgreement">
-                    <el-form :model="formData" label-width="100px" >
+                    <el-form :model="formData">
                         <el-form-item>
                             <div ref="userAgreementEditor" style="height: 100%;"></div>
                         </el-form-item>
@@ -36,7 +36,7 @@
 
                 <!-- 隐私协议 Tab -->
                 <el-tab-pane label="隐私协议" name="privacyAgreement">
-                    <el-form :model="formData" label-width="100px">
+                    <el-form :model="formData">
                         <el-form-item>
                             <div ref="privacyAgreementEditor" style="height: 100%;"></div>
                         </el-form-item>

@@ -34,8 +34,8 @@ class Agreement extends AdminBaseController
         $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->select();
         foreach ($apps as $app) {
             $agreement = \app\common\model\Agreement::where(['package' => $app['name']])->find();
-            $app['user_agreement'] = $agreement['user_agreement'];
-            $app['privacy_agreement'] = $agreement['privacy_agreement'];
+            $app['user_agreement'] = $agreement['user_agreement'] ?? '';
+            $app['privacy_agreement'] = $agreement['privacy_agreement'] ?? '';
         }
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
     }

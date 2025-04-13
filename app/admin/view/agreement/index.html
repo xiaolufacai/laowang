@@ -87,7 +87,7 @@
 <link href="https://cdn.jsdelivr.net/npm/wangeditor@4.7.15/dist/wangEditor.min.css" rel="stylesheet">
 
 <!-- 引入 wangEditor -->
-<script src="https://cdn.jsdelivr.net/npm/wangeditor@4.6.14/dist/wangEditor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wangeditor@4.7.15/dist/wangEditor.min.js"></script>
 
 <script type="module">
     var Main = {
@@ -143,10 +143,12 @@
             initEditor() {
                 // 初始化用户协议的编辑器
                 this.editorUserAgreement = new wangEditor(this.$refs.userAgreementEditor);
+                this.editorUserAgreement.config.height = 1000
                 this.editorUserAgreement.create();
 
                 // 初始化隐私协议的编辑器（取消注释）
                 this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
+                this.editorPrivacyAgreement.config.height = 1000
                 this.editorPrivacyAgreement.create();
 
                 // 设置两个编辑器的样式

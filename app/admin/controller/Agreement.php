@@ -46,7 +46,7 @@ class Agreement extends AdminBaseController
      * @param Request $request
      * @return Json
      */
-    public function add(Request $request): Json
+    public function update(Request $request): Json
     {
         $post = $request->post();
         return AppService::add($post);

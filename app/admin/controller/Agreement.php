@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace app\admin\controller;
 
 
+use app\admin\service\AgreementService;
 use app\admin\service\AppService;
 use app\AdminBaseController;
 use app\common\model\App as Apps;
@@ -49,6 +50,6 @@ class Agreement extends AdminBaseController
     public function update(Request $request): Json
     {
         $post = $request->post();
-        return AppService::add($post);
+        return AgreementService::add($post);
     }
 }

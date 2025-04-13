@@ -23,7 +23,7 @@ class AgreementService
         if (!$validate->check($data)) {
             return json(['code' => 1, 'msg' => $validate->getError()]);
         }
-        $model = Agreement::where(['package' => $data['package']])->find();
+        $model = Agreement::where(['app_id' => $data['app_id']])->find();
         if (empty($model)) {
             $app = new Agreement();
         }

@@ -2,7 +2,7 @@
 
 <!-- Vue 2 + wangEditor 富文本编辑器 -->
 <div id="app" style="background-color: #ffffff">
-    <el-container style="height: 100vh;">
+    <el-container >
         <el-header style="text-align: right; font-size: 12px; height: 60px; line-height: 60px;">
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item>
@@ -187,6 +187,7 @@
                 })
                     .then(response => {
                         if (response.data.code === 0) {
+                            alert(1111)
                             this.$message.success('修改成功');
                         } else {
                             this.$message.error(response.data.msg || '修改失败');

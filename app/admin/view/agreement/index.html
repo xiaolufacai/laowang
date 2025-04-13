@@ -54,27 +54,34 @@
 </div>
 
 <style>
-    .diy-el-form {
-        background-color: #fff;
-    }
-    .demo-form-inline {
-        margin-top: 10px;
-        z-index: 2;  /* 保证 select 不被富文本编辑器遮挡 */
-    }
+    /* 其他样式保持不变 */
+
     .el-header {
         background-color: #e7ebf0;
         color: #333;
         line-height: 60px;
-        z-index: 2;  /* 保证 header 不被遮挡 */
+        position: relative;  /* 添加 position */
+        z-index: 3000;      /* 提高 z-index */
     }
-    .el-main {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        height: calc(100% - 60px);  /* 使 main 占据剩余空间 */
+
+    .demo-form-inline {
+        margin-top: 10px;
+        position: relative;  /* 添加 position */
+        z-index: 3000;      /* 提高 z-index */
     }
-    h3 {
-        margin-bottom: 10px; /* 为标题增加间距 */
+
+    /* 确保下拉菜单在最上层 */
+    .el-select-dropdown {
+        z-index: 3001 !important;
+    }
+
+    /* 编辑器容器样式 */
+    .w-e-toolbar {
+        z-index: 2 !important;
+    }
+
+    .w-e-text-container {
+        z-index: 1 !important;
     }
 </style>
 
@@ -82,132 +89,92 @@
 <script src="https://cdn.jsdelivr.net/npm/wangeditor@4.6.14/dist/wangEditor.min.js"></script>
 
 <script type="module">
-
-    const initForm = {
-        name: '',
-        repository: '',
-        package_url: '',
-        ad_id: '',
-        ym_id: '',
-        wx_id: '',
-        app_id: ''
-    }
-    const _initForm = Object.assign({}, initForm);
-    Object.freeze(_initForm);
-
     var Main = {
         data() {
             return {
                 formInline: {
                     app: {}
                 },
-                activeTab: 'userAgreement',  // 默认选中的标签页
+                activeTab: 'userAgreement',
                 formData: {
-                    userAgreement: '',  // 用户协议内容
-                    privacyAgreement: ''  // 隐私协议内容
+                    userAgreement: '',
+                    privacyAgreement: ''
                 },
                 apps: [],
+                editorUserAgreement: null,
+                editorPrivacyAgreement: null
             }
         },
         created() {
-            this.getApps();  // 获取所有应用数据
+            this.getApps();
         },
         mounted() {
             this.$nextTick(() => {
-                // 确保 editor 已经渲染
                 this.initEditor();
             });
         },
         methods: {
-            getApps() {
-                let _this = this;
-                axios.get('/admin/app/apps', {})
-                    .then(response => {
-                        const data = response.data.data;
-                        const code = response.data.code;
-                        if (code !== 0) {
-                            _this.apps = [];
-                        } else {
-                            _this.apps = data;
-                            if (_this.apps.length > 0) {
-                                let index = _this.apps.length - 1;
-                                _this.formInline.app = _this.apps[index];
-                                _this.select(_this.apps[index].id);
-                            }
-                        }
-                    })
-                    // .catch(function (error) {
-                    //     _this.$message({
-                    //         message: '数据获取失败',
-                    //         type: 'error'
-                    //     });
-                    // })
-            },
-            select(id) {
-                let value = this.apps.find(item => item.id === id);
-                if (value) {
-                    this.formInline.app = id;  // Store only the ID
-                    // 更新富文本内容
-                    this.formData.userAgreement = value.user_agreement || '';
-                    this.formData.privacyAgreement = value.privacy_agreement || '';
-
-                    // 更新编辑器内容
-                    // this.editorUserAgreement.txt.html(this.formData.userAgreement);
-                    // this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
-                }
-            },
             initEditor() {
                 // 初始化用户协议的编辑器
                 this.editorUserAgreement = new wangEditor(this.$refs.userAgreementEditor);
                 this.editorUserAgreement.create();
 
-                // 获取编辑器容器并设置 z-index 和 height
-                const editorContainerUserAgreement = this.editorUserAgreement.$el;  // 获取编辑器的容器
-                editorContainerUserAgreement.style.zIndex = '1';  // 设置 z-index 为 1
-                editorContainerUserAgreement.style.height = '700px';  // 设置高度为 700px
-                editorContainerUserAgreement.style.overflowY = 'auto';  // 如果内容超出，显示滚动条
+                // 初始化隐私协议的编辑器（取消注释）
+                this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
+                this.editorPrivacyAgreement.create();
 
+                // 设置两个编辑器的样式
+                [this.editorUserAgreement, this.editorPrivacyAgreement].forEach(editor => {
+                    if (editor && editor.$el) {
+                        editor.$el.style.zIndex = '1';
+                        editor.$el.style.height = '700px';
+                        editor.$el.style.overflowY = 'auto';
+                    }
+                });
+            },
+            select(id) {
+                let value = this.apps.find(item => item.id === id);
+                if (value) {
+                    this.formInline.app = id;
 
-                // // 初始化隐私协议的编辑器
-                // this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
-                // this.editorPrivacyAgreement.create();
-                //
-                // // 获取隐私协议编辑器容器并设置 z-index 和 height
-                // const editorContainerPrivacyAgreement = this.editorPrivacyAgreement.$el;
-                // editorContainerPrivacyAgreement.style.zIndex = '1';
-                // editorContainerPrivacyAgreement.style.height = '700px';  // 设置高度为 700px
-                // editorContainerPrivacyAgreement.style.overflowY = 'auto';  // 如果内容超出，显示滚动条
+                    // 更新富文本内容
+                    this.formData.userAgreement = value.user_agreement || '';
+                    this.formData.privacyAgreement = value.privacy_agreement || '';
 
+                    // 更新编辑器内容（取消注释并修改）
+                    if (this.editorUserAgreement) {
+                        this.editorUserAgreement.txt.html(this.formData.userAgreement);
+                    }
+                    if (this.editorPrivacyAgreement) {
+                        this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
+                    }
+                }
             },
             submitForm() {
+                if (!this.formInline.app) {
+                    this.$message.warning('请先选择平台');
+                    return;
+                }
+
                 // 获取富文本内容
-                this.formData.userAgreement = this.editorUserAgreement.txt.html();
-                this.formData.privacyAgreement = this.editorPrivacyAgreement.txt.html();
+                const userAgreement = this.editorUserAgreement ? this.editorUserAgreement.txt.html() : '';
+                const privacyAgreement = this.editorPrivacyAgreement ? this.editorPrivacyAgreement.txt.html() : '';
 
                 // 提交数据
                 axios.post('/admin/app/update-agreements', {
-                    app_id: this.formInline.app,  // Add app ID to the request
-                    userAgreement: this.formData.userAgreement,
-                    privacyAgreement: this.formData.privacyAgreement
+                    app_id: this.formInline.app,
+                    userAgreement: userAgreement,
+                    privacyAgreement: privacyAgreement
                 })
                     .then(response => {
                         if (response.data.code === 0) {
-                            this.$message({
-                                message: '修改成功',
-                                type: 'success'
-                            });
+                            this.$message.success('修改成功');
                         } else {
-                            this.$message({
-                                message: '修改失败',
-                                type: 'error'
-                            });
+                            this.$message.error(response.data.msg || '修改失败');
                         }
                     })
                     .catch(error => {
-                        this.$message({
-                            message: '请求失败',
-                            type: 'error'
-                        });
+                        this.$message.error('请求失败：' + (error.message || '未知错误'));
                     });
             }
         }

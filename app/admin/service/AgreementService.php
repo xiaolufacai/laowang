@@ -11,11 +11,11 @@ class AgreementService
     public static function add($data)
     {
         $validate = Validate::rule([
-            'package'           => 'require',
+            'app_id'            => 'require',
             'user_agreement'    => 'require',
             'privacy_agreement' => 'require',
         ])->message([
-            'package.require'           => '包名不能为空',
+            'app_id.require'            => '包ID不能为空',
             'user_agreement.require'    => '用户协议不能为空',
             'privacy_agreement.require' => '隐私协议不能为空',
         ]);

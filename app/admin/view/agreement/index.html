@@ -143,12 +143,12 @@
             initEditor() {
                 // 初始化用户协议的编辑器
                 this.editorUserAgreement = new wangEditor(this.$refs.userAgreementEditor);
-                this.editorUserAgreement.config.height = 800
+                this.editorUserAgreement.config.height = 730
                 this.editorUserAgreement.create();
 
                 // 初始化隐私协议的编辑器（取消注释）
                 this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
-                this.editorPrivacyAgreement.config.height = 800
+                this.editorPrivacyAgreement.config.height = 730
                 this.editorPrivacyAgreement.create();
             },
             select(id) {

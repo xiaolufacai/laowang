@@ -25,9 +25,9 @@ class AgreementService
         }
         $model = Agreement::where(['app_id' => $data['app_id']])->find();
         if (empty($model)) {
-            $app = new Agreement();
+            $model = new Agreement();
         }
-        if ($app->save($data)) {
+        if ($model->save($data)) {
             return json(['code' => 0, 'msg' => '添加应用成功']);
         } else {
             return json(['code' => 1, 'msg' => '添加应用失败']);

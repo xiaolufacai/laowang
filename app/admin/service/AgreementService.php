@@ -4,12 +4,6 @@ declare (strict_types=1);
 namespace app\admin\service;
 
 use app\common\model\Agreement;
-use app\common\model\App;
-use app\common\model\AppChannel;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\facade\Config;
 use  \think\facade\Validate;
 
 class AgreementService

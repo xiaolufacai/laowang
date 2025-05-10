@@ -1,0 +1,186 @@
+{include file="/layout/header" /}
+
+<div id="app" style="background-color: #ffffff">
+    <el-container>
+        <el-header style="text-align: right; font-size: 12px">
+            <el-form :inline="true" ref="searchForm" :model="formInline" class="demo-form-inline">
+                <el-form-item>
+                    <el-input v-model="formInline.orderId" placeholder="请输入订单ID"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-select v-model="formInline.app" @change="select" placeholder="APP">
+                        <el-option
+                                v-for="(item,index) in apps"
+                                :key="index"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="searchOrders">搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </el-header>
+
+        <el-main>
+            <el-table
+                    :data="tableData"
+                    border
+                    style="width: 751px">
+                <el-table-column
+                        align="center"
+                        prop="id"
+                        label="订单ID"
+                        width="150">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="user_id"
+                        label="用户ID"
+                        width="150">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="create_time"
+                        label="时间"
+                        width="150">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="amount"
+                        label="金额"
+                        width="150">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="pay_platform"
+                        label="支付平台"
+                        width="150">
+                </el-table-column>
+            </el-table>
+
+            <!-- Pagination -->
+            <el-pagination
+                    v-if="totalItems > 0"
+                    @current-change="handlePageChange"
+                    :current-page="currentPage"
+                    :page-size="pageSize"
+                    :total="totalItems"
+                    layout="total, prev, pager, next, jumper">
+            </el-pagination>
+        </el-main>
+    </el-container>
+</div>
+
+<style>
+    .diy-el-form {
+        background-color: #fff;
+    }
+    .demo-form-inline {
+        margin-top: 10px;
+    }
+    .el-header {
+        background-color: #e7ebf0;
+        color: #333;
+        line-height: 60px;
+    }
+    .el-aside {
+        color: #333;
+    }
+</style>
+
+<script type="module">
+    var Main = {
+        data() {
+            return {
+                formInline: {
+                    app: '',
+                    orderId: ''
+                },
+                formVisible: false,
+                apps: [],
+                vips: [],
+                tableData: [],
+                currentPage: 1,
+                pageSize: 10,
+                totalItems: 0
+            }
+        },
+        created: function () {
+            this.getApps(); // 获取所有APP
+        },
+        methods: {
+            searchOrders() {
+                // 搜索订单时使用当前的APP和订单ID
+                this.getAppOrders(this.formInline.app, this.formInline.orderId, this.currentPage);
+            },
+            handlePageChange(page) {
+                // 分页改变时获取新页面的数据
+                this.currentPage = page;
+                this.getAppOrders(this.formInline.app, this.formInline.orderId, page);
+            },
+            getApps() {
+                let _this = this;
+                axios.get('/admin/app/apps', {})
+                    .then(response => {
+                        const data = response.data.data;
+                        const code = response.data.code;
+                        if (code !== 0) {
+                            _this.apps = [];
+                        } else {
+                            _this.apps = data;
+                            if (_this.apps.length > 0) {
+                                _this.formInline.app = _this.apps[0].id; // 默认选择第一个APP
+                                this.getAppOrders(_this.formInline.app, '', this.currentPage); // 默认加载订单列表
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    });
+            },
+            getAppOrders(appId, orderId, page) {
+                let _this = this;
+                axios.get('/admin/order/orders', {
+                    params: {
+                        app_id: appId,
+                        order_id: orderId,
+                        page: page,
+                        page_size: _this.pageSize
+                    }
+                })
+                    .then(response => {
+                        const data = response.data.data;
+                        const code = response.data.code;
+                        if (code !== 0) {
+                            _this.tableData = [];
+                            _this.totalItems = 0;
+                        } else {
+                            _this.tableData = data.data;
+                            _this.totalItems = data.total;
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    });
+            },
+            select(id) {
+                // 当APP选择变化时重新获取订单数据
+                this.formInline.app = id;
+                this.getAppOrders(id, this.formInline.orderId, this.currentPage);
+            },
+        }
+    }
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+</script>
+
+{include file="/layout/footer" /}
+

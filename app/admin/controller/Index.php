@@ -25,9 +25,9 @@ class Index extends AdminBaseController
     public function resetPassword(Request $request)
     {
         // 获取前端传过来的参数
-        $oldPw    = $request->post('old_pw');
-        $newPw    = $request->post('new_pw');
-        $userId   = Session::get('userId');
+        $oldPw  = $request->post('old_pw');
+        $newPw  = $request->post('new_pw');
+        $userId = Session::get('userId');
         // 获取当前管理员的密码（根据实际情况修改）
         $admin = Admin::where('id', $userId)->find();
 

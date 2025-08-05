@@ -10,23 +10,20 @@ use app\Request;
 use think\facade\View;
 use think\response\Json;
 
-class User extends AdminBaseController
-{
+class User extends AdminBaseController {
     /**
      * 用户 列表
      *
      * @return string
      */
-    public function index()
-    {
+    public function index(): string {
         View::assign([
-            'nav'  => '用户中心',
+            'nav' => '用户中心',
         ]);
         return View::fetch();
     }
 
-    public function users(Request $request): Json
-    {
+    public function users(Request $request): Json {
         // 获取查询参数
         $appId    = $request->get('app_id', null);
         $id       = $request->get('order_id', null);

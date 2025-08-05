@@ -5,23 +5,22 @@ namespace app\admin\controller;
 
 
 use app\admin\service\AgreementService;
-use app\admin\service\AppService;
 use app\AdminBaseController;
 use app\common\model\App as Apps;
 use app\Request;
-use think\facade\Config;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\facade\View;
 use think\response\Json;
-
-class Agreement extends AdminBaseController
-{
+use \app\common\model\Agreement as AgreementModel;
+class Agreement extends AdminBaseController {
     /**
      * App 列表
      *
      * @return string
      */
-    public function index()
-    {
+    public function index() {
         return View::fetch();
     }
 
@@ -29,13 +28,15 @@ class Agreement extends AdminBaseController
      * APP列表
      *
      * @return Json
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
-    public function apps(): Json
-    {
+    public function apps(): Json {
         $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->select();
         foreach ($apps as $app) {
-            $agreement = \app\common\model\Agreement::where(['app_id' => $app['id']])->find();
-            $app['user_agreement'] = $agreement['user_agreement'] ?? '';
+            $agreement                = AgreementModel::where(['app_id' => $app['id']])->find();
+            $app['user_agreement']    = $agreement['user_agreement'] ?? '';
             $app['privacy_agreement'] = $agreement['privacy_agreement'] ?? '';
         }
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
@@ -47,8 +48,7 @@ class Agreement extends AdminBaseController
      * @param Request $request
      * @return Json
      */
-    public function update(Request $request): Json
-    {
+    public function update(Request $request): Json {
         $post = $request->post();
         return AgreementService::add($post);
     }

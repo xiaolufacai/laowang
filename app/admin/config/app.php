@@ -1,12 +1,16 @@
 <?php
 // 配置渠道
 $channels = [
-    'oppo'   => 'OPPO',
-    'vivo'   => 'VIVO',
-    'huawei' => '华为',
-    'xiaomi' => '小米',
-    'yyb'    => '应用宝',
-    'test'   => 'Test渠道',
+    'oppo'    => 'OPPO',
+    'vivo'    => 'VIVO',
+    'huawei'  => '华为',
+    'xiaomi'  => '小米',
+    'yyb'     => '应用宝',
+    'test'    => 'Test渠道',
+    'qq'      => '应用宝',
+    'baidu'   => '百度',
+    'toutiao' => '头条',
+    'honor'   => '荣耀',
 ];
 // 会员
 $vips = [

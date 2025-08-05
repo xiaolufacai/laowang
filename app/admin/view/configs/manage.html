@@ -1,0 +1,350 @@
+{include file="/layout/header" /}
+
+<div id="app" style="background-color: #ffffff">
+    <el-container>
+        <el-header style="text-align: right; font-size: 12px">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item>
+                    <el-select v-model="formInline.app" @change="select" placeholder="APP">
+                        <el-option
+                                v-for="(item,index) in apps"
+                                :key="index"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+<!--                <el-form-item>-->
+<!--                    <el-button @click="handleAdd">新增渠道</el-button>-->
+<!--                </el-form-item>-->
+            </el-form>
+        </el-header>
+
+        <el-main>
+            <el-table
+                    :data="tableData"
+                    border
+                    style="width: 1151px">
+                <el-table-column
+                        align="center"
+                        prop="channel_txt"
+                        label="渠道"
+                        width="150px">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="version_no"
+                        label="版本号"
+                        width="150px">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="version_name"
+                        label="版本名称"
+                        width="150px">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="list"
+                        label="上架状态"
+                        width="150px">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="status_text"
+                        label="审核状态"
+                        width="150px">
+                </el-table-column>
+                <el-table-column align="center" label="操作" width="400px">
+                    <template slot-scope="scope">
+                        <el-button
+                                size="mini"
+                                @click="handleEdit(scope.$index, scope.row)">编辑
+                        </el-button>
+                        <el-button
+                                size="mini"
+                                :type="scope.row.status === 1 ? 'danger' : 'primary'"
+                                :disabled="scope.row.update_status === 0"
+                                @click="handleSwitch(scope.$index, scope.row)">
+                            {{ scope.row.status === 1 ? '切换到审核模式' : '切换线上模式' }}
+                        </el-button>
+                        <el-button
+                                size="mini"
+                                :type="scope.row.list_status === 1 ? 'danger' : 'primary'"
+                                :disabled="scope.row.update_status === 0"
+                                @click="handleList(scope.$index, scope.row)">
+                            {{ scope.row.list_status === 0 ? '上架' : '下架' }}
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-main>
+
+        <!-- Form Modal -->
+        <el-dialog :visible.sync="formVisible" title="编辑应用" width="40%">
+            <el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
+                <el-form-item label="渠道" prop="channel">
+                    <el-select v-model="ruleForm.channel" placeholder="渠道">
+                        <el-option
+                                v-for="(index, key) in channels"
+                                :key="key"
+                                :label="index"
+                                :value="key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="版本号" prop="version_no">
+                    <el-input v-model="ruleForm.version_no" placeholder="请输入版本号"></el-input>
+                </el-form-item>
+                <el-form-item label="版本名称" prop="version_name">
+                    <el-input v-model="ruleForm.version_name" placeholder="请输入版本名称"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="handleCancel">取消</el-button>
+                    <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+    </el-container>
+</div>
+
+<style>
+    .diy-el-form {
+        background-color: #fff;
+    }
+    .demo-form-inline {
+        margin-top: 10px;
+    }
+    .el-header {
+        background-color: #e7ebf0;
+        color: #333;
+        line-height: 60px;
+    }
+    .el-aside {
+        color: #333;
+    }
+</style>
+
+<script type="module">
+
+    const initForm = {
+        channel: '',
+        version_no: '',
+        version_name: '',
+        id: 0,
+        app_id: '',
+    }
+    const _initForm = Object.assign({}, initForm);
+    Object.freeze(_initForm);
+
+    var Main = {
+        data() {
+            return {
+                formInline: {
+                    app: {}
+                },
+                ruleForm: initForm,
+                rules: {
+                    channel: [{ required: true, message: '请输入渠道', trigger: 'change' }],
+                    version_no: [{ required: true, message: '请输入版本号', trigger: 'change' }],
+                    version_name: [{ required: true, message: '请输入版本名称', trigger: 'change' }]
+                },
+                formVisible: false,
+                apps: [],
+                channels: [],
+                tableData: [
+                //     {
+                //     channel: 'APPLE',
+                //     version_no: 1,
+                //     version_name: '1.0.012',
+                //     list: '上架',
+                //     status: '通过',
+                // }
+                ]
+            }
+        },
+        created: function () {
+            // 获取所有APP
+            this.getApps()
+            this.getAppChannels()
+        },
+        methods: {
+            handleEdit(index, obj) {
+                console.log(obj)
+                this.formVisible = true;
+                this.getChannels()
+                this.ruleForm.channel = obj.channel
+                this.ruleForm.id = obj.id
+                this.ruleForm.version_no = obj.version_no
+                this.ruleForm.version_name = obj.version_name
+                this.ruleForm.app_id = obj.app_id
+                // this.$nextTick(() => {
+                //     // 确保表单渲染完成后再调用 resetFields
+                //     if (obj.update_status === 0) {
+                //         this.$refs['ruleForm'].resetFields();
+                //     }
+                // });
+            },
+            handleAdd() {
+                this.formVisible = true;
+            },
+            handleCancel() {
+                this.formVisible = false; // 关闭表单弹窗
+                this.$nextTick(() => {
+                    // 重置表单数据
+                    this.ruleForm = {...this.ruleForm};  // 重置 ruleForm 为初始值
+                    this.$refs['ruleForm'].resetFields(); // 清空表单字段
+                });
+            },
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios.post('/admin/app/addChannel', this.ruleForm)
+                            .then(response => {
+                                const data = response.data;
+                                const code = data.code;
+                                if (code === 0) {
+                                    this.$message.success('应用新增成功!');
+                                    this.formVisible = false;
+                                    this.ruleForm = {..._initForm}
+                                    this.$refs[formName].resetFields();
+                                    this.getApps();
+                                } else {
+                                    this.$message.error(data.message);
+                                }
+
+                            })
+                            .catch(error => {
+                                this.$message.error('提交失败');
+                            });
+                    } else {
+                        this.$message.error('表单验证失败，请检查输入的内容');
+                        return false;
+                    }
+                });
+            },
+            getApps() {
+                let _this = this
+                axios.get('/admin/app/apps', {})
+                    .then(response => {
+                        const data = response.data.data
+                        const code = response.data.code
+                        if (code !== 0) {
+                            _this.apps = [];
+                        } else {
+                            _this.apps = data;
+                            if (_this.apps.length > 0) {
+                                // 设置默认选择的应用
+                                let index = _this.apps.length - 1
+                                _this.formInline.app = _this.apps[index];
+                                _this.select(_this.apps[index].id);
+                                _this.getAppChannels(_this.apps[index].id);
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    })
+            },
+            getChannels() {
+                let _this = this
+                axios.get('/admin/app/channels', {})
+                    .then(response => {
+                        const data = response.data.data
+                        const code = response.data.code
+                        if (code !== 0) {
+                            _this.channels = [];
+                        } else {
+                            _this.channels = data;
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    })
+            },
+            getAppChannels(id) {
+                let _this = this;
+                axios.get('/admin/app/appChannels', {
+                    params: { app_id: id }
+                })
+                    .then(response => {
+                        const data = response.data.data;
+                        const code = response.data.code;
+                        if (code !== 0) {
+                            _this.tableData = [];
+                        } else {
+                            _this.tableData = data;
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    });
+            },
+            select(id) {
+                this.getAppChannels(id)
+            },
+            handleSwitch(index, obj) {
+                console.log(obj.id, obj.app_id, obj.channel)
+                let _this = this
+                axios.post('/admin/app/switch', {
+                    id: obj.id,
+                    status: obj.status,
+                })
+                   .then(response => {
+                        const data = response.data;
+                        const code = data.code;
+                        if (code === 0) {
+                            _this.$message.success('应用状态切换成功!');
+                            _this.getAppChannels(obj.app_id);
+                        } else {
+                            _this.$message.error('应用状态切换失败!');
+                        }
+                    })
+                   .catch(function (error) {
+                        _this.$message({
+                            message: '应用状态切换失败',
+                            type: 'error'
+                        });
+                    });
+            },
+            handleList(index, obj) {
+                let _this = this
+                axios.post('/admin/app/setList', {
+                    id: obj.id,
+                    list_status: obj.list_status,
+                })
+                    .then(response => {
+                        const data = response.data;
+                        const code = data.code;
+                        if (code === 0) {
+                            _this.$message.success(data.message);
+                            _this.getAppChannels(obj.app_id);
+                        } else {
+                            _this.$message.error('操作失败!');
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '应用状态切换失败',
+                            type: 'error'
+                        });
+                    });
+            }
+        },
+        computed: {
+        }
+    }
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+</script>
+
+{include file="/layout/footer" /}

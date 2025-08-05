@@ -94,7 +94,7 @@ class ConfigService {
     }
 
     public static function table() {
-        return 'CREATE TABLE `info_config` (
+        return "CREATE TABLE `info_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL COMMENT '用户ID',
   `key` varchar(255) DEFAULT NULL COMMENT '键',
@@ -110,6 +110,6 @@ class ConfigService {
   PRIMARY KEY (`id`),
   UNIQUE KEY `key_ix` (`key`),
   KEY `user_id_idx` (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;';
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;";
     }
 }

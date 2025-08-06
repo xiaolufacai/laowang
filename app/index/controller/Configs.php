@@ -5,7 +5,6 @@ namespace app\index\controller;
 
 
 use app\index\service\AgreementService;
-use app\BaseController;
 use app\common\model\App;
 use app\index\service\ChannelService;
 use app\index\service\ConfigService;

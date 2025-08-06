@@ -97,24 +97,4 @@ class ConfigService {
             return ['error' => 1, 'message' => '未找到该记录'];
         }
     }
-
-    public static function table() {
-        return "CREATE TABLE `info_config` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) DEFAULT NULL COMMENT '用户ID',
-  `key` varchar(255) DEFAULT NULL COMMENT '键',
-  `value` text COMMENT '值',
-  `channel` varchar(255) DEFAULT NULL COMMENT '渠道ID',
-  `start_version` varchar(255) DEFAULT NULL COMMENT '最小支持版本',
-  `end_version` varchar(255) DEFAULT NULL COMMENT '最大支持版本',
-  `description` text COMMENT '描述',
-  `is_lock` tinyint(1) DEFAULT NULL COMMENT '锁定状态 0：未锁定 1：锁定',
-  `status` tinyint(1) DEFAULT '0' COMMENT '状态 0：正常 1：删除',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `key_ix` (`key`),
-  KEY `user_id_idx` (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;";
-    }
 }

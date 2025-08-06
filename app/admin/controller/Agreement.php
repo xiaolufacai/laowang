@@ -14,6 +14,7 @@ use think\db\exception\ModelNotFoundException;
 use think\facade\View;
 use think\response\Json;
 use \app\common\model\Agreement as AgreementModel;
+
 class Agreement extends AdminBaseController {
     /**
      * App 列表
@@ -38,6 +39,8 @@ class Agreement extends AdminBaseController {
             $agreement                = AgreementModel::where(['app_id' => $app['id']])->find();
             $app['user_agreement']    = $agreement['user_agreement'] ?? '';
             $app['privacy_agreement'] = $agreement['privacy_agreement'] ?? '';
+            $app['sdk_list']          = $agreement['sdk_list'] ?? '';
+            $app['user_collect']      = $agreement['user_collect'] ?? '';
         }
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
     }

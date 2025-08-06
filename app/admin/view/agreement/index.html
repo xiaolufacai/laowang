@@ -46,6 +46,32 @@
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
+
+	            <!-- 第三方sdk信息共享清单 Tab -->
+	            <el-tab-pane label="第三方SDK信息共享清单" name="SDKList">
+		            <el-form :model="formData">
+			            <el-form-item>
+				            <div ref="SDKEditor" style="height: 100%;"></div>
+			            </el-form-item>
+			            <!-- 提交按钮 -->
+			            <el-form-item>
+				            <el-button type="primary" @click="submitForm">提交修改</el-button>
+			            </el-form-item>
+		            </el-form>
+	            </el-tab-pane>
+
+	            <!-- 收集个人信息清单 Tab -->
+	            <el-tab-pane label="收集个人信息清单" name="userCollect">
+		            <el-form :model="formData">
+			            <el-form-item>
+				            <div ref="userCollectEditor" style="height: 100%;"></div>
+			            </el-form-item>
+			            <!-- 提交按钮 -->
+			            <el-form-item>
+				            <el-button type="primary" @click="submitForm">提交修改</el-button>
+			            </el-form-item>
+		            </el-form>
+	            </el-tab-pane>
             </el-tabs>
 
 
@@ -99,11 +125,15 @@
                 activeTab: 'userAgreement',
                 formData: {
                     userAgreement: '',
-                    privacyAgreement: ''
+                    privacyAgreement: '',
+	                SDKList:'',
+	                userCollect: ''
                 },
                 apps: [],
                 editorUserAgreement: null,
-                editorPrivacyAgreement: null
+                editorPrivacyAgreement: null,
+	            editorSDKList: null,
+	            editorUserCollect: null
             }
         },
         created() {
@@ -146,10 +176,20 @@
                 this.editorUserAgreement.config.height = 700
                 this.editorUserAgreement.create();
 
-                // 初始化隐私协议的编辑器（取消注释）
+                // 初始化隐私协议的编辑器
                 this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
                 this.editorPrivacyAgreement.config.height = 700
                 this.editorPrivacyAgreement.create();
+
+	            // 初始化SDK清单编辑器
+	            this.editorSDKList = new wangEditor(this.$refs.SDKEditor);
+	            this.editorSDKList.config.height = 700
+	            this.editorSDKList.create();
+
+	            // 初始化用户信息搜集清单编辑器
+	            this.editorUserCollect = new wangEditor(this.$refs.userCollectEditor);
+	            this.editorUserCollect.config.height = 700
+	            this.editorUserCollect.create();
             },
             select(id) {
                 let value = this.apps.find(item => item.id === id);
@@ -159,6 +199,8 @@
                     // 更新富文本内容
                     this.formData.userAgreement = value.user_agreement || '';
                     this.formData.privacyAgreement = value.privacy_agreement || '';
+	                this.formData.SDKList = value.sdk_list || '';
+	                this.formData.userCollect = value.user_collect || '';
 
                     // 更新编辑器内容（取消注释并修改）
                     if (this.editorUserAgreement) {
@@ -167,6 +209,12 @@
                     if (this.editorPrivacyAgreement) {
                         this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
                     }
+	                if (this.editorSDKList) {
+		                this.editorSDKList.txt.html(this.formData.SDKList);
+	                }
+	                if (this.editorUserCollect) {
+		                this.editorUserCollect.txt.html(this.formData.userCollect);
+	                }
                 }
             },
             submitForm() {
@@ -178,12 +226,16 @@
                 // 获取富文本内容
                 const userAgreement = this.editorUserAgreement ? this.editorUserAgreement.txt.html() : '';
                 const privacyAgreement = this.editorPrivacyAgreement ? this.editorPrivacyAgreement.txt.html() : '';
+                const SDKList = this.editorSDKList ? this.editorSDKList.txt.html() : '';
+                const userCollect = this.editorUserCollect ? this.editorUserCollect.txt.html() : '';
 
                 // 提交数据
                 axios.post('/admin/agreement/update', {
                     app_id: this.formInline.app,
                     user_agreement: userAgreement,
-                    privacy_agreement: privacyAgreement
+                    privacy_agreement: privacyAgreement,
+                    sdk_list: SDKList,
+                    user_collect: userCollect,
                 })
                     .then(response => {
                         if (response.data.code === 0) {

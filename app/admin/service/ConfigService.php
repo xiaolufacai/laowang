@@ -26,8 +26,13 @@ class ConfigService {
         if (!$validate->check($data)) {
             return json(['code' => 1, 'msg' => $validate->getError()]);
         }
-
-        $app                 = new Configure();
+        $id = $data['id'] ?? 0;
+        if ($id > 0) {
+            $app = Configure::find($id);
+            unset($data['id']);
+        } else {
+            $app = new Configure();
+        }
         $data['create_time'] = date('Y-m-d H:i:s');
         $data['user_id']     = (int)session('uid');
         if ($app->save($data)) {

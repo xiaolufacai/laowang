@@ -11,10 +11,8 @@ use think\db\exception\ModelNotFoundException;
 use think\facade\Config;
 use  \think\facade\Validate;
 
-class AppService
-{
-    public static function add($data)
-    {
+class AppService {
+    public static function add($data) {
         $validate = Validate::rule([
             'name'        => 'require',
             'ad_id'       => 'require',
@@ -36,9 +34,9 @@ class AppService
         if (!$validate->check($data)) {
             return json(['code' => 1, 'msg' => $validate->getError()]);
         }
-        $app = new App();
+        $app                 = new App();
         $data['create_time'] = date('Y-m-d H:i:s');
-        $data['user_id'] = (int)session('uid');
+        $data['user_id']     = (int)session('uid');
         if ($app->save($data)) {
             return json(['code' => 0, 'msg' => '添加应用成功']);
         } else {
@@ -52,8 +50,7 @@ class AppService
      * @param $appId
      * @return array
      */
-    public static function appChannels($appId, $channel = '')
-    {
+    public static function appChannels($appId, $channel = '') {
         $where = ['app_id' => $appId];
         if (!empty($channel)) {
             $where['channel'] = $channel;
@@ -79,7 +76,7 @@ class AppService
         $list = [];
         foreach ($channels as $key => $channel) {
             if (in_array($key, array_column($data, 'channel'))) {
-                $row = $data[$key];
+                $row  = $data[$key];
                 $temp = [
                     'channel'       => $key,
                     'channel_txt'   => $channel,
@@ -95,17 +92,17 @@ class AppService
                 ];
             } else {
                 $temp = [
-                    'channel'      => $key,
-                    'channel_txt'  => $channel,
-                    'list'         => '未上架',
+                    'channel'       => $key,
+                    'channel_txt'   => $channel,
+                    'list'          => '未上架',
                     'list_status'   => 0,
                     'update_status' => 1,
-                    'id'           => 0,
-                    'app_id'       => $appId,
-                    'version_name' => '',
-                    'version_no'   => '',
-                    'status_text'  => '',
-                    'status'       => 0,
+                    'id'            => 0,
+                    'app_id'        => $appId,
+                    'version_name'  => '',
+                    'version_no'    => '',
+                    'status_text'   => '',
+                    'status'        => 0,
                 ];
             }
             $list[] = $temp;
@@ -123,8 +120,7 @@ class AppService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function switchApp($id, $status): array
-    {
+    public static function switchApp($id, $status): array {
         $model = AppChannel::find($id);
         // 上架状态
         $statusArray = [
@@ -153,8 +149,7 @@ class AppService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function setListStatus($id, $status): array
-    {
+    public static function setListStatus($id, $status): array {
         $model = AppChannel::find($id);
         // 上架状态
         $statusArray = [
@@ -182,8 +177,7 @@ class AppService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function setAppChannel($data)
-    {
+    public static function setAppChannel($data) {
         $id = $data['id'];
         // 检查是否已有相同的 app_id 和 channel
         $exist = AppChannel::where('app_id', $data['app_id'])
@@ -197,18 +191,18 @@ class AppService
 
         $model = AppChannel::find($id);
         if ($model) {
-            $model->app_id = $data['app_id'];
+            $model->app_id       = $data['app_id'];
             $model->version_name = $data['version_name'];
-            $model->version_no = $data['version_no'];
-            $model->update_time = date('Y-m-d H:i:s');
+            $model->version_no   = $data['version_no'];
+            $model->update_time  = date('Y-m-d H:i:s');
         } else {
-            $model = new AppChannel();
-            $model->app_id = $data['app_id'];
+            $model               = new AppChannel();
+            $model->app_id       = $data['app_id'];
             $model->version_name = $data['version_name'];
-            $model->version_no = $data['version_no'];
-            $model->channel = $data['channel'];
-            $model->create_time = date('Y-m-d H:i:s');
-            $model->status = 0;
+            $model->version_no   = $data['version_no'];
+            $model->channel      = $data['channel'];
+            $model->create_time  = date('Y-m-d H:i:s');
+            $model->status       = 0;
         }
         if ($model->save()) {
             return ['error' => 0, 'message' => '操作成功', 'data' => $model->id];

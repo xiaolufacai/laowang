@@ -15,7 +15,8 @@ class JWTAuthMiddleware {
 
     const NOT_AUTH = [
         '/index/login/login',
-        '/index/configs/index'
+        '/index/configs/index',
+        '/index/agreement/index'
     ];
     public function handle(Request $request, Closure $next) {
         $url = $request->baseUrl();

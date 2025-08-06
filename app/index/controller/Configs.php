@@ -31,12 +31,12 @@ class Configs extends IndexBaseController {
             $id        = $app['id'];
             $agreement = AgreementService::getAgreement($id);
             // 协议地址
-            $agreementUrl                               = config('app.agreementUrl');
-            $data['optionsInfo']['privacyPolicy']       = $agreementUrl . $agreement['privacy_agreement'];
-            $data['optionsInfo']['userAgreement']       = $agreementUrl . $agreement['user_agreement'];
-            $data['optionsInfo']['sdkInfoList']         = $agreementUrl . $agreement['sdk_list'];
-            $data['optionsInfo']['userCollectInfoList'] = $agreementUrl . $agreement['user_collect'];
-            $data['optionsInfo']['vipAgreement']        = $agreementUrl . $agreement['vip_agreement'];
+            $agreementUrl                               = config('app.agreementUrl') . '/index/agreement/index?app_id=' . $id . '&type=';
+            $data['optionsInfo']['privacyPolicy']       = $agreementUrl . 'privacy_agreement';
+            $data['optionsInfo']['userAgreement']       = $agreementUrl . 'user_agreement';
+            $data['optionsInfo']['sdkInfoList']         = $agreementUrl . 'sdk_list';
+            $data['optionsInfo']['userCollectInfoList'] = $agreementUrl . 'user_collect';
+            $data['optionsInfo']['vipAgreement']        = $agreementUrl . 'vip_agreement';
 
             // 获取渠道信息
             $channelData                        = ChannelService::getChannelByApp($this->channel, $id);
@@ -53,5 +53,9 @@ class Configs extends IndexBaseController {
         } catch (\Exception $e) {
             return json(['code' => -1, 'data' => [], 'message' => $e->getMessage()]);
         }
+    }
+
+    public function s() {
+
     }
 }

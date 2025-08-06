@@ -293,7 +293,6 @@
                 this.getAppChannels(id)
             },
             handleSwitch(index, obj) {
-                console.log(obj.id, obj.app_id, obj.channel)
                 let _this = this
                 axios.post('/admin/app/switch', {
                     id: obj.id,

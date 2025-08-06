@@ -33,6 +33,7 @@
                     </template>
                 </el-table-column>
             </el-table>
+	        <el-button type="danger" class="delete-app" @click="deleteApp">删除</el-button>
         </el-main>
 
         <!-- Form Modal -->
@@ -83,6 +84,9 @@
     .el-aside {
         color: #333;
     }
+    .delete-app {
+	    margin-top: 10px;
+    }
 </style>
 
 <script type="module">
@@ -103,7 +107,7 @@
         data() {
             return {
                 formInline: {
-                    app: {}
+                    app: ''
                 },
                 tableObject: {
                     '包名': '',
@@ -196,7 +200,30 @@
                         'APP ID': value.app_id
                     };
                 }
-            }
+            },
+	        deleteApp() {
+		        console.log(this.formInline.app)
+		        let _this = this
+		        axios.post('/admin/app/delete', {
+			        id: this.formInline.app,
+		        })
+		        .then(response => {
+			        const data = response.data;
+			        const code = data.code;
+			        if (code === 0) {
+				        _this.$message.success('删除成功!');
+				        this.getApps()
+			        } else {
+				        _this.$message.error('删除失败!');
+			        }
+		        })
+		        .catch(function (error) {
+			        _this.$message({
+				        message: '删除失败',
+				        type: 'error'
+			        });
+		        });
+	        },
         },
         computed: {
             transformedData() {

@@ -47,7 +47,8 @@ class AppService {
     /**
      * 获取APP 渠道信息
      *
-     * @param $appId
+     * @param        $appId
+     * @param string $channel
      * @return array
      */
     public static function appChannels($appId, $channel = '') {
@@ -108,6 +109,15 @@ class AppService {
             $list[] = $temp;
         }
         return $list;
+    }
+
+    public static function delete($id) {
+        $app = App::find($id);
+        $app->status = App::STATUS_FORBIDDEN;
+        if ($app->save()) {
+            return json(['code' => 0, 'message' => '删除成功']);
+        }
+        return json(['code' => 1, 'message' => '删除失败']);
     }
 
     /**

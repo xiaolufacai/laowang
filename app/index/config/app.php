@@ -20,8 +20,12 @@ $paymentMethods = [
     'wxpay'  => '微信支付',
     'alipay' => '支付宝',
 ];
+
+// 协议地址
+$agreementUrl = 'http://www.laowang.com';
 return [
     'channels'       => $channels,
     'vips'           => $vips,
     'paymentMethods' => $paymentMethods,
+    'agreementUrl'   => $agreementUrl,
 ];

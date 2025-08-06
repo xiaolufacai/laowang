@@ -10,11 +10,9 @@ use think\db\exception\DbException;
 use think\facade\Db;
 use think\facade\Request;
 
-class UserService
-{
+class UserService {
 
-    public static function create()
-    {
+    public static function create() {
         $data = Request::post();
         // 必须要有 client_id 才能进行判断
         if (!empty($data['client_id'])) {
@@ -56,12 +54,11 @@ class UserService
      * @param $uid
      * @return string
      */
-    public static function token($uid): string
-    {
+    public static function token($uid): string {
         // 生成 JWT token
-        $issuedAt = time();
+        $issuedAt       = time();
         $expirationTime = $issuedAt + 7 * 24 * 60 * 60;  // 7天后过期
-        $payload = [
+        $payload        = [
             'iss' => 'laowang-publisher-issuer',      // 发行者
             'aud' => 'laowang-user-audience',    // 用户
             'iat' => $issuedAt,          // 发布时间

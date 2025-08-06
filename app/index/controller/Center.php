@@ -30,7 +30,7 @@ class Center extends IndexBaseController {
                     'reducedPrice'  => $vip['old_price'] - $vip['new_price'],
                 ];
             }
-            return \json(['code' => 1, 'message' => 'OK', 'data' => ['agreement' => $data]]);
+            return \json(['code' => 1, 'message' => 'OK', 'data' => $data]);
         } catch (\Exception $exception) {
             return json(['code' => -1, 'data' => [], 'message' => $exception->getMessage()]);
         }

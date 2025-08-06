@@ -25,7 +25,7 @@ class Center extends IndexBaseController {
             foreach ($vips as $vip) {
                 $data['goodsInfo'][] = [
                     'id'            => $vip['id'],
-                    'name'          => $vipNames[$vip['name']] ?? '',
+                    'name'          => $vipNames[$vip['vip']] ?? '',
                     'angleText'     => $vip['corner_text'],
                     'originalPrice' => $vip['old_price'],
                     'realPrice'     => $vip['new_price'],

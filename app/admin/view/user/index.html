@@ -55,7 +55,7 @@
             </el-table>
 
             <!-- Pagination -->
-            <el-pagination
+            <el-pagination class="el-pagination-page"
                     v-if="totalItems > 0"
                     @current-change="handlePageChange"
                     :current-page="currentPage"
@@ -81,6 +81,9 @@
     }
     .el-aside {
         color: #333;
+    }
+    .el-pagination-page {
+	    margin-top: 10px;
     }
 </style>
 

@@ -22,7 +22,7 @@ class Configs extends IndexBaseController {
     public function index() {
         try {
             // 根据包名查询协议数据
-            $app = App::find($this->appId);
+            $app = App::find(['app_id' => $this->appId]);
             if (empty($app)) {
                 return json(['code' => -1, 'data' => [], 'message' => '包名不存在']);
             }

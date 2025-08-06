@@ -79,7 +79,6 @@ abstract class IndexBaseController {
     public function __construct(App $app) {
         $this->app     = $app;
         $this->request = $this->app->request;
-
         $this->appId       = $this->request['appId'] ?? '';
         $this->device      = $this->request['deviceNum'] ?? '';
         $this->channel     = $this->request['channel'] ?? '';

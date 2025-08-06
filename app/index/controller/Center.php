@@ -20,10 +20,12 @@ class Center extends IndexBaseController {
         try {
             $vips = VipService::appVips($this->id);
             $data = [];
+            // 读取会员类型
+            $vipNames = config('app.vips');
             foreach ($vips as $vip) {
                 $data['goodsInfo'][] = [
                     'id'            => $vip['id'],
-                    'name'          => $vip['name'],
+                    'name'          => $vipNames[$vip['name']] ?? '',
                     'angleText'     => $vip['corner_text'],
                     'originalPrice' => $vip['old_price'],
                     'realPrice'     => $vip['new_price'],

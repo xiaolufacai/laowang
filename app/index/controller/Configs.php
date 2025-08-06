@@ -22,12 +22,7 @@ class Configs extends IndexBaseController {
     public function index() {
         try {
             // 根据包名查询协议数据
-            $app = App::where('app_id', $this->appId)->find();
-            if (empty($app)) {
-                return json(['code' => -1, 'data' => [], 'message' => '包名不存在']);
-            }
-            $data      = [];
-            $id        = $app['id'];
+            $id = $this->id;
             // 协议地址
             $agreementUrl                               = config('app.agreementUrl') . '/index/agreement/index?app_id=' . $id . '&type=';
             $data['optionsInfo']['privacyPolicy']       = $agreementUrl . 'privacy_agreement';
@@ -43,7 +38,7 @@ class Configs extends IndexBaseController {
             $data['optionsInfo']['auditStatus'] = $channelData['status'] ?? 0;
 
             // 获取扩展信息
-            $extraInfo = ConfigService::configs();
+            $extraInfo         = ConfigService::configs();
             $data['extraInfo'] = [];
             foreach ($extraInfo as $k => $v) {
                 $data['extraInfo'][][$v['key']] = $v['value'];

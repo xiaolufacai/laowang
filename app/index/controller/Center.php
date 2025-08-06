@@ -5,10 +5,11 @@ namespace app\index\controller;
 
 
 use app\index\service\VipService;
+use app\IndexBaseController;
 use app\Request;
 use think\response\Json;
 
-class Center {
+class Center extends IndexBaseController {
 
     /**
      *  会员中心
@@ -17,7 +18,7 @@ class Center {
      */
     public function index() {
         try {
-            $vips = VipService::vips();
+            $vips = VipService::appVips($this->id);
             $data = [];
             foreach ($vips as $vip) {
                 $data['goodsInfo'][] = [

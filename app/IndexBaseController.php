@@ -7,6 +7,7 @@ use think\App;
 use think\exception\ValidateException;
 use think\facade\Session;
 use think\Validate;
+use \app\common\model\App as AppModel;
 
 /**
  * 控制器基础类
@@ -44,11 +45,18 @@ abstract class IndexBaseController {
     public $channel;
 
     /**
-     *  包名
+     *  包名ID
      *
      * @var
      */
     public $appId;
+
+    /**
+     *  包ID所在表的ID
+     *
+     * @var
+     */
+    public $id;
 
     /**
      *  设备号
@@ -79,7 +87,15 @@ abstract class IndexBaseController {
     public function __construct(App $app) {
         $this->app     = $app;
         $this->request = $this->app->request;
-        $this->appId       = $this->request['appId'] ?? '';
+        $this->appId   = $this->request['appId'] ?? '';
+
+        // 查询包是否存在
+        $app = AppModel::where('app_id', $this->appId)->find();
+        if (empty($app)) {
+            return json(['code' => -1, 'data' => [], 'message' => '包名不存在']);
+        }
+        $this->id = $app['id'];
+
         $this->device      = $this->request['deviceNum'] ?? '';
         $this->channel     = $this->request['channel'] ?? '';
         $this->versionCode = $this->request['versionCode'] ?? '';

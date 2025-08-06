@@ -32,7 +32,7 @@ $agreementUrl = 'http://www.laowang.com/';
 $agreements = [
     'privacy_agreement' => '隐私政策',
     'user_agreement'    => '用户协议',
-    'sdk_list'          => '第三方sdk信息共享清单',
+    'sdk_list'          => '第三方SDK信息共享清单',
     'user_collect'      => '已收集个人信息清单',
     'vip_agreement'     => '会员服务协议'
 ];

@@ -41,6 +41,7 @@ class Agreement extends AdminBaseController {
             $app['privacy_agreement'] = $agreement['privacy_agreement'] ?? '';
             $app['sdk_list']          = $agreement['sdk_list'] ?? '';
             $app['user_collect']      = $agreement['user_collect'] ?? '';
+            $app['vip_agreement']     = $agreement['vip_agreement'] ?? '';
         }
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
     }

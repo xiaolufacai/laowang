@@ -47,6 +47,19 @@
                     </el-form>
                 </el-tab-pane>
 
+	            <!-- VIP协议 Tab -->
+	            <el-tab-pane label="VIP协议" name="vipAgreement">
+		            <el-form :model="formData">
+			            <el-form-item>
+				            <div ref="vipAgreementEditor" style="height: 100%;"></div>
+			            </el-form-item>
+			            <!-- 提交按钮 -->
+			            <el-form-item>
+				            <el-button type="primary" @click="submitForm">提交修改</el-button>
+			            </el-form-item>
+		            </el-form>
+	            </el-tab-pane>
+
 	            <!-- 第三方sdk信息共享清单 Tab -->
 	            <el-tab-pane label="第三方SDK信息共享清单" name="SDKList">
 		            <el-form :model="formData">
@@ -110,10 +123,8 @@
         z-index: 1 !important;
     }
 </style>
-<link href="https://cdn.jsdelivr.net/npm/wangeditor@4.7.15/dist/wangEditor.min.css" rel="stylesheet">
-
 <!-- 引入 wangEditor -->
-<script src="https://cdn.jsdelivr.net/npm/wangeditor@4.7.15/dist/wangEditor.min.js"></script>
+<script src="/static/admin/js/wangEditor.min.js"></script>
 
 <script type="module">
     var Main = {
@@ -127,13 +138,15 @@
                     userAgreement: '',
                     privacyAgreement: '',
 	                SDKList:'',
-	                userCollect: ''
+	                userCollect: '',
+	                vipAgreement: '',
                 },
                 apps: [],
                 editorUserAgreement: null,
                 editorPrivacyAgreement: null,
 	            editorSDKList: null,
-	            editorUserCollect: null
+	            editorUserCollect: null,
+	            editorVipAgreement: null,
             }
         },
         created() {
@@ -190,6 +203,11 @@
 	            this.editorUserCollect = new wangEditor(this.$refs.userCollectEditor);
 	            this.editorUserCollect.config.height = 700
 	            this.editorUserCollect.create();
+
+	            // 初始化会员协议的编辑器
+	            this.editorVipAgreement = new wangEditor(this.$refs.vipAgreementEditor);
+	            this.editorVipAgreement.config.height = 700
+	            this.editorVipAgreement.create();
             },
             select(id) {
                 let value = this.apps.find(item => item.id === id);
@@ -215,6 +233,9 @@
 	                if (this.editorUserCollect) {
 		                this.editorUserCollect.txt.html(this.formData.userCollect);
 	                }
+	                if (this.editorVipAgreement) {
+		                this.editorVipAgreement.txt.html(this.formData.editorVipAgreement);
+	                }
                 }
             },
             submitForm() {
@@ -228,6 +249,7 @@
                 const privacyAgreement = this.editorPrivacyAgreement ? this.editorPrivacyAgreement.txt.html() : '';
                 const SDKList = this.editorSDKList ? this.editorSDKList.txt.html() : '';
                 const userCollect = this.editorUserCollect ? this.editorUserCollect.txt.html() : '';
+                const vipAgreement = this.editorVipAgreement ? this.editorVipAgreement.txt.html() : '';
 
                 // 提交数据
                 axios.post('/admin/agreement/update', {
@@ -236,6 +258,7 @@
                     privacy_agreement: privacyAgreement,
                     sdk_list: SDKList,
                     user_collect: userCollect,
+	                vip_agreement: vipAgreement,
                 })
                     .then(response => {
                         if (response.data.code === 0) {

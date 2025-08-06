@@ -23,7 +23,7 @@ class JWTAuthMiddleware {
             return $next($request);
         }
         // 获取请求头中的 token
-        $token = Request::header('Authorization');
+        $token = $request->header('Authorization');
         if (!$token) {
             return json(['code' => -1, 'message' => '请登录', 'data' => (object)[]]);
         }

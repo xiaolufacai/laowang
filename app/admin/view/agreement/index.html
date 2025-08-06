@@ -219,6 +219,7 @@
                     this.formData.privacyAgreement = value.privacy_agreement || '';
 	                this.formData.SDKList = value.sdk_list || '';
 	                this.formData.userCollect = value.user_collect || '';
+	                this.formData.vipAgreement = value.vip_agreement || '';
 
                     // 更新编辑器内容（取消注释并修改）
                     if (this.editorUserAgreement) {
@@ -234,7 +235,7 @@
 		                this.editorUserCollect.txt.html(this.formData.userCollect);
 	                }
 	                if (this.editorVipAgreement) {
-		                this.editorVipAgreement.txt.html(this.formData.editorVipAgreement);
+		                this.editorVipAgreement.txt.html(this.formData.vipAgreement);
 	                }
                 }
             },

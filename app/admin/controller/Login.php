@@ -65,7 +65,7 @@ class Login {
             return json(['code' => 1, 'msg' => '用户不存在']);
         }
         if ($user['password'] == md5($data['password'])) {
-            Session::set('username', $data['username']);
+            Session::set('username', $data['username'], '');
             Session::set('userId', $user['id']);
             return json(['code' => 0, 'msg' => '登录成功']);
         } else {

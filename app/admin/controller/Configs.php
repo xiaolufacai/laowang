@@ -65,4 +65,14 @@ class Configs extends AdminBaseController {
         $result = ConfigService::delete($id);
         return json(['code' => $result['error'], 'message' => $result['message']]);
     }
+
+    /**
+     *  会员类型
+     *
+     * @return Json
+     */
+    public function vips() {
+        $vips = config('app.vips');
+        return json(['code' => 0, 'data' => $vips, 'message' => 'OK']);
+    }
 }

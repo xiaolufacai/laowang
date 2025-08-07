@@ -100,8 +100,9 @@
 		margin-top: 10px;
 	}
 </style>
-
+<script type="module" src="/static/admin/js/date.js"></script>
 <script type="module">
+	import {formatTimestamp} from '/static/admin/js/date.js'
 	var Main = {
 		data() {
 			return {
@@ -181,10 +182,9 @@
 				this.vipForm.user_id = row.id;
 				this.vipForm.vip_type = row.vip_type || '';
 				// 自动格式化 vip_time（如果是时间戳则转换）
-				if (typeof row.vip_time === 'number') {
-					const date = new Date(row.vip_time * 1000);
-					this.vipForm.vip_time = date.toISOString().slice(0, 19).replace('T', ' ');
-				} else {
+				if(!row.vip_time) {
+					this.vipForm.vip_time = formatTimestamp(Math.floor(Date.now() / 1000));
+				}else {
 					this.vipForm.vip_time = row.vip_time || '';
 				}
 				this.vipDialogVisible = true;

@@ -1,4 +1,5 @@
 <?php
+
 namespace app\admin\controller;
 
 
@@ -13,15 +14,13 @@ use think\facade\Request;
 use think\facade\Validate;
 use think\response\Json;
 
-class Login
-{
+class Login {
     /**
      * 登录页
      *
      * @return string
      */
-    public function index()
-    {
+    public function index() {
         if (Session::get('userId')) {
             return redirect('/admin/index/index')->send();
         }
@@ -36,8 +35,7 @@ class Login
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function login(): Json
-    {
+    public function login(): Json {
         // 获取请求数据
         $data = Request::post();
 
@@ -67,7 +65,7 @@ class Login
             return json(['code' => 1, 'msg' => '用户不存在']);
         }
         if ($user['password'] == md5($data['password'])) {
-            Session::set('username', $data['username']);
+            Session::set('username', $data['username'], '');
             Session::set('userId', $user['id']);
             return json(['code' => 0, 'msg' => '登录成功']);
         } else {

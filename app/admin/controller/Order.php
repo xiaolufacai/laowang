@@ -11,20 +11,17 @@ use think\facade\Config;
 use think\facade\View;
 use think\response\Json;
 
-class Order extends AdminBaseController
-{
+class Order extends AdminBaseController {
     /**
      * App 列表
      *
      * @return string
      */
-    public function index()
-    {
+    public function index() {
         return View::fetch();
     }
 
-    public function orders(Request $request): Json
-    {
+    public function orders(Request $request): Json {
         // 获取查询参数
         $appId    = $request->get('app_id', null);
         $id       = $request->get('order_id', null);

@@ -7,8 +7,7 @@ namespace app\admin\service;
 use think\db\exception\DbException;
 use think\facade\Db;
 
-class OrderService
-{
+class OrderService {
 
 
     /**
@@ -16,14 +15,13 @@ class OrderService
      *
      * @param int|null $appId
      * @param int|null $id
-     * @param int $page 当前页数
-     * @param int $pageSize 每页条数
+     * @param int      $page     当前页数
+     * @param int      $pageSize 每页条数
      *
      * @return array 查询结果，包含分页数据和总数
      * @throws DbException
      */
-    public static function orders($appId, $id, $page = 1, $pageSize = 10): array
-    {
+    public static function orders($appId, $id, $page = 1, $pageSize = 10): array {
         // 基本查询构建
         $query = Db::name('order');
 

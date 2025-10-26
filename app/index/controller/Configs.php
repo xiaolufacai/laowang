@@ -23,6 +23,7 @@ class Configs extends IndexBaseController {
         try {
             // 根据包名查询协议数据
             $id = $this->id;
+            var_dump($this->channel, $id);die();
             // 协议地址
             $agreementUrl                               = config('app.agreementUrl') . '/index/agreement/index?app_id=' . $id . '&type=';
             $data['optionsInfo']['privacyPolicy']       = $agreementUrl . 'privacy_agreement';

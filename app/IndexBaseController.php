@@ -84,11 +84,15 @@ abstract class IndexBaseController {
      * @access public
      * @param App $app 应用对象
      */
-    public function __construct(App $app) {
-        $this->app     = $app;
-        $this->request = $this->app->request;
-        $this->appId   = $this->request['appId'] ?? '';
+    public function __construct(App $app, Request $request) {
+        $this->app         = $app;
+        $this->request     = $this->app->request;
 
+        $this->device      = $request->header('deviceNum');
+        $this->channel     = strtolower($request->header('channel'));
+        $this->appId       = $request->header('appId');
+        $this->versionCode = $request->header('versionCode');
+        $this->versionName = $request->header('versionName');
         // 查询包是否存在
         $app = AppModel::where('app_id', $this->appId)->find();
         if (empty($app)) {
@@ -100,10 +104,6 @@ abstract class IndexBaseController {
 //        $this->channel     = $this->request['channel'] ?? '';
 //        $this->versionCode = $this->request['versionCode'] ?? '';
 //        $this->versionName = $this->request['versionName'] ?? '';
-        $this->device      = $this->request->header('deviceNum');
-        $this->channel     = strtolower($this->request->header('channel'));
-        $this->appId       = $this->request->header('appId');
-        $this->versionCode = $this->request->header('versionCode');
-        $this->versionName = $this->request->header('versionName');
+
     }
 }

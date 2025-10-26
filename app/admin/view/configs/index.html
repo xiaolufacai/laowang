@@ -15,7 +15,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-select v-model="formInline.app" @change="select" placeholder="APP">
+					<el-select v-model="formInline.app_id" @change="select" placeholder="APP">
 						<el-option
 								v-for="(item,index) in apps"
 								:key="index"
@@ -172,7 +172,8 @@
 		data() {
 			return {
 				formInline: {
-					channel: ''
+					channel: '',
+					app_id: ''
 				},
 				ruleForm: initForm,
 				rules: {
@@ -363,7 +364,7 @@
 							if (response.data.code === 0) {
 								this.$message.success('删除成功!');
 								// 刷新表格数据
-								this.getConfigs(this.formInline.channel);
+								this.getConfigs(this.formInline.channel, this.formInline.app_id);
 							} else {
 								this.$message.error('删除失败!');
 							}

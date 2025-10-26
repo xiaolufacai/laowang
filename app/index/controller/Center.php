@@ -18,7 +18,7 @@ class Center extends IndexBaseController {
      */
     public function index() {
         try {
-            $vips = VipService::appVips($this->appId);
+            $vips = VipService::appVips($this->id);
             $data = [];
             // 读取会员类型
             $vipNames = config('app.vips');

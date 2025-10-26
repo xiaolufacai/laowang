@@ -9,7 +9,7 @@
                         <el-option
                                 v-for="(item,index) in apps"
                                 :key="index"
-                                :label="item.name"
+                                :label="item.project"
                                 :value="item.id">
                         </el-option>
                     </el-select>
@@ -39,6 +39,9 @@
         <!-- Form Modal -->
         <el-dialog :visible.sync="formVisible" title="新增应用" width="60%">
             <el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
+	            <el-form-item label="项目名" prop="project">
+		            <el-input v-model="ruleForm.project" placeholder="请输入项目名"></el-input>
+	            </el-form-item>
                 <el-form-item label="包名称" prop="name">
                     <el-input v-model="ruleForm.name" placeholder="请输入包名称"></el-input>
                 </el-form-item>
@@ -111,6 +114,7 @@
                 },
                 tableObject: {
                     '包名': '',
+	                '项目名': '',
                     'coding仓库地址': "",
                     '打包平台地址': "",
                     '广告id': "",
@@ -192,6 +196,7 @@
                     // 假设选择的app对象中包含了更新tableObject所需的字段
                     this.tableObject = {
                         '包名': value.name,  // 根据你的app数据调整字段
+	                    '项目名': '',
                         'coding仓库地址': value.repository,
                         '打包平台地址': value.package_url,
                         '广告ID': value.ad_id,

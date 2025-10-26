@@ -32,7 +32,6 @@ class Configs extends IndexBaseController {
             $data['optionsInfo']['vipAgreement']        = $agreementUrl . 'vip_agreement';
 
             // 获取渠道信息
-            var_dump($this->channel, $id);die();
             $channelData                        = ChannelService::getChannelByApp($this->channel, $id);
             $data['optionsInfo']['versionName'] = $channelData['version_no'] ?? '';
             $data['optionsInfo']['versionCode'] = $channelData['version_name'] ?? '';

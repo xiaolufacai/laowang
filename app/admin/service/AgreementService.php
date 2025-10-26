@@ -6,18 +6,16 @@ namespace app\admin\service;
 use app\common\model\Agreement;
 use  \think\facade\Validate;
 
-class AgreementService
-{
-    public static function add($data)
-    {
+class AgreementService {
+    public static function add($data) {
         $validate = Validate::rule([
-            'app_id'            => 'require',
-            'user_agreement'    => 'require',
-            'privacy_agreement' => 'require',
+            'app_id' => 'require',
+//            'user_agreement'    => 'require',
+//            'privacy_agreement' => 'require',
         ])->message([
-            'app_id.require'            => '包ID不能为空',
-            'user_agreement.require'    => '用户协议不能为空',
-            'privacy_agreement.require' => '隐私协议不能为空',
+            'app_id.require' => '包ID不能为空',
+//            'user_agreement.require'    => '用户协议不能为空',
+//            'privacy_agreement.require' => '隐私协议不能为空',
         ]);
 
         if (!$validate->check($data)) {

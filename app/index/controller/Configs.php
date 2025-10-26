@@ -24,7 +24,7 @@ class Configs extends IndexBaseController {
             // 根据包名查询协议数据
             $id = $this->id;
             // 协议地址【根据包走】
-            $agreementUrl                               = config('app.agreementUrl') . '/index/agreement/index?app_id=' . $id . '&type=';
+            $agreementUrl                               = config('app.agreementUrl') . 'index/agreement/index?app_id=' . $id . '&type=';
             $data['optionsInfo']['privacyPolicy']       = $agreementUrl . 'privacy_agreement';
             $data['optionsInfo']['userAgreement']       = $agreementUrl . 'user_agreement';
             $data['optionsInfo']['sdkInfoList']         = $agreementUrl . 'sdk_list';

@@ -107,10 +107,10 @@
 				<el-form-item label="包" prop="app_id">
 					<el-select v-model="ruleForm.app_id" placeholder="包">
 						<el-option
-								v-for="(index, id) in apps"
-								:key="id"
-								:label="name"
-								:value="name">
+								v-for="(item, index) in apps"
+								:key="item.id"
+								:label="item.name"
+								:value="item.id">
 						</el-option>
 					</el-select>
 				</el-form-item>

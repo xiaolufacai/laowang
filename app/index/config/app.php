@@ -26,7 +26,7 @@ $paymentMethods = [
 ];
 
 // 协议地址
-$agreementUrl = 'http://www.laowang.com/';
+$agreementUrl = 'http://110.40.229.180/';
 
 // 协议类型
 $agreements = [

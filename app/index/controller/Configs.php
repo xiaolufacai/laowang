@@ -41,8 +41,11 @@ class Configs extends IndexBaseController {
             $extraInfo         = ConfigService::configs();
             $data['extraInfo'] = [];
             foreach ($extraInfo as $k => $v) {
-                $data['extraInfo'][]['extraKey'] = $v['key'];
-                $data['extraInfo'][]['extraValue'] = $v['value'];
+//                $data['extraInfo'][]['extraKey'] = $v['key'];
+//                $data['extraInfo'][]['extraValue'] = $v['value'];
+                $tmp['extraKey']     = $v['key'];
+                $tmp['extraValue']   = $v['value'];
+                $data['extraInfo'][] = $tmp;
             }
             return json(['code' => 200, 'data' => $data, 'message' => 'OK']);
         } catch (\Exception $e) {

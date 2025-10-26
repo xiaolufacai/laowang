@@ -52,13 +52,17 @@ class ConfigService {
      * @return array 查询结果，包含分页数据和总数
      * @throws DbException
      */
-    public static function configs($channel, $page = 1, $pageSize = 10): array {
+    public static function configs($channel, $appId, $page = 1, $pageSize = 10): array {
         // 基本查询构建
         $query = Db::name(Configure::TABLE_NAME);
 
         // 根据传入的 app_id 和 id 添加查询条件
         if ($channel) {
             $query->where('channel', $channel);
+        }
+
+        if ($appId) {
+            $query->where('app_id', $appId);
         }
 
         // 查询分页数据

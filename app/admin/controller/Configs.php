@@ -32,10 +32,11 @@ class Configs extends AdminBaseController {
     public function configs(Request $request): Json {
         // 获取查询参数
         $channel  = $request->get('channel', null);
+        $appId  = $request->get('app_id', null);
         $page     = $request->get('page', 1);
         $pageSize = $request->get('page_size', 10);
         // 调用 Service 获取订单数据
-        $result = ConfigService::configs($channel, $page, $pageSize);
+        $result = ConfigService::configs($channel, $appId, $page, $pageSize);
         // 返回响应
         return json(['code' => 0, 'data' => $result]);
     }

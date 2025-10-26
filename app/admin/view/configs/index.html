@@ -259,11 +259,12 @@
 					}
 				});
 			},
-			getConfigs(channel, page) {
+			getConfigs(channel, appId, page) {
 				let _this = this;
 				axios.get('/admin/configs/configs', {
 					params: {
 						channel: channel,
+						app_id: appId,
 						page: page,
 						page_size: _this.pageSize
 					}
@@ -336,7 +337,7 @@
 				// this.channels(id)
 				// this.ruleForm.app_id = id;
 				// this.getAppVips(id)
-				this.getConfigs(this.formInline.channel, this.currentPage);
+				this.getConfigs(this.formInline.channel, this.formInline.app_id, this.currentPage);
 			},
 
 			handleDelete(index, row) {

@@ -23,7 +23,7 @@ class Configs extends IndexBaseController {
         try {
             // 根据包名查询协议数据
             $id = $this->appId;
-            // 协议地址
+            // 协议地址【根据包走】
             $agreementUrl                               = config('app.agreementUrl') . '/index/agreement/index?app_id=' . $id . '&type=';
             $data['optionsInfo']['privacyPolicy']       = $agreementUrl . 'privacy_agreement';
             $data['optionsInfo']['userAgreement']       = $agreementUrl . 'user_agreement';
@@ -31,14 +31,14 @@ class Configs extends IndexBaseController {
             $data['optionsInfo']['userCollectInfoList'] = $agreementUrl . 'user_collect';
             $data['optionsInfo']['vipAgreement']        = $agreementUrl . 'vip_agreement';
 
-            // 获取渠道信息
+            // 获取渠道信息【渠道+包】
             $channelData                        = ChannelService::getChannelByApp($this->channel, $id);
             $data['optionsInfo']['versionName'] = $channelData['version_no'] ?? '';
             $data['optionsInfo']['versionCode'] = $channelData['version_name'] ?? '';
             $data['optionsInfo']['auditStatus'] = $channelData['status'] ?? 0;
 
-            // 获取扩展信息
-            $extraInfo         = ConfigService::configs();
+            // 获取扩展信息【根据渠道】
+            $extraInfo         = ConfigService::configs($this->channel);
             $data['extraInfo'] = [];
             foreach ($extraInfo as $k => $v) {
 //                $data['extraInfo'][]['extraKey'] = $v['key'];

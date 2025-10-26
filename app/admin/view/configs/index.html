@@ -15,6 +15,16 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
+					<el-select v-model="formInline.app" @change="select" placeholder="APP">
+						<el-option
+								v-for="(item,index) in apps"
+								:key="index"
+								:label="item.name"
+								:value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
 					<el-button @click="handleAdd">新增配置</el-button>
 				</el-form-item>
 			</el-form>
@@ -72,12 +82,12 @@
 
 			<!-- Pagination -->
 			<el-pagination class="el-pagination-page"
-					v-if="totalItems > 0"
-					@current-change="handlePageChange"
-					:current-page="currentPage"
-					:page-size="pageSize"
-					:total="totalItems"
-					layout="total, prev, pager, next, jumper">
+			               v-if="totalItems > 0"
+			               @current-change="handlePageChange"
+			               :current-page="currentPage"
+			               :page-size="pageSize"
+			               :total="totalItems"
+			               layout="total, prev, pager, next, jumper">
 			</el-pagination>
 		</el-main>
 
@@ -88,6 +98,16 @@
 					<el-select v-model="ruleForm.channel" placeholder="渠道">
 						<el-option
 								v-for="(index, key) in channels"
+								:key="key"
+								:label="index"
+								:value="key">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="包" prop="app_id">
+					<el-select v-model="ruleForm.app_id" placeholder="包">
+						<el-option
+								v-for="(index, key) in apps"
 								:key="key"
 								:label="index"
 								:value="key">
@@ -116,17 +136,21 @@
 	.diy-el-form {
 		background-color: #fff;
 	}
+
 	.demo-form-inline {
 		margin-top: 10px;
 	}
+
 	.el-header {
 		background-color: #e7ebf0;
 		color: #333;
 		line-height: 60px;
 	}
+
 	.el-aside {
 		color: #333;
 	}
+
 	.el-pagination-page {
 		margin-top: 10px;
 	}
@@ -152,10 +176,10 @@
 				},
 				ruleForm: initForm,
 				rules: {
-					vip: [{ required: true, message: '请选择渠道', trigger: 'change' }],
-					new_price: [{ required: true, message: '请输入现价', trigger: 'change' }],
-					old_price: [{ required: true, message: '请输入原价', trigger: 'change' }],
-					corner_text: [{ required: true, message: '请输入角标文案', trigger: 'change' }]
+					vip: [{required: true, message: '请选择渠道', trigger: 'change'}],
+					new_price: [{required: true, message: '请输入现价', trigger: 'change'}],
+					old_price: [{required: true, message: '请输入原价', trigger: 'change'}],
+					corner_text: [{required: true, message: '请输入角标文案', trigger: 'change'}]
 				},
 				formVisible: false,
 				configs: [],
@@ -172,12 +196,14 @@
 				currentPage: 1,
 				pageSize: 10,
 				totalItems: 0,
+				apps: [],
 			}
 		},
 		created: function () {
 			// 获取所有渠道
 			this.getChannels()
 			this.getConfigs()
+			this.getApps()
 		},
 		methods: {
 			handlePageChange(page) {
@@ -191,6 +217,7 @@
 				this.getChannels()
 				this.ruleForm.key = obj.key
 				this.ruleForm.id = obj.id
+				this.ruleForm.app_id = obj.app_id
 				this.ruleForm.value = obj.value
 				this.ruleForm.channel = obj.channel
 				this.ruleForm.description = obj.description
@@ -202,7 +229,7 @@
 			handleCancel() {
 				this.formVisible = false; // 关闭表单弹窗
 				this.ruleForm = {...initForm};  // 重置 ruleForm 为初始值
-				console.log( this.ruleForm)
+				console.log(this.ruleForm)
 				this.$refs['ruleForm'].resetFields(); // 清空表单字段
 			},
 			submitForm(formName) {
@@ -261,6 +288,31 @@
 							});
 						})
 			},
+			getApps() {
+				let _this = this
+				axios.get('/admin/app/apps', {})
+						.then(response => {
+							const data = response.data.data
+							const code = response.data.code
+							if (code !== 0) {
+								_this.apps = [];
+							} else {
+								_this.apps = data;
+								if (_this.apps.length > 0) {
+									// 设置默认选择的应用
+									let index = _this.apps.length - 1
+									_this.formInline.app = _this.apps[index];
+									_this.select(_this.apps[index].id);
+								}
+							}
+						})
+						.catch(function (error) {
+							_this.$message({
+								message: '数据获取失败',
+								type: 'error'
+							});
+						})
+			},
 			getChannels() {
 				let _this = this
 				axios.get('/admin/app/channels', {})
@@ -305,7 +357,7 @@
 			},
 			// 删除记录
 			deleteRecord(obj) {
-				axios.post('/admin/configs/delete', { id: obj.id })
+				axios.post('/admin/configs/delete', {id: obj.id})
 						.then(response => {
 							if (response.data.code === 0) {
 								this.$message.success('删除成功!');
@@ -319,8 +371,6 @@
 							this.$message.error('网络错误，请稍后重试');
 						});
 			},
-		},
-		computed: {
 		}
 	}
 	var Ctor = Vue.extend(Main)

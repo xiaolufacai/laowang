@@ -12,7 +12,7 @@ class ConfigService {
      *
      * @return \think\Collection|Collection
      */
-    public static function configs() {
-        return Configure::where(['status' => Configure::STATUS_NORMAL])->select();
+    public static function configs($channel) {
+        return Configure::where(['status' => Configure::STATUS_NORMAL, 'channel' => $channel])->select();
     }
 }

@@ -209,7 +209,7 @@
 			handlePageChange(page) {
 				// 分页改变时获取新页面的数据
 				this.currentPage = page;
-				this.getConfigs(this.formInline.channel, page);
+				this.getConfigs(this.formInline.channel, this.formInline.app_id, page);
 			},
 			handleEdit(index, obj) {
 				console.log(obj)

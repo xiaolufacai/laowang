@@ -96,9 +96,14 @@ abstract class IndexBaseController {
         }
         $this->id = $app['id'];
 
-        $this->device      = $this->request['deviceNum'] ?? '';
-        $this->channel     = $this->request['channel'] ?? '';
-        $this->versionCode = $this->request['versionCode'] ?? '';
-        $this->versionName = $this->request['versionName'] ?? '';
+//        $this->device      = $this->request['deviceNum'] ?? '';
+//        $this->channel     = $this->request['channel'] ?? '';
+//        $this->versionCode = $this->request['versionCode'] ?? '';
+//        $this->versionName = $this->request['versionName'] ?? '';
+        $this->device      = $this->request->header('deviceNum');
+        $this->channel     = $this->request->header('channel');
+        $this->appId       = $this->request->header('appId');
+        $this->versionCode = $this->request->header('versionCode');
+        $this->versionName = $this->request->header('versionName');
     }
 }

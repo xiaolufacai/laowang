@@ -9,5 +9,4 @@ return [
         \app\middleware\CorsMiddleware::class
     ],
     \app\middleware\JWTAuthMiddleware::class,
-
 ];

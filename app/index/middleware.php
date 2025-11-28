@@ -2,4 +2,5 @@
 // 这是系统自动生成的middleware定义文件
 return [
     \app\middleware\JWTAuthMiddleware::class,
+    \app\middleware\CorsMiddleware::class,
 ];

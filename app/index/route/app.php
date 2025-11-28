@@ -10,4 +10,4 @@
 // +----------------------------------------------------------------------
 use think\facade\Route;
 
-//Route::get('apps','\app\index\App@Apps')->middleware(\app\middleware\CorsMiddleware::class);
+Route::get('apps','index/App/apps');

@@ -14,7 +14,7 @@ class App {
      * @return Json
      */
     public function apps(): Json {
-        $data = AppModel::where(['status' => AppModel::STATUS_NORMAL])->select(['title', 'content'])->order('id desc')->select()->toArray();
+        $data = AppModel::where(['status' => AppModel::STATUS_NORMAL])->field(['title', 'content'])->order('id desc')->select()->toArray();
         return \json(['code' => 1, 'message' => 'OK', 'data' => ['apps' => $data]]);
     }
 }

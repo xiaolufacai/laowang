@@ -10,8 +10,4 @@
 // +----------------------------------------------------------------------
 use think\facade\Route;
 
-Route::get('think', function () {
-    return 'hello,ThinkPHP8!';
-});
-
-
+Route::get('/apps', 'index/app/apps')->middleware(\app\middleware\CorsMiddleware::class);

@@ -15,6 +15,7 @@ class CorsMiddleware {
      * @return Response
      */
     public function handle($request, \Closure $next) {
+        file_put_contents('/tmp/cors.log', date('Y-m-d H:i:s')."\n", FILE_APPEND);
         $response = $next($request);
         $response->header([
             'Access-Control-Allow-Origin' => '*',

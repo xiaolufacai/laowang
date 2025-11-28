@@ -4,11 +4,7 @@ namespace app\middleware;
 
 class CorsMiddleware {
     public function handle($request, \Closure $next) {
-        // 允许的来源
-        $origin = $request->header('origin') ?? '*';
-
         $response = $next($request);
-
         $response->header([
             'Access-Control-Allow-Origin'      => '*',
             'Access-Control-Allow-Methods'     => 'GET, POST, PUT, DELETE, OPTIONS',

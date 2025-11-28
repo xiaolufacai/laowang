@@ -17,6 +17,7 @@ class JWTAuthMiddleware {
         '/index/login/login',
         '/index/configs/index',
         '/index/agreement/index',
+        '/index/app/apps',
     ];
     public function handle(Request $request, Closure $next) {
         $url = $request->baseUrl();

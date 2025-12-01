@@ -10,3 +10,4 @@ Thumbs.db
 /.buildpath
 /.project
 app.json
+/config/wechat.php

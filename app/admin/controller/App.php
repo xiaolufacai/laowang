@@ -123,7 +123,8 @@ class App extends AdminBaseController {
 
     public function addChannel(Request $request) {
         $data   = $request->post();
-        $result = AppService::setAppChannel($data);
+        $appid  = $request->get('app_id');
+        $result = AppService::setAppChannel($data, $appid);
         return json(['code' => $result['error'], 'message' => $result['message']]);
     }
 }

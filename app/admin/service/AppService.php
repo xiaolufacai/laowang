@@ -236,14 +236,14 @@ class AppService {
     public static function setAppChannel($data) {
         $id = $data['id'];
         // 检查是否已有相同的 app_id 和 channel
-        $exist = AppChannel::where('app_id', $data['app_id'])
-            ->where('channel', $data['channel'])
-            ->find();
-
-        // 如果找到了相同的记录，返回错误提示
-        if ($exist) {
-            return ['error' => 1, 'message' => 'app_id 和 channel 已存在，无法新增或编辑'];
-        }
+//        $exist = AppChannel::where('app_id', $data['app_id'])
+//            ->where('channel', $data['channel'])
+//            ->find();
+//
+//        // 如果找到了相同的记录，返回错误提示
+//        if ($exist) {
+//            return ['error' => 1, 'message' => 'app_id 和 channel 已存在，无法新增或编辑'];
+//        }
 
         $model = AppChannel::find($id);
         if ($model) {

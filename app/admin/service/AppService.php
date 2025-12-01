@@ -233,15 +233,15 @@ class AppService {
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function setAppChannel($data, $appId = 0) {
+    public static function setAppChannel($data) {
         $id = $data['id'];
         // 检查是否已有相同的 app_id 和 channel
         $query = AppChannel::where('app_id', $data['app_id'])
             ->where('channel', $data['channel']);
 
-        if (!empty($appId)) {
+        if (!empty($id)) {
             // 编辑状态，排除本条记录
-            $query->where('app_id', '<>', $appId);
+            $query->where('id', '<>', $id);
         }
 
         $exist = $query->find();

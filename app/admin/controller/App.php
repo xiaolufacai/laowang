@@ -48,6 +48,16 @@ class App extends AdminBaseController {
         return AppService::delete($post['id']);
     }
 
+    public function app(Request $request) {
+        $id = $request->get('id');
+        return json(['code' => 0, 'message' => 'OK', 'data' => AppService::appData($id)]);
+    }
+
+    public function update(Request $request): Json {
+        $post = $request->post();
+        return AppService::edit($post);
+    }
+
     /**
      * APP管理
      *

@@ -18,7 +18,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="openFormModal">新增应用</el-button>
+					<el-button @click="openFormModal('add')">新增应用</el-button>
 				</el-form-item>
 			</el-form>
 		</el-header>
@@ -67,8 +67,8 @@
 					<el-input v-model="ruleForm.ym_id" placeholder="请输入友盟ID"></el-input>
 				</el-form-item>
 
-				<el-form-item label="微信ID" prop="wx_id">
-					<el-input v-model="ruleForm.wx_id" placeholder="请输入微信ID"></el-input>
+				<el-form-item label="微信APP ID" prop="wx_id">
+					<el-input v-model="ruleForm.wx_id" placeholder="请输入微信APP ID"></el-input>
 				</el-form-item>
 
 				<el-form-item label="APP ID" prop="app_id">
@@ -122,7 +122,7 @@
 					'打包平台地址': "",
 					'广告ID': "",
 					'友盟ID': "",
-					'微信ID': "",
+					'微信APP ID': "",
 					'APP ID': ""
 				},
 
@@ -134,7 +134,7 @@
 					package_url: [{ required: true, message: '请输入打包平台地址', trigger: 'change' }],
 					ad_id: [{ required: true, message: '请输入广告ID', trigger: 'change' }],
 					ym_id: [{ required: true, message: '请输入友盟ID', trigger: 'change' }],
-					wx_id: [{ required: true, message: '请输入微信ID', trigger: 'change' }],
+					wx_id: [{ required: true, message: '请输入微信APP ID', trigger: 'change' }],
 					app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }],
 					description: [{ required: true, message: '请输入APP描述', trigger: 'blur' }]
 				},
@@ -155,7 +155,6 @@
 			/** ---------------- 新增 or 编辑 打开表单 ---------------- */
 			openFormModal(mode = 'add') {
 				this.editMode = mode;
-
 				if (mode === 'add') {
 					this.ruleForm = { ..._initForm };
 				} else {
@@ -165,6 +164,11 @@
 				this.formVisible = true;
 
 				this.$nextTick(() => {
+					if (this.editor) {
+						this.editor.destroy();
+						this.editor = null;
+					}
+
 					const E = window.wangEditor;
 					this.editor = new E('#editor');
 					this.editor.config.onchange = html => {
@@ -181,7 +185,7 @@
 			/** ---------------- 提交表单（新增 / 编辑） ---------------- */
 			submitForm(formName) {
 				this.ruleForm.description = this.editor.txt.html();
-
+				console.log(11111111)
 				this.$refs[formName].validate(valid => {
 					if (!valid) {
 						return this.$message.error('表单验证失败，请检查内容');
@@ -242,7 +246,7 @@
 						'打包平台地址': value.package_url,
 						'广告ID': value.ad_id,
 						'友盟ID': value.ym_id,
-						'微信ID': value.wx_id,
+						'微信APP ID': value.wx_id,
 						'APP ID': value.app_id
 					};
 				}

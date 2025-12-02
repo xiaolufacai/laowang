@@ -80,13 +80,19 @@ abstract class IndexBaseController {
     public $versionName;
 
     /**
+     *  微信 APP ID
+     * @var mixed
+     */
+    public mixed $wechatAppId;
+
+    /**
      * 构造方法
      * @access public
      * @param App $app 应用对象
      */
     public function __construct(App $app, Request $request) {
-        $this->app         = $app;
-        $this->request     = $this->app->request;
+        $this->app     = $app;
+        $this->request = $this->app->request;
 
         $this->device      = $request->header('deviceNum');
         $this->channel     = strtolower($request->header('channel'));
@@ -98,8 +104,8 @@ abstract class IndexBaseController {
         if (empty($app)) {
             return json(['code' => -1, 'data' => [], 'message' => '包名不存在']);
         }
-        $this->id = $app['id'];
-
+        $this->id          = $app['id'];
+        $this->wechatAppId = $app['wx_id'];
 //        $this->device      = $this->request['deviceNum'] ?? '';
 //        $this->channel     = $this->request['channel'] ?? '';
 //        $this->versionCode = $this->request['versionCode'] ?? '';

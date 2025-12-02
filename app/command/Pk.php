@@ -54,6 +54,8 @@ class Pk extends Command {
     }
 
     protected function apps() {
-        var_dump(WechatService::apps());
+        $appId = 'wxe4f024f4e62bd3d4';
+        $authUrl = WechatService::getOAuthUrl($appId);
+        var_dump($authUrl);
     }
 }

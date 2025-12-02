@@ -185,7 +185,6 @@
 			/** ---------------- 提交表单（新增 / 编辑） ---------------- */
 			submitForm(formName) {
 				this.ruleForm.description = this.editor.txt.html();
-				console.log(11111111)
 				this.$refs[formName].validate(valid => {
 					if (!valid) {
 						return this.$message.error('表单验证失败，请检查内容');

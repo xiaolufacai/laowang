@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace app\command;
 
+use app\common\service\WechatService;
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
@@ -10,7 +11,7 @@ use think\console\input\Argument;
 
 class Pk extends Command {
     protected function configure() {
-        $this->setName('test')
+        $this->setName('pk')
             ->addArgument('action', Argument::OPTIONAL, 'action name')
             ->addArgument('params', Argument::IS_ARRAY, 'params');
     }
@@ -52,8 +53,7 @@ class Pk extends Command {
         return "detail => id={$id}, type={$type}";
     }
 
-
-    protected function clear() {
-        return "clear executed";
+    protected function apps() {
+        var_dump(WechatService::apps());
     }
 }

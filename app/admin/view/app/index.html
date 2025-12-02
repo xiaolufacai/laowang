@@ -75,6 +75,10 @@
 					<el-input v-model="ruleForm.app_id" placeholder="请输入APP ID"></el-input>
 				</el-form-item>
 
+				<el-form-item label="微信APP ID" prop="app_id">
+					<el-input v-model="ruleForm.wx_app_id" placeholder="请输入微信APP ID"></el-input>
+				</el-form-item>
+
 				<!-- 富文本 -->
 				<el-form-item label="APP 描述" prop="description">
 					<div id="editor" style="border:1px solid #dcdfe6; border-radius:4px;"></div>
@@ -123,7 +127,8 @@
 					'广告ID': "",
 					'友盟ID': "",
 					'微信ID': "",
-					'APP ID': ""
+					'APP ID': "",
+					'微信APP ID': "",
 				},
 
 				ruleForm: { ...initForm },
@@ -136,7 +141,8 @@
 					ym_id: [{ required: true, message: '请输入友盟ID', trigger: 'change' }],
 					wx_id: [{ required: true, message: '请输入微信ID', trigger: 'change' }],
 					app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }],
-					description: [{ required: true, message: '请输入APP描述', trigger: 'blur' }]
+					description: [{ required: true, message: '请输入APP描述', trigger: 'blur' }],
+					wx_app_id: [{ required: true, message: '请输入微信APP ID', trigger: 'blur' }],
 				},
 
 				editor: null,
@@ -243,7 +249,8 @@
 						'广告ID': value.ad_id,
 						'友盟ID': value.ym_id,
 						'微信ID': value.wx_id,
-						'APP ID': value.app_id
+						'APP ID': value.app_id,
+						'微信APP ID': value.wx_app_id,
 					};
 				}
 			},
@@ -291,7 +298,8 @@
 						ym_id: data.ym_id,
 						wx_id: data.wx_id,
 						app_id: data.app_id,
-						description: data.description
+						description: data.description,
+						wx_app_id: data.wx_app_id,
 					};
 
 					// 打开编辑弹窗

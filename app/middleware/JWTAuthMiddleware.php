@@ -18,7 +18,8 @@ class JWTAuthMiddleware {
         '/index/configs/index',
         '/index/agreement/index',
         '/index/app/apps',
-        '/apps'
+        '/apps',
+        '/index/wechat/callback',
     ];
     public function handle(Request $request, Closure $next) {
         $url = $request->baseUrl();

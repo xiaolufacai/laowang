@@ -16,6 +16,7 @@ use think\response\Json;
 class Wechat {
 
     public function callback() {
-        var_dump(runtime_path() . 'wechat.log');
+        $file = runtime_path() . 'wechat.log';
+        file_put_contents($file, json_encode($_REQUEST), FILE_APPEND);
     }
 }

@@ -20,6 +20,7 @@ class ChannelService {
      * @throws ModelNotFoundException
      */
     public static function getChannelByApp($channel, $appId): AppChannel|array|Model|null {
+        var_dump($channel, $appId);DIE;
         return AppChannel::where(['channel' => $channel, 'app_id' => $appId])->find();
     }
 }

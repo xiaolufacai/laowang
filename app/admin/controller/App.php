@@ -28,7 +28,8 @@ class App extends AdminBaseController {
      * @return Json
      */
     public function apps(): Json {
-        $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->select();
+        $fields = ['id', 'project', 'user_id', 'name', 'repository', 'package_url', 'ad_id', 'ym_id', 'wx_id', 'app_id', 'description'];
+        $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->field($fields)->select();
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace app\common\service;
 
+use app\common\model\App;
 use app\common\tool\CURL;
 
 class WechatService {
@@ -22,7 +23,7 @@ class WechatService {
      * @return mixed|string
      */
     public static function secret($appId): mixed {
-        return self::apps()[$appId] ?? '';
+        return App::find(['wx_id' => $appId])->secret;
     }
 
     /**

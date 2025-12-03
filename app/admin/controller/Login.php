@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 
 use app\common\model\Admin;
+use app\index\service\UserService;
 use think\captcha\facade\Captcha;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -71,5 +72,34 @@ class Login {
         } else {
             return json(['code' => 1, 'msg' => '用户名或密码错误']);
         }
+    }
+
+    /**
+     *  微信登录
+     *
+     * @return Json
+     */
+    public function wechat() {
+        // 获取请求数据
+        $data = Request::post();
+
+        // 1. 表单验证
+        $validate = Validate::rule([
+            'code'      => 'require',
+            'client_id' => 'require',
+        ])->message([
+            'code.require'      => 'CODE不能为空',
+            'client_id.require' => 'client_id不能为空',
+        ]);
+
+        if (!$validate->check($data)) {
+            return json(['code' => 1, 'msg' => $validate->getError()]);
+        }
+
+        $result = UserService::wechatLogin($data['client_id'], $data['app_id'], $data['code']);
+        if ($result['error']) {
+            return json(['code' => 1, 'msg' => $result['message']]);
+        }
+        return json(['code' => 0, 'msg' => '登录成功']);
     }
 }

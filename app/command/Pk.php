@@ -55,7 +55,8 @@ class Pk extends Command {
 
     protected function apps() {
         $appId = 'wxe4f024f4e62bd3d4';
-        $authUrl = WechatService::getOAuthUrl($appId);
+        $url   = 'https://api.nuobt.site/index/wechat/callback';
+        $authUrl = WechatService::getOAuthUrl($appId, $url);
         var_dump($authUrl);
     }
 }

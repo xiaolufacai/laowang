@@ -4,6 +4,7 @@ namespace app\index\service;
 
 
 use app\common\model\User;
+use app\common\service\WechatService;
 use app\middleware\JWTAuthMiddleware;
 use Firebase\JWT\JWT;
 use think\db\exception\DbException;
@@ -12,8 +13,10 @@ use think\facade\Request;
 
 class UserService {
 
-    public static function create() {
-        $data = Request::post();
+    public static function create($data = []) {
+        if (empty($data)) {
+            $data = Request::post();
+        }
         // 必须要有 client_id 才能进行判断
         if (!empty($data['client_id'])) {
             // 查找是否已经存在该 client_id 的记录
@@ -59,8 +62,8 @@ class UserService {
         $issuedAt       = time();
         $expirationTime = $issuedAt + 7 * 24 * 60 * 60;  // 7天后过期
         $payload        = [
-            'iss' => 'laowang-publisher-issuer',      // 发行者
-            'aud' => 'laowang-user-audience',    // 用户
+            'iss' => 'lao-wang-publisher-issuer',      // 发行者
+            'aud' => 'lao-wang-user-audience',    // 用户
             'iat' => $issuedAt,          // 发布时间
             'exp' => $expirationTime,    // 过期时间
             'uid' => $uid,    // 用户ID
@@ -68,5 +71,52 @@ class UserService {
 
         // 使用 HS256 算法生成 JWT token
         return JWT::encode($payload, JWTAuthMiddleware::KEY, 'HS256');
+    }
+
+    /**
+     *  微信登录
+     *
+     * @param $clientId
+     * @param $appId
+     * @param $code
+     * @return array
+     */
+    public static function wechatLogin($clientId, $appId, $code) {
+        if (empty($code)) {
+            return ['error' => 1, 'message' => 'CODE ERROR', 'data' => []];
+        }
+
+        if (empty($appId)) {
+            return ['error' => 1, 'message' => 'APP ID ERROR', 'data' => []];
+        }
+
+        if (empty($clientId)) {
+            return ['error' => 1, 'message' => 'CLIENT ID ERROR', 'data' => []];
+        }
+
+        // 根据code获取用户信息
+        $req = WechatService::getoAuthAccessToken($appId, $code);
+        if (empty($req['errcode']) || empty($req['openid'])) {
+            return ['error' => 1, 'message' => $req['errmsg'], 'data' => []];
+        }
+        // 根据openid获取用户信息
+        $wxUser = WechatService::getUserInfo($req['access_token'], $req['openid']);
+        if (empty($wxUser['errcode']) || empty($wxUser['openid'])) {
+            return ['error' => 1, 'message' => $wxUser['errmsg'], 'data' => []];
+        }
+
+        $post = Request::post();
+        // 判断当前client是否已经注册过
+        $data['openid']       = $wxUser['openid'];
+        $data['client_id']    = $clientId;
+        $data['avatar']       = $wxUser['headimgurl'];
+        $data['nickname']     = $wxUser['nickname'];
+        $data['app_id']       = $post['app_id'];
+        $data['mobile']       = $post['mobile'];
+        $data['mobile_brand'] = $post['mobile_brand'];
+        $data['mobile_model'] = $post['mobile_model'];
+        $data['package_id']   = $post['package_id'];
+
+        return self::create($data);
     }
 }

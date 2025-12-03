@@ -51,6 +51,11 @@
 					<el-input v-model="ruleForm.name" placeholder="请输入包名称"></el-input>
 				</el-form-item>
 
+				<el-form-item label="APP ID" prop="app_id">
+					<el-input v-model="ruleForm.app_id" placeholder="请输入APP ID"></el-input>
+				</el-form-item>
+
+
 				<el-form-item label="仓库地址" prop="repository">
 					<el-input v-model="ruleForm.repository" placeholder="请输入仓库地址"></el-input>
 				</el-form-item>
@@ -73,10 +78,6 @@
 
 				<el-form-item label="APP SECRET" prop="wx_id">
 					<el-input v-model="ruleForm.secret" placeholder="请输入APP SECRET"></el-input>
-				</el-form-item>
-
-				<el-form-item label="APP ID" prop="app_id">
-					<el-input v-model="ruleForm.app_id" placeholder="请输入APP ID"></el-input>
 				</el-form-item>
 
 				<!-- 富文本 -->
@@ -134,14 +135,14 @@
 				ruleForm: { ...initForm },
 				rules: {
 					project: [{ required: true, message: '请输入项目名', trigger: 'change' }],
+					app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }],
 					name: [{ required: true, message: '请输入包名称', trigger: 'change' }],
 					repository: [{ required: true, message: '请输入仓库地址', trigger: 'change' }],
 					package_url: [{ required: true, message: '请输入打包平台地址', trigger: 'change' }],
 					ad_id: [{ required: true, message: '请输入广告ID', trigger: 'change' }],
 					ym_id: [{ required: true, message: '请输入友盟ID', trigger: 'change' }],
-					wx_id: [{ required: true, message: '请输入微信APP ID', trigger: 'change' }],
-					secret: [{ required: true, message: '请输入secret', trigger: 'change' }],
-					app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }],
+					wx_id: [{ required: false, message: '请输入微信APP ID', trigger: 'change' }],
+					secret: [{ required: false, message: '请输入secret', trigger: 'change' }],
 					description: [{ required: true, message: '请输入APP描述', trigger: 'blur' }]
 				},
 

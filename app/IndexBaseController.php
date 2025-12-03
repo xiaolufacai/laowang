@@ -100,7 +100,7 @@ abstract class IndexBaseController {
         $this->versionCode = $request->header('versionCode');
         $this->versionName = $request->header('versionName');
         // 查询包是否存在
-        $app = AppModel::where('app_id', $this->appId)->find();
+        $app = AppModel::where('app_id', $this->appId)->where(['status' => AppModel::STATUS_NORMAL])->find();
         if (empty($app)) {
             return json(['code' => -1, 'data' => [], 'message' => '包名不存在']);
         }

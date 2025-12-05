@@ -86,34 +86,33 @@ class UserService {
      * @param $code
      * @return array
      */
-    public static function wechatLogin($clientId, $appId, $code) {
-        if (empty($code)) {
+    public static function wechatLogin($data) {
+        if (empty($data['code'])) {
             return ['error' => 1, 'message' => 'CODE ERROR', 'data' => []];
         }
 
-        if (empty($appId)) {
+        if (empty($data['app_id'])) {
             return ['error' => 1, 'message' => 'APP ID ERROR', 'data' => []];
         }
 
-        if (empty($clientId)) {
+        if (empty($data['app_secret'])) {
             return ['error' => 1, 'message' => 'CLIENT ID ERROR', 'data' => []];
         }
 
         // 根据code获取用户信息
-        $req = WechatService::getoAuthAccessToken($appId, $code);
-        if (empty($req['errcode']) || empty($req['openid'])) {
-            return ['error' => 1, 'message' => $req['errmsg'], 'data' => []];
+        $resp = WechatService::getoAuthAccessToken($data['app_id'], $data['code']);
+        if (empty($resp['errcode']) || empty($resp['openid'])) {
+            return ['error' => 1, 'message' => $resp['errmsg'], 'data' => []];
         }
         // 根据openid获取用户信息
-        $wxUser = WechatService::getUserInfo($req['access_token'], $req['openid']);
-        if (empty($wxUser['errcode']) || empty($wxUser['openid'])) {
+        $wxUser = WechatService::getUserInfo($resp['access_token'], $resp['openid']);
+        if (!empty($wxUser['errcode']) || empty($wxUser['openid'])) {
             return ['error' => 1, 'message' => $wxUser['errmsg'], 'data' => []];
         }
 
         $post = Request::post();
         // 判断当前client是否已经注册过
         $data['openid']       = $wxUser['openid'];
-        $data['client_id']    = $clientId;
         $data['avatar']       = $wxUser['headimgurl'];
         $data['nickname']     = $wxUser['nickname'];
         $data['app_id']       = $post['app_id'];

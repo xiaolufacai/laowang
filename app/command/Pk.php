@@ -59,4 +59,19 @@ class Pk extends Command {
         $authUrl = WechatService::getOAuthUrl($appId, $url);
         var_dump($authUrl);
     }
+
+    public function wxd() {
+        $code = '031sGPkl2pkaMg4ORfol2izmAz3sGPkR';
+        $appId = 'wxe4f024f4e62bd3d4';
+        var_dump($appId);
+        $data = WechatService::getoAuthAccessToken($appId, $code);
+        var_dump($data);
+    }
+
+    public function wxu() {
+        $openid = 'or_fX63NPDOPlh7vVScWVJ4JOb4o';
+        $at     = '98_xPBZ7s4ckmgz2hn4uRg1x_UrAZpxLjPm0xVKG_1R8-RQvmLATdxGNlyibuCVhtSL3lclO8BHq827oF_4WscofI50rykZNz1peE4I9b2vue8';
+        $user   = WechatService::getUserInfo($at, $openid);
+        var_dump($user);
+    }
 }

@@ -110,6 +110,5 @@ abstract class IndexBaseController {
 //        $this->channel     = $this->request['channel'] ?? '';
 //        $this->versionCode = $this->request['versionCode'] ?? '';
 //        $this->versionName = $this->request['versionName'] ?? '';
-
     }
 }

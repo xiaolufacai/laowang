@@ -23,7 +23,7 @@ class WechatService {
      * @return mixed|string
      */
     public static function secret($appId): mixed {
-        return App::find(['wx_id' => $appId])->secret;
+        return App::where(['wx_id' => $appId])->find()->secret;
     }
 
     /**
@@ -68,7 +68,7 @@ class WechatService {
         $apiUrl      = 'https://api.weixin.qq.com/sns/userinfo?access_token=' . $accessToken . '&openid=' . $openId . '&lang=zh_CN';
         $curlResult  = CURL::http($apiUrl);
         $resultArray = json_decode($curlResult, true);
-        if ($resultArray['errcode']) {
+        if (!empty($resultArray['errcode'])) {
             return false;
         }
         return $resultArray;

@@ -20,22 +20,26 @@ class UserService {
         // 必须要有 client_id 才能进行判断
         if (!empty($data['client_id'])) {
             // 查找是否已经存在该 client_id 的记录
-            $user = User::where('client_id', $data['client_id'])->find();
+            $user = User::where(['client_id' => $data['client_id'], 'app_id' => $data['app_id']])->find();
 
             if ($user) {
-                // 如果记录存在，遍历数据并更新变化的字段
-                $updateData = [];
-                foreach ($data as $key => $value) {
-                    // 如果字段值发生变化，进行更新
-                    if ($user[$key] != $value) {
-                        $updateData[$key] = $value;
+                // 判断当前client_id是否使用微信登录，如果是则查询同一个APP ID下最先使用微信登录的openid 为主账号
+                if (!empty($user->openid)) {
+                    $user = User::where(['app_id' => $data['app_id'], 'openid' => $user->openid, 'status' => 0])->order('id asc')->find();
+                } else {
+                    // 如果记录存在，遍历数据并更新变化的字段
+                    $updateData = [];
+                    foreach ($data as $key => $value) {
+                        // 如果字段值发生变化，进行更新
+                        if ($user[$key] != $value) {
+                            $updateData[$key] = $value;
+                        }
                     }
-                }
-
-                // 如果有更新的字段
-                if ($updateData) {
-                    $updateData['update_time'] = date('Y-m-d H:i:s'); // 更新 `update_time`
-                    $user->save($updateData);
+                    // 如果有更新的字段
+                    if ($updateData) {
+                        $updateData['update_time'] = date('Y-m-d H:i:s'); // 更新 `update_time`
+                        $user->save($updateData);
+                    }
                 }
             } else {
                 // 如果没有记录，进行新增操作
@@ -44,6 +48,7 @@ class UserService {
                 // 进行新增
                 $user = User::create($data);
             }
+            session('uid', $user->id);
             return ['error' => 0, 'message' => 'OK', 'data' => ['uid' => $user->id]];
         } else {
             // 没有 client_id 时返回错误
@@ -116,6 +121,7 @@ class UserService {
         $data['mobile_brand'] = $post['mobile_brand'];
         $data['mobile_model'] = $post['mobile_model'];
         $data['package_id']   = $post['package_id'];
+        $data['unionid']      = $wxUser['unionid'] ?? '';
 
         return self::create($data);
     }

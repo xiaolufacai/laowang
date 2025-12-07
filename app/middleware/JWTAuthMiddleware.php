@@ -15,6 +15,7 @@ class JWTAuthMiddleware {
 
     const NOT_AUTH = [
         '/index/login/login',
+        '/index/login/wechat',
         '/index/configs/index',
         '/index/agreement/index',
         '/index/app/apps',

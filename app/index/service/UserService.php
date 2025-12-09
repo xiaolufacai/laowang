@@ -91,6 +91,7 @@ class UserService {
             return ['error' => 1, 'message' => 'CODE ERROR', 'data' => []];
         }
 
+        $data['app_id'] = Request::header('appId');
         if (empty($data['app_id'])) {
             return ['error' => 1, 'message' => 'APP ID ERROR', 'data' => []];
         }

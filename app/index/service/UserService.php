@@ -65,7 +65,7 @@ class UserService {
     public static function token($uid): string {
         // 生成 JWT token
         $issuedAt       = time();
-        $expirationTime = $issuedAt + 7 * 24 * 60 * 60;  // 7天后过期
+        $expirationTime = $issuedAt + 60 * 24 * 60 * 60;  // 7天后过期
         $payload        = [
             'iss' => 'lao-wang-publisher-issuer',      // 发行者
             'aud' => 'lao-wang-user-audience',    // 用户
@@ -96,9 +96,9 @@ class UserService {
             return ['error' => 1, 'message' => 'APP ID ERROR', 'data' => []];
         }
 
-        if (empty($data['app_secret'])) {
-            return ['error' => 1, 'message' => 'CLIENT ID ERROR', 'data' => []];
-        }
+//        if (empty($data['app_secret'])) {
+//            return ['error' => 1, 'message' => 'CLIENT ID ERROR', 'data' => []];
+//        }
 
         // 根据code获取用户信息
         $resp = WechatService::getoAuthAccessToken($data['app_id'], $data['code']);

@@ -86,17 +86,17 @@ class Login {
         // 1. 表单验证
         $validate = Validate::rule([
             'code'      => 'require',
-            'client_id' => 'require',
+            'wx_app_id' => 'require',
         ])->message([
             'code.require'      => 'CODE不能为空',
-            'client_id.require' => 'client_id不能为空',
+            'wx_app_id.require' => '微信ID不能为空',
         ]);
 
         if (!$validate->check($data)) {
             return json(['code' => 1, 'msg' => $validate->getError()]);
         }
 
-        $result = UserService::wechatLogin($data['client_id'], $data['app_id'], $data['code']);
+        $result = UserService::wechatLogin($data);
         if ($result['error']) {
             return json(['code' => 1, 'msg' => $result['message']]);
         }

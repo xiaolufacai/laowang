@@ -110,13 +110,11 @@ class UserService {
 
         // 根据code获取用户信息
         $resp = WechatService::getoAuthAccessToken($data['wx_app_id'], $data['code']);
-        var_dump($resp);
         if (!empty($resp['errcode']) || empty($resp['openid'])) {
             return ['error' => 1, 'message' => $resp['errmsg'], 'data' => []];
         }
         // 根据openid获取用户信息
         $wxUser = WechatService::getUserInfo($resp['access_token'], $resp['openid']);
-        var_dump($wxUser);die();
         if (!empty($wxUser['errcode']) || empty($wxUser['openid'])) {
             return ['error' => 1, 'message' => $wxUser['errmsg'], 'data' => []];
         }

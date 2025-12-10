@@ -14,7 +14,7 @@ class JWTAuthMiddleware {
     const KEY = 'project-lao-wang'; // 你可以自定义秘钥
 
     const NOT_AUTH = [
-        '/index/login/login',
+        '/index/login/device',
         '/index/login/wechat',
         '/index/configs/index',
         '/index/agreement/index',

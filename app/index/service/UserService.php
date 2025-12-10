@@ -80,7 +80,7 @@ class UserService {
     public static function token($uid): string {
         // 生成 JWT token
         $issuedAt       = time();
-        $expirationTime = $issuedAt + 60 * 24 * 60 * 60;  // 7天后过期
+        $expirationTime = $issuedAt + 60 * 24 * 60 * 60;  // 60天后过期
         $payload        = [
             'iss' => 'lao-wang-publisher-issuer',      // 发行者
             'aud' => 'lao-wang-user-audience',    // 用户

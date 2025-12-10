@@ -3,6 +3,7 @@
 namespace app\index\service;
 
 
+use app\common\model\App;
 use app\common\model\User;
 use app\common\service\WechatService;
 use app\middleware\JWTAuthMiddleware;
@@ -16,6 +17,20 @@ class UserService {
     public static function create($data = []) {
         if (empty($data)) {
             $data = Request::post();
+            // 包ID
+            $data['app_id'] = Request::header('appId');
+            // 设备ID
+            $data['client_id'] = Request::header('deviceNum');
+            // 手机品牌
+            $data['mobile_brand'] = Request::header('mobile_brand');
+            // 手机型号
+            $data['mobile_model'] = Request::header('mobileModel');
+            // 获取package_id
+            $app = App::where(['app_id' => $data['app_id'], 'status' => App::STATUS_NORMAL])->find();
+            if (empty($app)) {
+                return ['error' => 1, 'message' => 'APP ID NOT FOUND', 'data' => []];
+            }
+            $data['package_id'] = $app['id'];
         }
         // 必须要有 client_id 才能进行判断
         if (!empty($data['client_id'])) {
@@ -81,9 +96,7 @@ class UserService {
     /**
      *  微信登录
      *
-     * @param $clientId
-     * @param $appId
-     * @param $code
+     * @param $data
      * @return array
      */
     public static function wechatLogin($data) {
@@ -91,17 +104,12 @@ class UserService {
             return ['error' => 1, 'message' => 'CODE ERROR', 'data' => []];
         }
 
-        $data['app_id'] = Request::header('appId');
-        if (empty($data['app_id'])) {
+        if (empty($data['wx_app_id'])) {
             return ['error' => 1, 'message' => 'APP ID ERROR', 'data' => []];
         }
 
-//        if (empty($data['app_secret'])) {
-//            return ['error' => 1, 'message' => 'CLIENT ID ERROR', 'data' => []];
-//        }
-
         // 根据code获取用户信息
-        $resp = WechatService::getoAuthAccessToken($data['app_id'], $data['code']);
+        $resp = WechatService::getoAuthAccessToken($data['wx_app_id'], $data['code']);
         if (empty($resp['errcode']) || empty($resp['openid'])) {
             return ['error' => 1, 'message' => $resp['errmsg'], 'data' => []];
         }
@@ -111,17 +119,25 @@ class UserService {
             return ['error' => 1, 'message' => $wxUser['errmsg'], 'data' => []];
         }
 
-        $post = Request::post();
         // 判断当前client是否已经注册过
-        $data['openid']       = $wxUser['openid'];
-        $data['avatar']       = $wxUser['headimgurl'];
-        $data['nickname']     = $wxUser['nickname'];
-        $data['app_id']       = $post['app_id'];
-        $data['mobile']       = $post['mobile'];
-        $data['mobile_brand'] = $post['mobile_brand'];
-        $data['mobile_model'] = $post['mobile_model'];
-        $data['package_id']   = $post['package_id'];
-        $data['unionid']      = $wxUser['unionid'] ?? '';
+        $data['openid']   = $wxUser['openid'];
+        $data['avatar']   = $wxUser['headimgurl'];
+        $data['nickname'] = $wxUser['nickname'];
+        // 包ID
+        $data['app_id'] = Request::header('appId');
+        // 设备ID
+        $data['client_id'] = Request::header('deviceNum');
+        // 手机品牌
+        $data['mobile_brand'] = Request::header('mobile_brand');
+        // 手机型号
+        $data['mobile_model'] = Request::header('mobileModel');
+        // 获取package_id
+        $app = App::where(['app_id' => $data['app_id'], 'status' => App::STATUS_NORMAL])->find();
+        if (empty($app)) {
+            return ['error' => 1, 'message' => 'APP ID NOT FOUND', 'data' => []];
+        }
+        $data['package_id'] = $app['id'];
+        $data['unionid']    = $wxUser['unionid'] ?? '';
 
         return self::create($data);
     }

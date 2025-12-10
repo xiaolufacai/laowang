@@ -128,7 +128,7 @@ class UserService {
         // 设备ID
         $data['client_id'] = Request::header('deviceNum');
         // 手机品牌
-        $data['mobile_brand'] = Request::header('mobile_brand');
+        $data['mobile_brand'] = Request::header('mobileBrand');
         // 手机型号
         $data['mobile_model'] = Request::header('mobileModel');
         // 获取package_id

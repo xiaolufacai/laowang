@@ -68,6 +68,7 @@ class WechatService {
         $apiUrl      = 'https://api.weixin.qq.com/sns/userinfo?access_token=' . $accessToken . '&openid=' . $openId . '&lang=zh_CN';
         $curlResult  = CURL::http($apiUrl);
         $resultArray = json_decode($curlResult, true);
+        var_dump($resultArray);
         if (!empty($resultArray['errcode'])) {
             return false;
         }

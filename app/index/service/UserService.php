@@ -115,6 +115,7 @@ class UserService {
         }
         // 根据openid获取用户信息
         $wxUser = WechatService::getUserInfo($resp['access_token'], $resp['openid']);
+        var_dump($wxUser);
         if (!empty($wxUser['errcode']) || empty($wxUser['openid'])) {
             return ['error' => 1, 'message' => $wxUser['errmsg'], 'data' => []];
         }

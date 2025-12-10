@@ -17,14 +17,14 @@ class Login {
      *
      * @return Json
      */
-    public function login(): Json {
+    public function device(): Json {
         $res = UserService::create();
         if ($res['error']) {
             // 返回生成的 token
             return \json(['code' => 1, 'message' => $res['message'], 'data' => $res['data']]);
         }
         $jwt = UserService::token($res['data']['uid']);
-        return \json(['code' => 1, 'message' => $res['message'], 'data' => ['token' => $jwt]]);
+        return \json(['code' => 200, 'message' => $res['message'], 'data' => ['token' => $jwt]]);
     }
 
     /**
@@ -40,6 +40,6 @@ class Login {
             return \json(['code' => 1, 'message' => $res['message'], 'data' => $res['data']]);
         }
         $jwt = UserService::token($res['data']['uid']);
-        return \json(['code' => 1, 'message' => $res['message'], 'data' => ['token' => $jwt]]);
+        return \json(['code' => 200, 'message' => $res['message'], 'data' => ['token' => $jwt]]);
     }
 }

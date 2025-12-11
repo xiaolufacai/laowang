@@ -76,7 +76,7 @@
 					<el-input v-model="ruleForm.wx_id" placeholder="请输入微信APP ID"></el-input>
 				</el-form-item>
 
-				<el-form-item :label="set_secret === 1 ? '微信APP SECRET（已设置）' : '微信APP SECRET'" prop="secret">
+				<el-form-item :label="set_secret === 1 ? '微信APP SECRET' : '微信APP SECRET'" prop="secret">
 					<el-input
 							v-model="ruleForm.secret"
 							:placeholder="set_secret === 1 ? '已设置密钥，如需修改请重新输入' : '请输入微信APP SECRET'"

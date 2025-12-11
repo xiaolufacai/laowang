@@ -29,7 +29,8 @@ class App extends AdminBaseController {
      */
     public function apps(): Json {
         $fields = ['id', 'project', 'user_id', 'name', 'repository', 'package_url', 'ad_id', 'ym_id', 'wx_id', 'app_id', 'description'];
-        $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->field($fields)->select();
+        $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->field($fields)
+            ->fieldRaw('CASE WHEN secret IS NOT NULL AND secret != "" THEN 1 ELSE 0 END as set_secret')->select();
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
     }
 

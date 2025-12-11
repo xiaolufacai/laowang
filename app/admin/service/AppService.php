@@ -17,18 +17,18 @@ class AppService {
             'name'        => 'require',
             'ad_id'       => 'require',
             'app_id'      => 'require',
-            'package_url' => 'require',
-            'repository'  => 'require',
-            'wx_id'       => 'require',
-            'ym_id'       => 'require',
+//            'package_url' => 'require',
+//            'repository'  => 'require',
+//            'wx_id'       => 'require',
+//            'ym_id'       => 'require',
         ])->message([
             'name.require'        => '包名不能为空',
             'ad_id.require'       => '广告ID不能为空',
             'app_id.require'      => 'APP ID不能为空',
-            'package_url.require' => '打包平台地址不能为空',
-            'repository.require'  => 'coding仓库地址不能为空',
-            'ym_id.require'       => '友盟id不能为空',
-            'wx_id.require'       => '微信id不能为空',
+//            'package_url.require' => '打包平台地址不能为空',
+//            'repository.require'  => 'coding仓库地址不能为空',
+//            'ym_id.require'       => '友盟id不能为空',
+//            'wx_id.require'       => '微信id不能为空',
         ]);
 
         if (!$validate->check($data)) {
@@ -48,21 +48,21 @@ class AppService {
         $validate = Validate::rule([
             'id'          => 'require',
             'name'        => 'require',
-            'ad_id'       => 'require',
+//            'ad_id'       => 'require',
             'app_id'      => 'require',
-            'package_url' => 'require',
-            'repository'  => 'require',
-            'wx_id'       => 'require',
-            'ym_id'       => 'require',
+//            'package_url' => 'require',
+//            'repository'  => 'require',
+//            'wx_id'       => 'require',
+//            'ym_id'       => 'require',
         ])->message([
             'id.require'          => 'ID 错误',
             'name.require'        => '包名不能为空',
-            'ad_id.require'       => '广告ID不能为空',
+//            'ad_id.require'       => '广告ID不能为空',
             'app_id.require'      => 'APP ID不能为空',
-            'package_url.require' => '打包平台地址不能为空',
-            'repository.require'  => 'coding仓库地址不能为空',
-            'ym_id.require'       => '友盟id不能为空',
-            'wx_id.require'       => '微信id不能为空',
+//            'package_url.require' => '打包平台地址不能为空',
+//            'repository.require'  => 'coding仓库地址不能为空',
+//            'ym_id.require'       => '友盟id不能为空',
+//            'wx_id.require'       => '微信id不能为空',
         ]);
 
         if (!$validate->check($data)) {

@@ -24,6 +24,7 @@ class Login {
             return \json(['code' => 1, 'message' => $res['message'], 'data' => $res['data']]);
         }
         $jwt = UserService::token($res['data']['uid']);
+        UserService::setLoginType($res['data']['uid'], UserService::CLIENT_ID_LOGIN);
         return \json(['code' => 200, 'message' => $res['message'], 'data' => ['token' => $jwt]]);
     }
 
@@ -40,6 +41,7 @@ class Login {
             return \json(['code' => 1, 'message' => $res['message'], 'data' => $res['data']]);
         }
         $jwt = UserService::token($res['data']['uid']);
+        UserService::setLoginType($res['data']['uid'], UserService::WECHAT_LOGIN);
         return \json(['code' => 200, 'message' => $res['message'], 'data' => ['token' => $jwt]]);
     }
 }

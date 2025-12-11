@@ -9,9 +9,9 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\facade\Db;
+use think\model\contract\Modelable;
 
 class UserService {
-
 
     /**
      * 查询用户列表
@@ -74,5 +74,6 @@ class UserService {
         if ($user->save()) {
             return ['error' => 0, 'message' => '会员设置成功', 'data' => []];
         }
-        return ['error' => 1, 'message' => '会员设置失败', 'data' => []];    }
+        return ['error' => 1, 'message' => '会员设置失败', 'data' => []];
+    }
 }

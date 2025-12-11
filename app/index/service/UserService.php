@@ -11,8 +11,23 @@ use Firebase\JWT\JWT;
 use think\db\exception\DbException;
 use think\facade\Db;
 use think\facade\Request;
+use think\model\contract\Modelable;
 
 class UserService {
+
+    /**
+     *  设备号登录
+     */
+    const CLIENT_ID_LOGIN = 1;
+    /**
+     *  微信登录
+     */
+    const WECHAT_LOGIN    = 2;
+
+    /**
+     *  手机号登录
+     */
+    const MOBILE_LOGIN    = 3;
 
     public static function create($data = []) {
         if (empty($data)) {
@@ -142,5 +157,17 @@ class UserService {
         $data['unionid']    = $wxUser['unionid'] ?? '';
 
         return self::create($data);
+    }
+
+
+    /**
+     *  更新用户登录方式
+     *
+     * @param $userId
+     * @param $loginType
+     * @return Modelable
+     */
+    public static function setLoginType($userId, $loginType): Modelable {
+        return User::update(['login_type' => $loginType], ['id' => $userId]);
     }
 }

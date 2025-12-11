@@ -42,7 +42,7 @@ class JWTAuthMiddleware {
             // 将解码后的信息放入请求中，方便后续使用
             $request->user = (array)$decoded;
         } catch (\Exception $e) {
-            return json(['code' => -2, 'message' => '登陆超时', 'data' => (object)[]]);
+            return json(['code' => -1, 'message' => '登陆超时', 'data' => (object)[]]);
         }
 
         return $next($request);

@@ -131,6 +131,8 @@ class UserService {
         $data['mobile_brand'] = Request::header('mobileBrand');
         // 手机型号
         $data['mobile_model'] = Request::header('mobileModel');
+        // 渠道
+        $data['channel'] = Request::header('channel');
         // 获取package_id
         $app = App::where(['app_id' => $data['app_id'], 'status' => App::STATUS_NORMAL])->find();
         if (empty($app)) {

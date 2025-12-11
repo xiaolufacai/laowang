@@ -87,7 +87,7 @@ class AppService {
      * @param $id
      */
     public static function appData($id) {
-        return App::where(['id' => $id])->fieldRaw('CASE WHEN secret IS NOT NULL AND secret != "" THEN 1 ELSE 0 END as set_secret')->find()->toArray();
+        return App::where(['id' => $id])->withoutField('secret')->fieldRaw('CASE WHEN secret IS NOT NULL AND secret != "" THEN 1 ELSE 0 END as set_secret')->find()->toArray();
     }
 
     /**

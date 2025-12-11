@@ -76,8 +76,16 @@
 					<el-input v-model="ruleForm.wx_id" placeholder="请输入微信APP ID"></el-input>
 				</el-form-item>
 
-				<el-form-item label="APP SECRET" prop="wx_id">
-					<el-input v-model="ruleForm.secret" placeholder="请输入APP SECRET"></el-input>
+				<el-form-item label="微信APP SECRET" prop="secret">
+					<el-input v-model="ruleForm.secret" placeholder="请输入微信APP SECRET"></el-input>
+				</el-form-item>
+
+				<el-form-item label="APP签名" prop="app_sign">
+					<el-input v-model="ruleForm.secret" placeholder="请输入APP签名"></el-input>
+				</el-form-item>
+
+				<el-form-item label="SHA1" prop="sha1">
+					<el-input v-model="ruleForm.sha1" placeholder="请输入SHA1"></el-input>
 				</el-form-item>
 
 				<!-- 富文本 -->
@@ -111,6 +119,8 @@
 		wx_id: '',
 		secret: '',
 		app_id: '',
+		app_sign: '',
+		sha1: '',
 		description: ''
 	}
 	const _initForm = Object.assign({}, initForm);
@@ -129,7 +139,9 @@
 					'广告ID': "",
 					'友盟ID': "",
 					'微信APP ID': "",
-					'APP ID': ""
+					'APP ID': "",
+					'APP签名':'',
+					'SHA1':''
 				},
 
 				ruleForm: { ...initForm },
@@ -253,7 +265,9 @@
 						'广告ID': value.ad_id,
 						'友盟ID': value.ym_id,
 						'微信APP ID': value.wx_id,
-						'APP ID': value.app_id
+						'APP ID': value.app_id,
+						'APP签名': value.app_sign,
+						'SHA1': value.sha1
 					};
 				}
 			},
@@ -301,6 +315,8 @@
 						ym_id: data.ym_id,
 						wx_id: data.wx_id,
 						app_id: data.app_id,
+						app_sign: data.app_sign,
+						sha1: data.sha1,
 						description: data.description
 					};
 

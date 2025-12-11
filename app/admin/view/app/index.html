@@ -124,7 +124,6 @@
 		app_id: '',
 		app_sign: '',
 		sha1: '',
-		set_secret: 0,
 		description: ''
 	}
 	const _initForm = Object.assign({}, initForm);
@@ -165,7 +164,7 @@
 				editor: null,
 				formVisible: false,
 				editMode: 'add',  // add / edit
-
+				set_secret: 0,
 				apps: [],
 			}
 		},
@@ -321,9 +320,9 @@
 						app_id: data.app_id,
 						app_sign: data.app_sign,
 						sha1: data.sha1,
-						set_secret: data.set_secret,
 						description: data.description
 					};
+					this.set_secret = data.set_secret
 
 					// 打开编辑弹窗
 					this.openFormModal('edit');

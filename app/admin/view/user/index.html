@@ -144,7 +144,7 @@
 							if (response.data.code === 0) {
 								_this.apps = data;
 								if (_this.apps.length > 0) {
-									_this.formInline.app = _this.apps[0].id;
+									_this.formInline.app = _this.apps[0].app_id;
 									_this.getAppOrders(_this.formInline.app, '', _this.currentPage);
 								}
 							}

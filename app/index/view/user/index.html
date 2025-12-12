@@ -125,7 +125,7 @@
                         } else {
                             _this.apps = data;
                             if (_this.apps.length > 0) {
-                                _this.formInline.app = _this.apps[0].id; // 默认选择第一个APP
+                                _this.formInline.app = _this.apps[0].app_id; // 默认选择第一个APP
                                 this.getAppOrders(_this.formInline.app, '', this.currentPage); // 默认加载订单列表
                             }
                         }

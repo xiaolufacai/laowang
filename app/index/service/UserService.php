@@ -50,12 +50,12 @@ class UserService {
         // 必须要有 client_id 才能进行判断
         if (!empty($data['client_id'])) {
             // 查找是否已经存在该 client_id 的记录
-            $user = User::where(['client_id' => $data['client_id'], 'app_id' => $data['app_id']])->find();
+            $user = User::where(['client_id' => $data['client_id'], 'app_id' => $data['package_id']])->find();
 
             if ($user) {
                 // 判断当前client_id是否使用微信登录，如果是则查询同一个APP ID下最先使用微信登录的openid 为主账号
                 if (!empty($user->openid)) {
-                    $user = User::where(['app_id' => $data['app_id'], 'openid' => $user->openid, 'status' => 0])->order('id asc')->find();
+                    $user = User::where(['name' => $data['app_id'], 'openid' => $user->openid, 'status' => 0])->order('id asc')->find();
                 } else {
                     // 如果记录存在，遍历数据并更新变化的字段
                     $updateData = [];

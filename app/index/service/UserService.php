@@ -41,7 +41,7 @@ class UserService {
             // 手机型号
             $data['mobile_model'] = Request::header('mobileModel');
             // 获取package_id
-            $app = App::where(['app_id' => $data['app_id'], 'status' => App::STATUS_NORMAL])->find();
+            $app = App::where(['name' => $data['app_id'], 'status' => App::STATUS_NORMAL])->find();
             if (empty($app)) {
                 return ['error' => 1, 'message' => 'APP ID NOT FOUND', 'data' => []];
             }

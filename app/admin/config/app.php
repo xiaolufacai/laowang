@@ -5,7 +5,6 @@ $channels = [
     'vivo'    => 'VIVO',
     'huawei'  => '华为',
     'xiaomi'  => '小米',
-    'yyb'     => '应用宝',
     'test'    => 'Test渠道',
     'qq'      => '应用宝',
     'baidu'   => '百度',

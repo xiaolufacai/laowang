@@ -11,6 +11,9 @@ $channels = [
     'baidu'   => '百度',
     'toutiao' => '头条',
     'honor'   => '荣耀',
+    'cool'    => '酷安',
+    'oneplus' => '一加',
+    'other'   => '其他',
 ];
 // 会员
 $vips = [

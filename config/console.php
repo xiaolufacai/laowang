@@ -5,5 +5,6 @@
 return [
     // 指令定义
     'commands' => [
+        'pk' => \app\command\Pk::class
     ],
 ];

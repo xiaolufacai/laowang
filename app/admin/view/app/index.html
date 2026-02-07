@@ -1,214 +1,348 @@
 {include file="/layout/header" /}
 
+<!-- wangEditor v4 -->
+<script src="/static/admin/js/wangEditor.min.js"></script>
+
 <div id="app" style="background-color: #ffffff">
-    <el-container>
-        <el-header style="text-align: right; font-size: 12px">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                <el-form-item>
-                    <el-select v-model="formInline.app" @change="select" placeholder="APP">
-                        <el-option
-                                v-for="(item,index) in apps"
-                                :key="index"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button @click="openFormModal">新增应用</el-button>
-                </el-form-item>
-            </el-form>
-        </el-header>
+	<el-container>
+		<el-header style="text-align: right; font-size: 12px">
+			<el-form :inline="true" :model="formInline" class="demo-form-inline">
+				<el-form-item>
+					<el-select v-model="formInline.app" @change="select" placeholder="APP">
+						<el-option
+								v-for="(item,index) in apps"
+								:key="index"
+								:label="item.project"
+								:value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<el-button @click="openFormModal('add')">新增应用</el-button>
+				</el-form-item>
+			</el-form>
+		</el-header>
 
-        <el-main>
-            <el-table :data="transformedData" border :show-header="false">
-                <el-table-column prop="field" width="200">
-                    <template #default="scope">
-                        <div class="cell">{{ scope.row.field }}</div>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="value">
-                    <template #default="scope">
-                        <div class="cell">{{ scope.row.value }}</div>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </el-main>
+		<el-main>
+			<el-table :data="transformedData" border :show-header="false">
+				<el-table-column prop="field" width="200">
+					<template #default="scope">
+						<div class="cell">{{ scope.row.field }}</div>
+					</template>
+				</el-table-column>
+				<el-table-column prop="value">
+					<template #default="scope">
+						<div class="cell">{{ scope.row.value }}</div>
+					</template>
+				</el-table-column>
+			</el-table>
+			<el-button type="danger" class="delete-app" @click="deleteApp">删除</el-button>
+			<el-button type="success" class="edit" @click="editApp">编辑</el-button>
+		</el-main>
 
-        <!-- Form Modal -->
-        <el-dialog :visible.sync="formVisible" title="新增应用" width="60%">
-            <el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
-                <el-form-item label="包名称" prop="name">
-                    <el-input v-model="ruleForm.name" placeholder="请输入包名称"></el-input>
-                </el-form-item>
-                <el-form-item label="仓库地址" prop="repository">
-                    <el-input v-model="ruleForm.repository" placeholder="请输入仓库地址"></el-input>
-                </el-form-item>
-                <el-form-item label="打包平台地址" prop="package_url">
-                    <el-input v-model="ruleForm.package_url" placeholder="请输入打包平台地址"></el-input>
-                </el-form-item>
-                <el-form-item label="广告ID" prop="ad_id">
-                    <el-input v-model="ruleForm.ad_id" type="textarea" rows="4"  placeholder="请输入广告ID"></el-input>
-                </el-form-item>
-                <el-form-item label="友盟ID" prop="ym_id">
-                    <el-input v-model="ruleForm.ym_id" placeholder="请输入友盟ID"></el-input>
-                </el-form-item>
-                <el-form-item label="微信ID" prop="wx_id">
-                    <el-input v-model="ruleForm.wx_id" placeholder="请输入微信ID"></el-input>
-                </el-form-item>
-                <el-form-item label="APP ID" prop="app_id">
-                    <el-input v-model="ruleForm.app_id" placeholder="请输入APP ID"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button @click="formVisible = false">取消</el-button>
-                    <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-    </el-container>
+		<!-- Form Modal -->
+		<el-dialog :visible.sync="formVisible" title="新增应用" width="60%">
+			<el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
+				<el-form-item label="项目名" prop="project">
+					<el-input v-model="ruleForm.project" placeholder="请输入项目名"></el-input>
+				</el-form-item>
+
+				<el-form-item label="包名称" prop="name">
+					<el-input v-model="ruleForm.name" placeholder="请输入包名称"></el-input>
+				</el-form-item>
+
+				<el-form-item label="APP ID" prop="app_id">
+					<el-input v-model="ruleForm.app_id" placeholder="请输入APP ID"></el-input>
+				</el-form-item>
+
+
+				<el-form-item label="仓库地址" prop="repository">
+					<el-input v-model="ruleForm.repository" placeholder="请输入仓库地址"></el-input>
+				</el-form-item>
+
+				<el-form-item label="打包平台地址" prop="package_url">
+					<el-input v-model="ruleForm.package_url" placeholder="请输入打包平台地址"></el-input>
+				</el-form-item>
+
+				<el-form-item label="广告ID" prop="ad_id">
+					<el-input v-model="ruleForm.ad_id" type="textarea" rows="4" placeholder="请输入广告ID"></el-input>
+				</el-form-item>
+
+				<el-form-item label="友盟ID" prop="ym_id">
+					<el-input v-model="ruleForm.ym_id" placeholder="请输入友盟ID"></el-input>
+				</el-form-item>
+
+				<el-form-item label="微信APP ID" prop="wx_id">
+					<el-input v-model="ruleForm.wx_id" placeholder="请输入微信APP ID"></el-input>
+				</el-form-item>
+
+				<el-form-item :label="set_secret === 1 ? '微信APP SECRET' : '微信APP SECRET'" prop="secret">
+					<el-input
+							v-model="ruleForm.secret"
+							:placeholder="set_secret === 1 ? '已设置微信APP SECRET，如需修改请重新输入' : '请输入微信APP SECRET'"
+					></el-input>
+				</el-form-item>
+
+				<el-form-item label="APP签名" prop="app_sign">
+					<el-input v-model="ruleForm.secret" placeholder="请输入APP签名"></el-input>
+				</el-form-item>
+
+				<el-form-item label="SHA1" prop="sha1">
+					<el-input v-model="ruleForm.sha1" placeholder="请输入SHA1"></el-input>
+				</el-form-item>
+
+				<!-- 富文本 -->
+				<el-form-item label="APP 描述" prop="description">
+					<div id="editor" style="border:1px solid #dcdfe6; border-radius:4px;"></div>
+				</el-form-item>
+
+				<el-form-item>
+					<el-button @click="formVisible = false">取消</el-button>
+					<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
+	</el-container>
 </div>
 
 <style>
-    .diy-el-form {
-        background-color: #fff;
-    }
-    .demo-form-inline {
-        margin-top: 10px;
-    }
-    .el-header {
-        background-color: #e7ebf0;
-        color: #333;
-        line-height: 60px;
-    }
-    .el-aside {
-        color: #333;
-    }
+	.demo-form-inline { margin-top: 10px; }
+	.el-header { background-color: #e7ebf0; color: #333; line-height: 60px; }
+	.delete-app { margin-top: 10px; }
 </style>
 
 <script type="module">
+	const initForm = {
+		project: '',
+		name: '',
+		repository: '',
+		package_url: '',
+		ad_id: '',
+		ym_id: '',
+		wx_id: '',
+		secret: '',
+		app_id: '',
+		app_sign: '',
+		sha1: '',
+		description: ''
+	}
+	const _initForm = Object.assign({}, initForm);
+	Object.freeze(_initForm);
 
-    const initForm = {
-        name: '',
-        repository: '',
-        package_url: '',
-        ad_id: '',
-        ym_id: '',
-        wx_id: '',
-        app_id: ''
-    }
-    const _initForm = Object.assign({}, initForm);
-    Object.freeze(_initForm);
+	var Main = {
+		data() {
+			return {
+				formInline: { app: '' },
 
-    var Main = {
-        data() {
-            return {
-                formInline: {
-                    app: {}
-                },
-                tableObject: {
-                    '包名': '',
-                    'coding仓库地址': "",
-                    '打包平台地址': "",
-                    '广告id': "",
-                    '友盟id': "",
-                    '微信id': "",
-                    'appld': ""
-                },
-                ruleForm: initForm,
-                rules: {
-                    name: [{ required: true, message: '请输入包名称', trigger: 'change' }],
-                    repository: [{ required: true, message: '请输入仓库地址', trigger: 'change' }],
-                    package_url: [{ required: true, message: '请输入打包平台地址', trigger: 'change' }],
-                    ad_id: [{ required: true, message: '请输入广告ID', trigger: 'change' }],
-                    ym_id: [{ required: true, message: '请输入友盟ID', trigger: 'change' }],
-                    wx_id: [{ required: true, message: '请输入微信ID', trigger: 'change' }],
-                    app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }]
-                },
-                formVisible: false,
-                apps: [],
-            }
-        },
-        created: function () {
-            // 获取所有APP
-            this.getApps()
-        },
-        methods: {
-            openFormModal() {
-                this.formVisible = true;
-            },
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        axios.post('/admin/app/add', this.ruleForm)
-                            .then(response => {
-                                this.$message.success('应用新增成功!');
-                                this.formVisible = false;
-                                this.ruleForm = {..._initForm}
-                                this.$refs[formName].resetFields();
-                                this.getApps();
-                            })
-                            .catch(error => {
-                                this.$message.error('提交失败');
-                            });
-                    } else {
-                        this.$message.error('表单验证失败，请检查输入的内容');
-                        return false;
-                    }
-                });
-            },
-            getApps() {
-                let _this = this
-                axios.get('/admin/app/apps', {})
-                    .then(response => {
-                        const data = response.data.data
-                        const code = response.data.code
-                        if (code !== 0) {
-                            _this.apps = [];
-                        } else {
-                            _this.apps = data;
-                            if (_this.apps.length > 0) {
-                                // 设置默认选择的应用
-                                let index = _this.apps.length - 1
-                                _this.formInline.app = _this.apps[index];
-                                _this.select(_this.apps[index].id);
-                            }
-                        }
-                    })
-                    .catch(function (error) {
-                        _this.$message({
-                            message: '数据获取失败',
-                            type: 'error'
-                        });
-                    })
-            },
-            select(id) {
-                let value = this.apps.find(item => item.id === id);
-                // 当选择的app发生变化时，更新tableObject
-                if (value) {
-                    // 假设选择的app对象中包含了更新tableObject所需的字段
-                    this.tableObject = {
-                        '包名': value.name,  // 根据你的app数据调整字段
-                        'coding仓库地址': value.repository,
-                        '打包平台地址': value.package_url,
-                        '广告ID': value.ad_id,
-                        '友盟ID': value.ym_id,
-                        '微信ID': value.wx_id,
-                        'APP ID': value.app_id
-                    };
-                }
-            }
-        },
-        computed: {
-            transformedData() {
-                return Object.keys(this.tableObject).map(key => ({
-                    field: key,
-                    value: this.tableObject[key]
-                }));
-            }
-        }
-    }
-    var Ctor = Vue.extend(Main)
-    new Ctor().$mount('#app')
+				tableObject: {
+					'包名': '',
+					'项目名': '',
+					'coding仓库地址': "",
+					'打包平台地址': "",
+					'广告ID': "",
+					'友盟ID': "",
+					'微信APP ID': "",
+					'APP ID': "",
+					'APP签名':'',
+					'SHA1':''
+				},
+
+				ruleForm: { ...initForm },
+				rules: {
+					project: [{ required: true, message: '请输入项目名', trigger: 'change' }],
+					app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }],
+					name: [{ required: true, message: '请输入包名称', trigger: 'change' }],
+					repository: [{ required: true, message: '请输入仓库地址', trigger: 'change' }],
+					package_url: [{ required: false, message: '请输入打包平台地址', trigger: 'change' }],
+					ad_id: [{ required: true, message: '请输入广告ID', trigger: 'change' }],
+					ym_id: [{ required: true, message: '请输入友盟ID', trigger: 'change' }],
+					wx_id: [{ required: false, message: '请输入微信APP ID', trigger: 'change' }],
+					secret: [{ required: false, message: '请输入secret', trigger: 'change' }],
+					description: [{ required: false, message: '请输入APP描述', trigger: 'blur' }]
+				},
+
+				editor: null,
+				formVisible: false,
+				editMode: 'add',  // add / edit
+				set_secret: 0,
+				apps: [],
+			}
+		},
+
+		created() {
+			this.getApps();
+		},
+
+		methods: {
+			/** ---------------- 新增 or 编辑 打开表单 ---------------- */
+			openFormModal(mode = 'add') {
+				this.editMode = mode;
+				if (mode === 'add') {
+					this.ruleForm = { ..._initForm };
+				} else {
+					this.ruleForm.id = this.formInline.app;
+				}
+
+				this.formVisible = true;
+
+				this.$nextTick(() => {
+					if (this.editor) {
+						this.editor.destroy();
+						this.editor = null;
+					}
+
+					const E = window.wangEditor;
+					this.editor = new E('#editor');
+					this.editor.config.onchange = html => {
+						this.ruleForm.description = html;
+					}
+					this.editor.create();
+
+					if (mode === 'edit') {
+						this.editor.txt.html(this.ruleForm.description);
+					}
+				})
+			},
+
+			/** ---------------- 提交表单（新增 / 编辑） ---------------- */
+			submitForm(formName) {
+				this.ruleForm.description = this.editor.txt.html();
+				this.$refs[formName].validate(valid => {
+					if (!valid) {
+						return this.$message.error('表单验证失败，请检查内容');
+					}
+
+					let url = this.editMode === 'add'
+							? '/admin/app/add'
+							: '/admin/app/update';
+
+					axios.post(url, this.ruleForm)
+							.then(res => {
+								if (res.data.code === 0) {
+									this.$message.success(this.editMode === 'add' ? '新增成功!' : '修改成功!');
+
+									this.formVisible = false;
+									this.editor && this.editor.destroy();
+									this.ruleForm = { ..._initForm };
+									this.$refs[formName].resetFields();
+
+									this.getApps();
+								} else {
+									this.$message.error(res.data.msg || '操作失败');
+								}
+							})
+				});
+			},
+
+			/** ---------------- 读取 APP 列表 ---------------- */
+			getApps() {
+				axios.get('/admin/app/apps')
+						.then(res => {
+							const data = res.data.data;
+							const code = res.data.code;
+
+							if (code !== 0) {
+								this.apps = [];
+								return;
+							}
+
+							this.apps = data;
+
+							if (this.apps.length > 0) {
+								let index = this.apps.length - 1;
+								this.formInline.app = this.apps[index].id;
+								this.select(this.apps[index].id);
+							}
+						});
+			},
+
+			/** ---------------- 切换 APP 显示详情 ---------------- */
+			select(id) {
+				let value = this.apps.find(item => item.id === id);
+				if (value) {
+					this.tableObject = {
+						'包名': value.name,
+						'项目名': value.project,
+						'coding仓库地址': value.repository,
+						'打包平台地址': value.package_url,
+						'广告ID': value.ad_id,
+						'友盟ID': value.ym_id,
+						'微信APP ID': value.wx_id,
+						'APP ID': value.app_id,
+						'APP签名': value.app_sign,
+						'SHA1': value.sha1
+					};
+				}
+			},
+
+			/** ---------------- 获取某 APP（编辑用） ---------------- */
+			getAppData(id) {
+				return axios.get('/admin/app/app', { params: { id } })
+						.then(res => {
+							if (res.data.code !== 0) {
+								this.$message.error('获取 APP 失败');
+								return null;
+							}
+							return res.data.data;
+						});
+			},
+
+			/** ---------------- 删除 ---------------- */
+			deleteApp() {
+				axios.post('/admin/app/delete', { id: this.formInline.app })
+						.then(res => {
+							if (res.data.code === 0) {
+								this.$message.success('删除成功!');
+								this.getApps();
+							} else {
+								this.$message.error('删除失败!');
+							}
+						})
+			},
+
+			/** ---------------- 编辑 ---------------- */
+			editApp() {
+				let id = this.formInline.app;
+				if (!id) return this.$message.error("请选择 APP");
+
+				this.getAppData(id).then(data => {
+					if (!data) return;
+
+					// 填充表单
+					this.ruleForm = {
+						project: data.project,
+						name: data.name,
+						repository: data.repository,
+						package_url: data.package_url,
+						ad_id: data.ad_id,
+						ym_id: data.ym_id,
+						wx_id: data.wx_id,
+						app_id: data.app_id,
+						app_sign: data.app_sign,
+						sha1: data.sha1,
+						description: data.description
+					};
+					this.set_secret = data.set_secret
+
+					// 打开编辑弹窗
+					this.openFormModal('edit');
+				});
+			}
+		},
+
+		computed: {
+			transformedData() {
+				return Object.keys(this.tableObject).map(key => ({
+					field: key,
+					value: this.tableObject[key]
+				}));
+			}
+		}
+	};
+
+	var Ctor = Vue.extend(Main)
+	new Ctor().$mount('#app')
 </script>
+
 
 {include file="/layout/footer" /}

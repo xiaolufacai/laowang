@@ -1,0 +1,382 @@
+{include file="/layout/header" /}
+
+<div id="app" style="background-color: #ffffff">
+	<el-container>
+		<el-header style="text-align: right; font-size: 12px">
+			<el-form :inline="true" :model="formInline" class="demo-form-inline">
+				<el-form-item>
+					<el-select v-model="formInline.channel" @change="select" placeholder="渠道">
+						<el-option
+								v-for="(item,index) in channels"
+								:key="index"
+								:label="item"
+								:value="index">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<el-select v-model="formInline.app_id" @change="select" placeholder="APP">
+						<el-option
+								v-for="(item,index) in apps"
+								:key="index"
+								:label="item.project"
+								:value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<el-button @click="handleAdd">新增配置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-header>
+
+		<el-main>
+			<el-table
+					:data="tableData"
+					border
+					style="width: 1102px">
+				<el-table-column
+						align="center"
+						prop="id"
+						label="编号"
+						width="150">
+				</el-table-column>
+				<el-table-column
+						align="center"
+						prop="key"
+						label="键名"
+						width="150">
+				</el-table-column>
+				<el-table-column
+						align="center"
+						prop="value"
+						label="键值"
+						width="150">
+				</el-table-column>
+				<el-table-column
+						align="center"
+						prop="channel"
+						label="渠道"
+						width="150">
+				</el-table-column>
+				<el-table-column
+						align="center"
+						prop="description"
+						label="说明"
+						width="300">
+				</el-table-column>
+				<el-table-column align="center" label="操作">
+					<template slot-scope="scope">
+						<el-button
+								size="mini"
+								type="danger"
+								@click="handleDelete(scope.$index, scope.row)">删除
+						</el-button>
+						<el-button
+								size="mini"
+								@click="handleEdit(scope.$index, scope.row)">编辑
+						</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+
+			<!-- Pagination -->
+			<el-pagination class="el-pagination-page"
+			               v-if="totalItems > 0"
+			               @current-change="handlePageChange"
+			               :current-page="currentPage"
+			               :page-size="pageSize"
+			               :total="totalItems"
+			               layout="total, prev, pager, next, jumper">
+			</el-pagination>
+		</el-main>
+
+		<!-- Form Modal -->
+		<el-dialog :visible.sync="formVisible" title="新增配置" width="40%">
+			<el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
+				<el-form-item label="渠道" prop="channel">
+					<el-select v-model="ruleForm.channel" placeholder="渠道">
+						<el-option
+								v-for="(index, key) in channels"
+								:key="key"
+								:label="index"
+								:value="key">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="包" prop="app_id">
+					<el-select v-model="ruleForm.app_id" placeholder="包">
+						<el-option
+								v-for="(item, index) in apps"
+								:key="item.id"
+								:label="item.project"
+								:value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="键名" prop="key">
+					<el-input v-model="ruleForm.key" placeholder="请输入键名"></el-input>
+				</el-form-item>
+				<el-form-item label="键值" prop="value">
+					<el-input v-model="ruleForm.value" placeholder="请输入键值"></el-input>
+				</el-form-item>
+				<el-form-item label="说明" prop="description">
+					<el-input v-model="ruleForm.description" placeholder="请输选择说明"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button @click="handleCancel">取消</el-button>
+					<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
+	</el-container>
+</div>
+
+<style>
+	.diy-el-form {
+		background-color: #fff;
+	}
+
+	.demo-form-inline {
+		margin-top: 10px;
+	}
+
+	.el-header {
+		background-color: #e7ebf0;
+		color: #333;
+		line-height: 60px;
+	}
+
+	.el-aside {
+		color: #333;
+	}
+
+	.el-pagination-page {
+		margin-top: 10px;
+	}
+</style>
+
+<script type="module">
+
+	const initForm = {
+		channel: '',
+		key: '',
+		value: '',
+		id: 0,
+		description: '',
+	}
+	const _initForm = Object.assign({}, initForm);
+	Object.freeze(_initForm);
+
+	var Main = {
+		data() {
+			return {
+				formInline: {
+					channel: '',
+					app_id: ''
+				},
+				ruleForm: initForm,
+				rules: {
+					vip: [{required: true, message: '请选择渠道', trigger: 'change'}],
+					new_price: [{required: true, message: '请输入现价', trigger: 'change'}],
+					old_price: [{required: true, message: '请输入原价', trigger: 'change'}],
+					corner_text: [{required: true, message: '请输入角标文案', trigger: 'change'}]
+				},
+				formVisible: false,
+				configs: [],
+				channels: [],
+				tableData: [
+					//     {
+					//     channel: 'APPLE',
+					//     version_no: 1,
+					//     version_name: '1.0.012',
+					//     list: '上架',
+					//     status: '通过',
+					// }
+				],
+				currentPage: 1,
+				pageSize: 10,
+				totalItems: 0,
+				apps: [],
+			}
+		},
+		created: function () {
+			// 获取所有渠道
+			this.getChannels()
+			this.getConfigs()
+			this.getApps()
+		},
+		methods: {
+			handlePageChange(page) {
+				// 分页改变时获取新页面的数据
+				this.currentPage = page;
+				this.getConfigs(this.formInline.channel, this.formInline.app_id, page);
+			},
+			handleEdit(index, obj) {
+				console.log(obj)
+				this.formVisible = true;
+				this.getChannels()
+				this.ruleForm.key = obj.key
+				this.ruleForm.id = obj.id
+				this.ruleForm.app_id = obj.app_id
+				this.ruleForm.value = obj.value
+				this.ruleForm.channel = obj.channel
+				this.ruleForm.description = obj.description
+			},
+			handleAdd() {
+				this.formVisible = true;
+				this.getChannels()
+			},
+			handleCancel() {
+				this.formVisible = false; // 关闭表单弹窗
+				this.ruleForm = {...initForm};  // 重置 ruleForm 为初始值
+				console.log(this.ruleForm)
+				this.$refs['ruleForm'].resetFields(); // 清空表单字段
+			},
+			submitForm(formName) {
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						axios.post('/admin/configs/add', this.ruleForm)
+								.then(response => {
+									const data = response.data;
+									const code = data.code;
+									if (code === 0) {
+										this.$message.success('新增成功!');
+										this.formVisible = false;
+										this.ruleForm = {..._initForm}
+										this.$refs[formName].resetFields();
+										this.getConfigs();
+									} else {
+										this.$message.error(data.message);
+									}
+
+								})
+								.catch(error => {
+									this.$message.error('提交失败');
+								});
+					} else {
+						this.$message.error('表单验证失败，请检查输入的内容');
+						return false;
+					}
+				});
+			},
+			getConfigs(channel, appId, page) {
+				let _this = this;
+				axios.get('/admin/configs/configs', {
+					params: {
+						channel: channel,
+						app_id: appId,
+						page: page,
+						page_size: _this.pageSize
+					}
+				})
+						.then(response => {
+							const data = response.data.data
+							const code = response.data.code
+							if (code !== 0) {
+								_this.configs = [];
+								_this.totalItems = 0
+							} else {
+								_this.configs = data.data;
+							}
+							console.log(_this.configs)
+							_this.tableData = _this.configs
+							_this.totalItems = data.total;
+						})
+						.catch(function (error) {
+							_this.$message({
+								message: '数据获取失败',
+								type: 'error'
+							});
+						})
+			},
+			getApps() {
+				let _this = this
+				axios.get('/admin/app/apps', {})
+						.then(response => {
+							const data = response.data.data
+							const code = response.data.code
+							if (code !== 0) {
+								_this.apps = [];
+							} else {
+								_this.apps = data;
+								if (_this.apps.length > 0) {
+									// 设置默认选择的应用
+									let index = _this.apps.length - 1
+									_this.formInline.app = _this.apps[index];
+									_this.select(_this.apps[index].id);
+								}
+							}
+						})
+						.catch(function (error) {
+							_this.$message({
+								message: '数据获取失败',
+								type: 'error'
+							});
+						})
+			},
+			getChannels() {
+				let _this = this
+				axios.get('/admin/app/channels', {})
+						.then(response => {
+							const data = response.data.data
+							const code = response.data.code
+							if (code !== 0) {
+								_this.channels = [];
+							} else {
+								_this.channels = data;
+							}
+						})
+						.catch(function (error) {
+							_this.$message({
+								message: '数据获取失败',
+								type: 'error'
+							});
+						})
+			},
+			select(id) {
+				// this.channels(id)
+				// this.ruleForm.app_id = id;
+				// this.getAppVips(id)
+				this.getConfigs(this.formInline.channel, this.formInline.app_id, this.currentPage);
+			},
+
+			handleDelete(index, row) {
+				// 弹出确认框
+				this.$confirm('是否确认删除该记录?', '提示', {
+					confirmButtonText: '删除',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					// 执行删除操作
+					this.deleteRecord(row);  // 假设 row.id 是记录的唯一标识
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});
+				});
+			},
+			// 删除记录
+			deleteRecord(obj) {
+				axios.post('/admin/configs/delete', {id: obj.id})
+						.then(response => {
+							if (response.data.code === 0) {
+								this.$message.success('删除成功!');
+								// 刷新表格数据
+								this.getConfigs(this.formInline.channel, this.formInline.app_id);
+							} else {
+								this.$message.error('删除失败!');
+							}
+						})
+						.catch(error => {
+							this.$message.error('网络错误，请稍后重试');
+						});
+			},
+		}
+	}
+	var Ctor = Vue.extend(Main)
+	new Ctor().$mount('#app')
+</script>
+
+{include file="/layout/footer" /}

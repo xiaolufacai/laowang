@@ -11,34 +11,69 @@ use think\db\exception\ModelNotFoundException;
 use think\facade\Config;
 use  \think\facade\Validate;
 
-class AppService
-{
-    public static function add($data)
-    {
+class AppService {
+    public static function add($data) {
         $validate = Validate::rule([
             'name'        => 'require',
             'ad_id'       => 'require',
             'app_id'      => 'require',
-            'package_url' => 'require',
-            'repository'  => 'require',
-            'wx_id'       => 'require',
-            'ym_id'       => 'require',
+//            'package_url' => 'require',
+//            'repository'  => 'require',
+//            'wx_id'       => 'require',
+//            'ym_id'       => 'require',
         ])->message([
             'name.require'        => '包名不能为空',
             'ad_id.require'       => '广告ID不能为空',
             'app_id.require'      => 'APP ID不能为空',
-            'package_url.require' => '打包平台地址不能为空',
-            'repository.require'  => 'coding仓库地址不能为空',
-            'ym_id.require'       => '友盟id不能为空',
-            'wx_id.require'       => '微信id不能为空',
+//            'package_url.require' => '打包平台地址不能为空',
+//            'repository.require'  => 'coding仓库地址不能为空',
+//            'ym_id.require'       => '友盟id不能为空',
+//            'wx_id.require'       => '微信id不能为空',
         ]);
 
         if (!$validate->check($data)) {
             return json(['code' => 1, 'msg' => $validate->getError()]);
         }
-        $app = new App();
+        $app                 = new App();
         $data['create_time'] = date('Y-m-d H:i:s');
-        $data['user_id'] = (int)session('uid');
+        $data['user_id']     = (int)session('uid');
+        if ($app->save($data)) {
+            return json(['code' => 0, 'msg' => '添加应用成功']);
+        } else {
+            return json(['code' => 1, 'msg' => '添加应用失败']);
+        }
+    }
+
+    public static function edit($data) {
+        $validate = Validate::rule([
+            'id'          => 'require',
+            'name'        => 'require',
+//            'ad_id'       => 'require',
+            'app_id'      => 'require',
+//            'package_url' => 'require',
+//            'repository'  => 'require',
+//            'wx_id'       => 'require',
+//            'ym_id'       => 'require',
+        ])->message([
+            'id.require'          => 'ID 错误',
+            'name.require'        => '包名不能为空',
+//            'ad_id.require'       => '广告ID不能为空',
+            'app_id.require'      => 'APP ID不能为空',
+//            'package_url.require' => '打包平台地址不能为空',
+//            'repository.require'  => 'coding仓库地址不能为空',
+//            'ym_id.require'       => '友盟id不能为空',
+//            'wx_id.require'       => '微信id不能为空',
+        ]);
+
+        if (!$validate->check($data)) {
+            return json(['code' => 1, 'msg' => $validate->getError()]);
+        }
+        $app = App::find($data['id']);
+        if (empty($app)) {
+            return json(['code' => 0, 'message' => 'APP 不存在']);
+        }
+        $data['create_time'] = date('Y-m-d H:i:s');
+        $data['user_id']     = (int)session('uid');
         if ($app->save($data)) {
             return json(['code' => 0, 'msg' => '添加应用成功']);
         } else {
@@ -47,13 +82,22 @@ class AppService
     }
 
     /**
+     *  获取APP
+     *
+     * @param $id
+     */
+    public static function appData($id) {
+        return App::where(['id' => $id])->withoutField('secret')->fieldRaw('CASE WHEN secret IS NOT NULL AND secret != "" THEN 1 ELSE 0 END as set_secret')->find()->toArray();
+    }
+
+    /**
      * 获取APP 渠道信息
      *
-     * @param $appId
+     * @param        $appId
+     * @param string $channel
      * @return array
      */
-    public static function appChannels($appId, $channel = '')
-    {
+    public static function appChannels($appId, $channel = '') {
         $where = ['app_id' => $appId];
         if (!empty($channel)) {
             $where['channel'] = $channel;
@@ -79,7 +123,7 @@ class AppService
         $list = [];
         foreach ($channels as $key => $channel) {
             if (in_array($key, array_column($data, 'channel'))) {
-                $row = $data[$key];
+                $row  = $data[$key];
                 $temp = [
                     'channel'       => $key,
                     'channel_txt'   => $channel,
@@ -95,22 +139,31 @@ class AppService
                 ];
             } else {
                 $temp = [
-                    'channel'      => $key,
-                    'channel_txt'  => $channel,
-                    'list'         => '未上架',
+                    'channel'       => $key,
+                    'channel_txt'   => $channel,
+                    'list'          => '未上架',
                     'list_status'   => 0,
                     'update_status' => 1,
-                    'id'           => 0,
-                    'app_id'       => $appId,
-                    'version_name' => '',
-                    'version_no'   => '',
-                    'status_text'  => '',
-                    'status'       => 0,
+                    'id'            => 0,
+                    'app_id'        => $appId,
+                    'version_name'  => '',
+                    'version_no'    => '',
+                    'status_text'   => '',
+                    'status'        => 0,
                 ];
             }
             $list[] = $temp;
         }
         return $list;
+    }
+
+    public static function delete($id) {
+        $app         = App::find($id);
+        $app->status = App::STATUS_FORBIDDEN;
+        if ($app->save()) {
+            return json(['code' => 0, 'message' => '删除成功']);
+        }
+        return json(['code' => 1, 'message' => '删除失败']);
     }
 
     /**
@@ -123,8 +176,7 @@ class AppService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function switchApp($id, $status): array
-    {
+    public static function switchApp($id, $status): array {
         $model = AppChannel::find($id);
         // 上架状态
         $statusArray = [
@@ -153,8 +205,7 @@ class AppService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function setListStatus($id, $status): array
-    {
+    public static function setListStatus($id, $status): array {
         $model = AppChannel::find($id);
         // 上架状态
         $statusArray = [
@@ -182,13 +233,18 @@ class AppService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function setAppChannel($data)
-    {
+    public static function setAppChannel($data) {
         $id = $data['id'];
         // 检查是否已有相同的 app_id 和 channel
-        $exist = AppChannel::where('app_id', $data['app_id'])
-            ->where('channel', $data['channel'])
-            ->find();
+        $query = AppChannel::where('app_id', $data['app_id'])
+            ->where('channel', $data['channel']);
+
+        if (!empty($id)) {
+            // 编辑状态，排除本条记录
+            $query->where('id', '<>', $id);
+        }
+
+        $exist = $query->find();
 
         // 如果找到了相同的记录，返回错误提示
         if ($exist) {
@@ -197,18 +253,18 @@ class AppService
 
         $model = AppChannel::find($id);
         if ($model) {
-            $model->app_id = $data['app_id'];
+            $model->app_id       = $data['app_id'];
             $model->version_name = $data['version_name'];
-            $model->version_no = $data['version_no'];
-            $model->update_time = date('Y-m-d H:i:s');
+            $model->version_no   = $data['version_no'];
+            $model->update_time  = date('Y-m-d H:i:s');
         } else {
-            $model = new AppChannel();
-            $model->app_id = $data['app_id'];
+            $model               = new AppChannel();
+            $model->app_id       = $data['app_id'];
             $model->version_name = $data['version_name'];
-            $model->version_no = $data['version_no'];
-            $model->channel = $data['channel'];
-            $model->create_time = date('Y-m-d H:i:s');
-            $model->status = 0;
+            $model->version_no   = $data['version_no'];
+            $model->channel      = $data['channel'];
+            $model->create_time  = date('Y-m-d H:i:s');
+            $model->status       = 0;
         }
         if ($model->save()) {
             return ['error' => 0, 'message' => '操作成功', 'data' => $model->id];

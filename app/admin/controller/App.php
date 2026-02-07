@@ -12,15 +12,13 @@ use think\facade\Config;
 use think\facade\View;
 use think\response\Json;
 
-class App extends AdminBaseController
-{
+class App extends AdminBaseController {
     /**
      * App 列表
      *
      * @return string
      */
-    public function index()
-    {
+    public function index() {
         return View::fetch();
     }
 
@@ -29,9 +27,9 @@ class App extends AdminBaseController
      *
      * @return Json
      */
-    public function apps(): Json
-    {
-        $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->select();
+    public function apps(): Json {
+        $fields = ['id', 'project', 'user_id', 'name', 'repository', 'package_url', 'ad_id', 'ym_id', 'wx_id', 'app_id', 'description'];
+        $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->field($fields)->select();
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
     }
 
@@ -41,10 +39,24 @@ class App extends AdminBaseController
      * @param Request $request
      * @return Json
      */
-    public function add(Request $request): Json
-    {
+    public function add(Request $request): Json {
         $post = $request->post();
         return AppService::add($post);
+    }
+
+    public function delete(Request $request): Json {
+        $post = $request->post();
+        return AppService::delete($post['id']);
+    }
+
+    public function app(Request $request) {
+        $id = $request->get('id');
+        return json(['code' => 0, 'message' => 'OK', 'data' => AppService::appData($id)]);
+    }
+
+    public function update(Request $request): Json {
+        $post = $request->post();
+        return AppService::edit($post);
     }
 
     /**
@@ -52,8 +64,7 @@ class App extends AdminBaseController
      *
      * @return string
      */
-    public function manage(): string
-    {
+    public function manage(): string {
         return View::fetch();
     }
 
@@ -62,8 +73,7 @@ class App extends AdminBaseController
      *
      * @return Json
      */
-    public function channels(): Json
-    {
+    public function channels(): Json {
         $channels = Config::get('app.channels');
         return json(['code' => 0, 'data' => $channels]);
     }
@@ -74,8 +84,7 @@ class App extends AdminBaseController
      * @param Request $request
      * @return Json
      */
-    public function appChannels(Request $request): Json
-    {
+    public function appChannels(Request $request): Json {
         $appId = $request->get('app_id');
         $list  = AppService::appChannels($appId);
         return json(['code' => 0, 'data' => $list]);
@@ -87,15 +96,14 @@ class App extends AdminBaseController
      * @param Request $request
      * @return Json
      */
-    public function switch(Request $request): Json
-    {
-        $id      = $request->post('id');
-        $status  = $request->post('status');
+    public function switch(Request $request): Json {
+        $id     = $request->post('id');
+        $status = $request->post('status');
 
         // 状态
         $setStatus = intval(!$status);
         $result    = AppService::switchApp($id, $setStatus);
-        return json(['code' => $result['error'],'message' => $result['message']]);
+        return json(['code' => $result['error'], 'message' => $result['message']]);
     }
 
     /**
@@ -104,21 +112,19 @@ class App extends AdminBaseController
      * @param Request $request
      * @return Json
      */
-    public function setList(Request $request): Json
-    {
-        $id      = $request->post('id');
-        $status  = $request->post('list_status');
+    public function setList(Request $request): Json {
+        $id     = $request->post('id');
+        $status = $request->post('list_status');
 
         // 状态
         $setStatus = intval(!$status);
         $result    = AppService::setListStatus($id, $setStatus);
-        return json(['code' => $result['error'],'message' => $result['message']]);
+        return json(['code' => $result['error'], 'message' => $result['message']]);
     }
 
-    public function addChannel(Request $request)
-    {
+    public function addChannel(Request $request) {
         $data   = $request->post();
         $result = AppService::setAppChannel($data);
-        return json(['code' => $result['error'],'message' => $result['message']]);
+        return json(['code' => $result['error'], 'message' => $result['message']]);
     }
 }

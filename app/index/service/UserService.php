@@ -37,11 +37,12 @@ class UserService {
             // 设备ID
             $data['client_id'] = Request::header('deviceNum');
             // 手机品牌
-            $data['mobile_brand'] = Request::header('mobile_brand');
+            $data['mobile_brand'] = Request::header('mobileBrand');
             // 手机型号
             $data['mobile_model'] = Request::header('mobileModel');
             // 获取package_id
             $app = App::where(['app_id' => $data['app_id'], 'status' => App::STATUS_NORMAL])->find();
+            var_dump($app, $data);
             if (empty($app)) {
                 return ['error' => 1, 'message' => 'APP ID NOT FOUND', 'data' => []];
             }

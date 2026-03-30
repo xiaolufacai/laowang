@@ -5,12 +5,14 @@ $channels = [
     'vivo'    => 'VIVO',
     'huawei'  => '华为',
     'xiaomi'  => '小米',
-    'yyb'     => '应用宝',
     'test'    => 'Test渠道',
     'qq'      => '应用宝',
     'baidu'   => '百度',
     'toutiao' => '头条',
     'honor'   => '荣耀',
+    'cool'    => '酷安',
+    'oneplus' => '一加',
+    'other'   => '其他',
 ];
 // 会员
 $vips = [

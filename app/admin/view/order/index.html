@@ -18,6 +18,30 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
+                    <el-select v-model="formInline.payType" placeholder="支付类型" clearable>
+                        <el-option label="微信支付" value="1"></el-option>
+                        <el-option label="支付宝支付" value="2"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select v-model="formInline.payStatus" placeholder="支付状态" clearable>
+                        <el-option label="待支付" value="0"></el-option>
+                        <el-option label="已支付" value="1"></el-option>
+                        <el-option label="已取消" value="2"></el-option>
+                        <el-option label="已完成" value="3"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-date-picker
+                            v-model="formInline.dateRange"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item>
                     <el-button type="primary" @click="searchOrders">搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -27,36 +51,74 @@
             <el-table
                     :data="tableData"
                     border
-                    style="width: 751px">
+                    style="width: 100%"
+                    @row-click="showDetail">
                 <el-table-column
                         align="center"
                         prop="id"
                         label="订单ID"
-                        width="150">
+                        width="80">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="order_no"
+                        label="订单号"
+                        width="180">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="user_id"
                         label="用户ID"
-                        width="150">
-                </el-table-column>
-                <el-table-column
-                        align="center"
-                        prop="create_time"
-                        label="时间"
-                        width="150">
+                        width="100">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="amount"
-                        label="金额"
-                        width="150">
+                        label="支付金额"
+                        width="100">
                 </el-table-column>
                 <el-table-column
                         align="center"
-                        prop="pay_platform"
-                        label="支付平台"
-                        width="150">
+                        prop="original_amount"
+                        label="原始金额"
+                        width="100">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="pay_type_text"
+                        label="支付类型"
+                        width="120">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="pay_status_text"
+                        label="支付状态"
+                        width="100">
+                    <template slot-scope="scope">
+                        <el-tag :type="getPayStatusTag(scope.row.pay_status)">
+                            {{scope.row.pay_status_text}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="create_time"
+                        label="创建时间"
+                        width="160">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="pay_time"
+                        label="支付时间"
+                        width="160">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="操作"
+                        width="100">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="small" @click="showDetail(scope.row)">详情</el-button>
+                    </template>
                 </el-table-column>
             </el-table>
 
@@ -70,6 +132,41 @@
                     layout="total, prev, pager, next, jumper">
             </el-pagination>
         </el-main>
+
+        <!-- 订单详情弹窗 -->
+        <el-dialog title="订单详情" :visible.sync="detailVisible" width="600px">
+            <el-descriptions :column="2" border v-if="orderDetail">
+                <el-descriptions-item label="订单ID">{{orderDetail.id}}</el-descriptions-item>
+                <el-descriptions-item label="订单号">{{orderDetail.order_no}}</el-descriptions-item>
+                <el-descriptions-item label="用户ID">{{orderDetail.user_id}}</el-descriptions-item>
+                <el-descriptions-item label="包ID">{{orderDetail.app_id}}</el-descriptions-item>
+                <el-descriptions-item label="支付金额">{{orderDetail.amount}}</el-descriptions-item>
+                <el-descriptions-item label="原始金额">{{orderDetail.original_amount}}</el-descriptions-item>
+                <el-descriptions-item label="支付类型">{{orderDetail.pay_type_text}}</el-descriptions-item>
+                <el-descriptions-item label="支付状态">
+                    <el-tag :type="getPayStatusTag(orderDetail.pay_status)">
+                        {{orderDetail.pay_status_text}}
+                    </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="创建时间">{{orderDetail.create_time}}</el-descriptions-item>
+                <el-descriptions-item label="支付时间">{{orderDetail.pay_time}}</el-descriptions-item>
+                <el-descriptions-item label="第三方交易号">{{orderDetail.transaction_id}}</el-descriptions-item>
+            </el-descriptions>
+            <el-divider content-position="left">会员信息</el-divider>
+            <el-descriptions :column="2" border v-if="vipInfo">
+                <el-descriptions-item label="会员类型">{{vipInfo.vip}}</el-descriptions-item>
+                <el-descriptions-item label="原价">{{vipInfo.old_price}}</el-descriptions-item>
+                <el-descriptions-item label="现价">{{vipInfo.new_price}}</el-descriptions-item>
+                <el-descriptions-item label="角标文案">{{vipInfo.corner_text}}</el-descriptions-item>
+            </el-descriptions>
+            <el-divider content-position="left">操作日志</el-divider>
+            <el-table :data="orderLogs" border size="small" v-if="orderLogs.length > 0">
+                <el-table-column prop="operation" label="操作" width="120"></el-table-column>
+                <el-table-column prop="message" label="说明"></el-table-column>
+                <el-table-column prop="create_time" label="时间" width="160"></el-table-column>
+            </el-table>
+            <el-empty v-else description="暂无操作日志" :image-size="60"></el-empty>
+        </el-dialog>
     </el-container>
 </div>
 
@@ -89,7 +186,7 @@
         color: #333;
     }
     .el-pagination-page {
-	    margin-top: 10px;
+        margin-top: 10px;
     }
 </style>
 
@@ -99,11 +196,17 @@
             return {
                 formInline: {
                     app: '',
-                    orderId: ''
+                    orderId: '',
+                    payType: '',
+                    payStatus: '',
+                    dateRange: []
                 },
                 formVisible: false,
+                detailVisible: false,
+                orderDetail: null,
+                vipInfo: null,
+                orderLogs: [],
                 apps: [],
-                vips: [],
                 tableData: [],
                 currentPage: 1,
                 pageSize: 10,
@@ -114,14 +217,51 @@
             this.getApps(); // 获取所有APP
         },
         methods: {
+            getPayStatusTag(status) {
+                const tagMap = {
+                    0: 'info',
+                    1: 'success',
+                    2: 'warning',
+                    3: 'primary'
+                };
+                return tagMap[status] || 'info';
+            },
             searchOrders() {
-                // 搜索订单时使用当前的APP和订单ID
-                this.getAppOrders(this.formInline.app, this.formInline.orderId, this.currentPage);
+                // 搜索订单时使用当前的筛选条件
+                let startTime = '';
+                let endTime = '';
+                if (this.formInline.dateRange && this.formInline.dateRange.length === 2) {
+                    startTime = this.formInline.dateRange[0];
+                    endTime = this.formInline.dateRange[1];
+                }
+                this.getAppOrders(
+                    this.formInline.app,
+                    this.formInline.orderId,
+                    this.formInline.payType,
+                    this.formInline.payStatus,
+                    startTime,
+                    endTime,
+                    this.currentPage
+                );
             },
             handlePageChange(page) {
                 // 分页改变时获取新页面的数据
                 this.currentPage = page;
-                this.getAppOrders(this.formInline.app, this.formInline.orderId, page);
+                let startTime = '';
+                let endTime = '';
+                if (this.formInline.dateRange && this.formInline.dateRange.length === 2) {
+                    startTime = this.formInline.dateRange[0];
+                    endTime = this.formInline.dateRange[1];
+                }
+                this.getAppOrders(
+                    this.formInline.app,
+                    this.formInline.orderId,
+                    this.formInline.payType,
+                    this.formInline.payStatus,
+                    startTime,
+                    endTime,
+                    page
+                );
             },
             getApps() {
                 let _this = this;
@@ -135,7 +275,7 @@
                             _this.apps = data;
                             if (_this.apps.length > 0) {
                                 _this.formInline.app = _this.apps[0].id; // 默认选择第一个APP
-                                this.getAppOrders(_this.formInline.app, '', this.currentPage); // 默认加载订单列表
+                                this.getAppOrders(_this.formInline.app, '', '', '', '', '', this.currentPage); // 默认加载订单列表
                             }
                         }
                     })
@@ -146,12 +286,16 @@
                         });
                     });
             },
-            getAppOrders(appId, orderId, page) {
+            getAppOrders(appId, orderId, payType, payStatus, startTime, endTime, page) {
                 let _this = this;
                 axios.get('/admin/order/orders', {
                     params: {
                         app_id: appId,
                         order_id: orderId,
+                        pay_type: payType,
+                        pay_status: payStatus,
+                        start_time: startTime,
+                        end_time: endTime,
                         page: page,
                         page_size: _this.pageSize
                     }
@@ -177,8 +321,49 @@
             select(id) {
                 // 当APP选择变化时重新获取订单数据
                 this.formInline.app = id;
-                this.getAppOrders(id, this.formInline.orderId, this.currentPage);
+                this.getAppOrders(id, this.formInline.orderId, this.formInline.payType, this.formInline.payStatus, '', '', this.currentPage);
             },
+            showDetail(row) {
+                let _this = this;
+                axios.get('/admin/order/getOrderDetail', {
+                    params: {
+                        order_id: row.id
+                    }
+                })
+                    .then(response => {
+                        const data = response.data;
+                        if (data.code === 0) {
+                            _this.orderDetail = data.data.order;
+                            _this.vipInfo = data.data.vip_info;
+                        } else {
+                            _this.$message({
+                                message: data.message,
+                                type: 'error'
+                            });
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '获取订单详情失败',
+                            type: 'error'
+                        });
+                    });
+
+                // 获取操作日志
+                axios.get('/admin/order/logs', {
+                    params: {
+                        order_id: row.id
+                    }
+                })
+                    .then(response => {
+                        const data = response.data;
+                        if (data.code === 0) {
+                            _this.orderLogs = data.data;
+                        }
+                    });
+
+                _this.detailVisible = true;
+            }
         }
     }
     var Ctor = Vue.extend(Main)
@@ -186,4 +371,3 @@
 </script>
 
 {include file="/layout/footer" /}
-

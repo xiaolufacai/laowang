@@ -11,3 +11,4 @@ Thumbs.db
 /.project
 app.json
 /config/wechat.php
+/cert/

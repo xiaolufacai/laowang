@@ -5,6 +5,7 @@
 return [
     // 指令定义
     'commands' => [
-        'pk' => \app\command\Pk::class
+        'pk'    => \app\command\Pk::class,
+        'order' => \app\command\OrderTest::class,
     ],
 ];

@@ -7,7 +7,6 @@ use Closure;
 use Firebase\JWT\Key;
 use think\Request;
 use Firebase\JWT\JWT;
-use think\exception\ValidateException;
 
 class JWTAuthMiddleware {
     // 秘钥，用于生成和验证 JWT
@@ -40,7 +39,8 @@ class JWTAuthMiddleware {
             // 解码 JWT
             $decoded = JWT::decode($token, new Key(self::KEY, 'HS256'));
             // 将解码后的信息放入请求中，方便后续使用
-            $request->user = (array)$decoded;
+            $request->user   = (array)$decoded;
+            $request->userId = $request->user['id'] ?? null;
         } catch (\Exception $e) {
             return json(['code' => -1, 'message' => '登陆超时', 'data' => (object)[]]);
         }

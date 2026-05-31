@@ -89,7 +89,7 @@ class AppService {
      * @param $id
      */
     public static function appData($id) {
-        return App::where(['id' => $id])->withoutField('secret')->find()->toArray();
+        return App::where(['id' => $id])->find()->toArray();
     }
 
     /**

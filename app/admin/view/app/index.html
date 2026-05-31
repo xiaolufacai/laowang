@@ -11,15 +11,17 @@
 
 		<el-main>
 			<el-table :data="apps" border style="width: 100%">
+				<el-table-column align="center" prop="id" label="ID" width="80"></el-table-column>
+				<el-table-column align="center" prop="app_id" label="APP ID" min-width="180"></el-table-column>
 				<el-table-column align="center" prop="name" label="包名" min-width="150"></el-table-column>
 				<el-table-column align="center" prop="project" label="项目名" min-width="150"></el-table-column>
-				<el-table-column align="center" prop="repository" label="coding仓库地址" min-width="220"></el-table-column>
 				<el-table-column align="center" prop="ad_id" label="广告ID" min-width="180"></el-table-column>
 				<el-table-column align="center" prop="ym_id" label="友盟ID" min-width="150"></el-table-column>
 				<el-table-column align="center" prop="src_id" label="SRC ID" min-width="150"></el-table-column>
-				<el-table-column align="center" label="操作" width="260" fixed="right">
+				<el-table-column align="center" label="操作" width="340" fixed="right">
 					<template slot-scope="scope">
 						<el-button size="mini" type="success" @click="editApp(scope.row)">编辑</el-button>
+						<el-button size="mini" @click="openDetailModal(scope.row)">详情</el-button>
 						<el-button size="mini" type="primary" @click="openNotifyModal(scope.row)">通知地址</el-button>
 						<el-button size="mini" type="danger" @click="deleteApp(scope.row)">删除</el-button>
 					</template>
@@ -66,6 +68,21 @@
 			</el-form>
 		</el-dialog>
 
+		<el-dialog :visible.sync="detailVisible" :title="detailTitle" width="70%">
+			<el-table :data="detailRows" border>
+				<el-table-column align="center" prop="label" label="字段" width="180"></el-table-column>
+				<el-table-column prop="value" label="内容">
+					<template slot-scope="scope">
+						<div v-if="scope.row.key === 'description'" class="detail-value" v-html="scope.row.value || '-'"></div>
+						<div v-else class="detail-value">{{ scope.row.value || '-' }}</div>
+					</template>
+				</el-table-column>
+			</el-table>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="detailVisible = false">关闭</el-button>
+			</span>
+		</el-dialog>
+
 		<el-dialog :visible.sync="notifyVisible" :title="notifyTitle" width="70%" class="notify-dialog">
 			<div v-for="item in notifyAddresses" :key="item.key" class="notify-item">
 				<div class="notify-label">{{ item.label }}</div>
@@ -88,6 +105,7 @@
 	.notify-row { display: flex; gap: 10px; align-items: center; }
 	.notify-row .el-input { flex: 1; }
 	.notify-dialog .el-dialog__body { min-height: 420px; }
+	.detail-value { word-break: break-all; }
 </style>
 
 <script type="module">
@@ -102,6 +120,26 @@
 	}
 	const _initForm = Object.assign({}, initForm);
 	Object.freeze(_initForm);
+	const detailFields = [
+		{ key: 'id', label: 'ID' },
+		{ key: 'project', label: '项目名' },
+		{ key: 'user_id', label: '用户 ID' },
+		{ key: 'name', label: '包名称' },
+		{ key: 'repository', label: '仓库地址' },
+		{ key: 'package_url', label: '打包平台地址' },
+		{ key: 'ad_id', label: '广告ID' },
+		{ key: 'ym_id', label: '友盟ID' },
+		{ key: 'wx_id', label: '微信开放平台 app_id' },
+		{ key: 'secret', label: 'wx APP SECRET' },
+		{ key: 'app_id', label: 'APP ID' },
+		{ key: 'app_sign', label: '应用签名' },
+		{ key: 'sha1', label: 'SHA1' },
+		{ key: 'description', label: 'APP 描述' },
+		{ key: 'status', label: '状态' },
+		{ key: 'src_id', label: 'SRC ID' },
+		{ key: 'create_time', label: '创建时间' },
+		{ key: 'update_time', label: '更新时间' }
+	];
 	const notifyPlatforms = [
 		{ key: 'vivo', label: 'VIVO', path: 'vivo' },
 		{ key: 'oppo', label: 'OPPO', path: 'oppo' },
@@ -128,6 +166,8 @@
 				formVisible: false,
 				editMode: 'add',  // add / edit
 				apps: [],
+				detailVisible: false,
+				detailApp: {},
 				notifyVisible: false,
 				notifyApp: {},
 			}
@@ -265,6 +305,15 @@
 				});
 			},
 
+			openDetailModal(row) {
+				this.getAppData(row.id).then(data => {
+					if (!data) return;
+
+					this.detailApp = data;
+					this.detailVisible = true;
+				});
+			},
+
 			openNotifyModal(row) {
 				this.notifyApp = row;
 				this.notifyVisible = true;
@@ -288,6 +337,24 @@
 			notifyTitle() {
 				const project = this.notifyApp.project || '';
 				return project ? project + ' - 通知地址' : '通知地址';
+			},
+			detailTitle() {
+				const project = this.detailApp.project || '';
+				return project ? project + ' - 详情' : '应用详情';
+			},
+			detailRows() {
+				return detailFields.map(item => {
+					let value = this.detailApp[item.key];
+					if (item.key === 'status') {
+						value = Number(value) === 1 ? '删除' : '正常';
+					}
+
+					return {
+						key: item.key,
+						label: item.label,
+						value: value
+					};
+				});
 			},
 			notifyAddresses() {
 				const appId = this.notifyApp.app_id || '';

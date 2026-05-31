@@ -6,42 +6,29 @@
 <div id="app" style="background-color: #ffffff">
 	<el-container>
 		<el-header style="text-align: right; font-size: 12px">
-			<el-form :inline="true" :model="formInline" class="demo-form-inline">
-				<el-form-item>
-					<el-select v-model="formInline.app" @change="select" placeholder="APP">
-						<el-option
-								v-for="(item,index) in apps"
-								:key="index"
-								:label="item.project"
-								:value="item.id">
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item>
-					<el-button @click="openFormModal('add')">新增应用</el-button>
-				</el-form-item>
-			</el-form>
+			<el-button type="primary" @click="openFormModal('add')">新增应用</el-button>
 		</el-header>
 
 		<el-main>
-			<el-table :data="transformedData" border :show-header="false">
-				<el-table-column prop="field" width="200">
-					<template #default="scope">
-						<div class="cell">{{ scope.row.field }}</div>
-					</template>
-				</el-table-column>
-				<el-table-column prop="value">
-					<template #default="scope">
-						<div class="cell">{{ scope.row.value }}</div>
+			<el-table :data="apps" border style="width: 100%">
+				<el-table-column align="center" prop="name" label="包名" min-width="150"></el-table-column>
+				<el-table-column align="center" prop="project" label="项目名" min-width="150"></el-table-column>
+				<el-table-column align="center" prop="repository" label="coding仓库地址" min-width="220"></el-table-column>
+				<el-table-column align="center" prop="ad_id" label="广告ID" min-width="180"></el-table-column>
+				<el-table-column align="center" prop="ym_id" label="友盟ID" min-width="150"></el-table-column>
+				<el-table-column align="center" prop="src_id" label="SRC ID" min-width="150"></el-table-column>
+				<el-table-column align="center" label="操作" width="260" fixed="right">
+					<template slot-scope="scope">
+						<el-button size="mini" type="success" @click="editApp(scope.row)">编辑</el-button>
+						<el-button size="mini" type="primary" @click="openNotifyModal(scope.row)">通知地址</el-button>
+						<el-button size="mini" type="danger" @click="deleteApp(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-button type="danger" class="delete-app" @click="deleteApp">删除</el-button>
-			<el-button type="success" class="edit" @click="editApp">编辑</el-button>
 		</el-main>
 
 		<!-- Form Modal -->
-		<el-dialog :visible.sync="formVisible" title="新增应用" width="60%">
+		<el-dialog :visible.sync="formVisible" :title="formTitle" width="60%">
 			<el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="120px">
 				<el-form-item label="项目名" prop="project">
 					<el-input v-model="ruleForm.project" placeholder="请输入项目名"></el-input>
@@ -78,13 +65,29 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
+
+		<el-dialog :visible.sync="notifyVisible" :title="notifyTitle" width="70%" class="notify-dialog">
+			<div v-for="item in notifyAddresses" :key="item.key" class="notify-item">
+				<div class="notify-label">{{ item.label }}</div>
+				<div class="notify-row">
+					<el-input :value="item.url" readonly></el-input>
+					<el-button type="primary" @click="copyNotifyUrl(item.url)">复制</el-button>
+				</div>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="notifyVisible = false">关闭</el-button>
+			</span>
+		</el-dialog>
 	</el-container>
 </div>
 
 <style>
-	.demo-form-inline { margin-top: 10px; }
 	.el-header { background-color: #e7ebf0; color: #333; line-height: 60px; }
-	.delete-app { margin-top: 10px; }
+	.notify-item { margin-bottom: 14px; }
+	.notify-label { margin-bottom: 6px; color: #000; font-size: 18px; font-weight: bold; line-height: 1.3; }
+	.notify-row { display: flex; gap: 10px; align-items: center; }
+	.notify-row .el-input { flex: 1; }
+	.notify-dialog .el-dialog__body { min-height: 420px; }
 </style>
 
 <script type="module">
@@ -99,21 +102,17 @@
 	}
 	const _initForm = Object.assign({}, initForm);
 	Object.freeze(_initForm);
+	const notifyPlatforms = [
+		{ key: 'vivo', label: 'VIVO', path: 'vivo' },
+		{ key: 'oppo', label: 'OPPO', path: 'oppo' },
+		{ key: 'xiaomi', label: '小米', path: 'xiaomi' },
+		{ key: 'honor', label: '荣耀', path: 'rongyao' },
+		{ key: 'huawei', label: '华为', path: 'huawei' }
+	];
 
 	var Main = {
 		data() {
 			return {
-				formInline: { app: '' },
-
-				tableObject: {
-					'包名': '',
-					'项目名': '',
-					'coding仓库地址': "",
-					'广告ID': "",
-					'友盟ID': "",
-					'SRC ID': ""
-				},
-
 				ruleForm: { ...initForm },
 				rules: {
 					project: [{ required: true, message: '请输入项目名', trigger: 'change' }],
@@ -129,6 +128,8 @@
 				formVisible: false,
 				editMode: 'add',  // add / edit
 				apps: [],
+				notifyVisible: false,
+				notifyApp: {},
 			}
 		},
 
@@ -142,8 +143,6 @@
 				this.editMode = mode;
 				if (mode === 'add') {
 					this.ruleForm = { ..._initForm };
-				} else {
-					this.ruleForm.id = this.formInline.app;
 				}
 
 				this.formVisible = true;
@@ -210,28 +209,7 @@
 							}
 
 							this.apps = data;
-
-							if (this.apps.length > 0) {
-								let index = this.apps.length - 1;
-								this.formInline.app = this.apps[index].id;
-								this.select(this.apps[index].id);
-							}
 						});
-			},
-
-			/** ---------------- 切换 APP 显示详情 ---------------- */
-			select(id) {
-				let value = this.apps.find(item => item.id === id);
-				if (value) {
-					this.tableObject = {
-						'包名': value.name,
-						'项目名': value.project,
-						'coding仓库地址': value.repository,
-						'广告ID': value.ad_id,
-						'友盟ID': value.ym_id,
-						'SRC ID': value.src_id
-					};
-				}
 			},
 
 			/** ---------------- 获取某 APP（编辑用） ---------------- */
@@ -247,28 +225,32 @@
 			},
 
 			/** ---------------- 删除 ---------------- */
-			deleteApp() {
-				axios.post('/admin/app/delete', { id: this.formInline.app })
-						.then(res => {
-							if (res.data.code === 0) {
-								this.$message.success('删除成功!');
-								this.getApps();
-							} else {
-								this.$message.error('删除失败!');
-							}
-						})
+			deleteApp(row) {
+				this.$confirm('确定删除该应用吗？', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					axios.post('/admin/app/delete', { id: row.id })
+							.then(res => {
+								if (res.data.code === 0) {
+									this.$message.success('删除成功!');
+									this.getApps();
+								} else {
+									this.$message.error('删除失败!');
+								}
+							})
+				}).catch(() => {});
 			},
 
 			/** ---------------- 编辑 ---------------- */
-			editApp() {
-				let id = this.formInline.app;
-				if (!id) return this.$message.error("请选择 APP");
-
-				this.getAppData(id).then(data => {
+			editApp(row) {
+				this.getAppData(row.id).then(data => {
 					if (!data) return;
 
 					// 填充表单
 					this.ruleForm = {
+						id: data.id,
 						project: data.project,
 						name: data.name,
 						repository: data.repository,
@@ -281,14 +263,38 @@
 					// 打开编辑弹窗
 					this.openFormModal('edit');
 				});
+			},
+
+			openNotifyModal(row) {
+				this.notifyApp = row;
+				this.notifyVisible = true;
+			},
+
+			copyNotifyUrl(url) {
+				const input = document.createElement('input');
+				input.value = url;
+				document.body.appendChild(input);
+				input.select();
+				document.execCommand('copy');
+				document.body.removeChild(input);
+				this.$message.success('复制成功');
 			}
 		},
 
 		computed: {
-			transformedData() {
-				return Object.keys(this.tableObject).map(key => ({
-					field: key,
-					value: this.tableObject[key]
+			formTitle() {
+				return this.editMode === 'add' ? '新增应用' : '编辑应用';
+			},
+			notifyTitle() {
+				const project = this.notifyApp.project || '';
+				return project ? project + ' - 通知地址' : '通知地址';
+			},
+			notifyAddresses() {
+				const appId = this.notifyApp.app_id || '';
+				return notifyPlatforms.map(item => ({
+					key: item.key,
+					label: item.label,
+					url: 'https://api.yichunchihang.com/notify/' + item.path + '.html?appId=' + appId
 				}));
 			}
 		}

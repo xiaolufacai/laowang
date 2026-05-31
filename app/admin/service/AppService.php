@@ -12,6 +12,24 @@ use think\facade\Config;
 use  \think\facade\Validate;
 
 class AppService {
+    private static array $appDefaultData = [
+        'project'     => '',
+        'user_id'     => 0,
+        'name'        => '',
+        'repository'  => '',
+        'package_url' => '',
+        'ad_id'       => '',
+        'ym_id'       => '',
+        'wx_id'       => '',
+        'secret'      => '',
+        'app_id'      => '',
+        'app_sign'    => '',
+        'sha1'        => '',
+        'description' => '',
+        'status'      => 0,
+        'src_id'      => '',
+    ];
+
     public static function add($data) {
         $validate = Validate::rule([
             'project'     => 'require',
@@ -34,10 +52,13 @@ class AppService {
         if (!$validate->check($data)) {
             return json(['code' => 1, 'msg' => $validate->getError()]);
         }
-        $app                 = new App();
-        $data['app_id']      = self::generateAppId();
-        $data['create_time'] = date('Y-m-d H:i:s');
-        $data['user_id']     = (int)session('uid');
+        $app                  = new App();
+        $data                 = self::setAppDefaults($data, true);
+        $data['app_id']       = self::generateAppId();
+        $data['create_time']  = date('Y-m-d H:i:s');
+        $data['update_time']  = date('Y-m-d H:i:s');
+        $data['user_id']      = (int)session('uid');
+        $data['status']       = App::STATUS_NORMAL;
         if ($app->save($data)) {
             return json(['code' => 0, 'msg' => '添加应用成功']);
         } else {
@@ -74,7 +95,8 @@ class AppService {
             return json(['code' => 0, 'message' => 'APP 不存在']);
         }
         unset($data['app_id']);
-        $data['create_time'] = date('Y-m-d H:i:s');
+        $data                = self::setAppDefaults($data, false);
+        $data['update_time'] = date('Y-m-d H:i:s');
         $data['user_id']     = (int)session('uid');
         if ($app->save($data)) {
             return json(['code' => 0, 'msg' => '添加应用成功']);
@@ -281,5 +303,19 @@ class AppService {
         } while (App::where(['app_id' => $appId])->find());
 
         return $appId;
+    }
+
+    private static function setAppDefaults(array $data, bool $withAppId): array {
+        foreach (self::$appDefaultData as $field => $default) {
+            if (!$withAppId && $field === 'app_id') {
+                continue;
+            }
+
+            if (!array_key_exists($field, $data) || $data[$field] === null) {
+                $data[$field] = $default;
+            }
+        }
+
+        return $data;
     }
 }

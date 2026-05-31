@@ -27,9 +27,42 @@ class App extends AdminBaseController {
      *
      * @return Json
      */
-    public function apps(): Json {
+    public function apps(Request $request): Json {
         $fields = ['id', 'app_id', 'project', 'user_id', 'name', 'repository', 'ad_id', 'ym_id', 'src_id', 'description'];
-        $apps = Apps::where(['status' => Apps::STATUS_NORMAL])->field($fields)->select();
+        $page     = $request->get('page', null);
+        $pageSize = $request->get('page_size', null);
+        $keyword  = trim((string)$request->get('keyword', ''));
+
+        $query = Apps::where(['status' => Apps::STATUS_NORMAL]);
+        if ($keyword !== '') {
+            $query->where(function ($query) use ($keyword) {
+                $query->whereLike('app_id', '%' . $keyword . '%')
+                    ->whereLike('project', '%' . $keyword . '%', 'OR')
+                    ->whereLike('name', '%' . $keyword . '%', 'OR')
+                    ->whereLike('ad_id', '%' . $keyword . '%', 'OR')
+                    ->whereLike('ym_id', '%' . $keyword . '%', 'OR')
+                    ->whereLike('src_id', '%' . $keyword . '%', 'OR');
+
+                if (ctype_digit($keyword)) {
+                    $query->whereOr('id', (int)$keyword);
+                }
+            });
+        }
+
+        if ($page !== null || $pageSize !== null || $keyword !== '') {
+            $page     = max((int)$page, 1);
+            $pageSize = max((int)$pageSize, 10);
+            $apps     = $query->field($fields)->paginate($pageSize, false, ['page' => $page]);
+
+            return json([
+                'code'    => 0,
+                'message' => 'OK',
+                'data'    => $apps->items(),
+                'total'   => $apps->total(),
+            ]);
+        }
+
+        $apps = $query->field($fields)->select();
         return json(['code' => 0, 'message' => 'OK', 'data' => $apps]);
     }
 

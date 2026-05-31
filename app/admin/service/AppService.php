@@ -14,17 +14,17 @@ use  \think\facade\Validate;
 class AppService {
     public static function add($data) {
         $validate = Validate::rule([
+            'project'     => 'require',
             'name'        => 'require',
-            'ad_id'       => 'require',
-            'app_id'      => 'require',
+//            'ad_id'       => 'require',
 //            'package_url' => 'require',
 //            'repository'  => 'require',
 //            'wx_id'       => 'require',
 //            'ym_id'       => 'require',
         ])->message([
+            'project.require'     => '项目名不能为空',
             'name.require'        => '包名不能为空',
-            'ad_id.require'       => '广告ID不能为空',
-            'app_id.require'      => 'APP ID不能为空',
+//            'ad_id.require'       => '广告ID不能为空',
 //            'package_url.require' => '打包平台地址不能为空',
 //            'repository.require'  => 'coding仓库地址不能为空',
 //            'ym_id.require'       => '友盟id不能为空',
@@ -35,6 +35,7 @@ class AppService {
             return json(['code' => 1, 'msg' => $validate->getError()]);
         }
         $app                 = new App();
+        $data['app_id']      = self::generateAppId();
         $data['create_time'] = date('Y-m-d H:i:s');
         $data['user_id']     = (int)session('uid');
         if ($app->save($data)) {
@@ -47,18 +48,18 @@ class AppService {
     public static function edit($data) {
         $validate = Validate::rule([
             'id'          => 'require',
+            'project'     => 'require',
             'name'        => 'require',
 //            'ad_id'       => 'require',
-            'app_id'      => 'require',
 //            'package_url' => 'require',
 //            'repository'  => 'require',
 //            'wx_id'       => 'require',
 //            'ym_id'       => 'require',
         ])->message([
             'id.require'          => 'ID 错误',
+            'project.require'     => '项目名不能为空',
             'name.require'        => '包名不能为空',
 //            'ad_id.require'       => '广告ID不能为空',
-            'app_id.require'      => 'APP ID不能为空',
 //            'package_url.require' => '打包平台地址不能为空',
 //            'repository.require'  => 'coding仓库地址不能为空',
 //            'ym_id.require'       => '友盟id不能为空',
@@ -72,6 +73,7 @@ class AppService {
         if (empty($app)) {
             return json(['code' => 0, 'message' => 'APP 不存在']);
         }
+        unset($data['app_id']);
         $data['create_time'] = date('Y-m-d H:i:s');
         $data['user_id']     = (int)session('uid');
         if ($app->save($data)) {
@@ -271,5 +273,13 @@ class AppService {
         } else {
             return ['error' => 1, 'message' => '操作失败'];
         }
+    }
+
+    private static function generateAppId(): string {
+        do {
+            $appId = date('Ymd') . random_int(100000, 999999);
+        } while (App::where(['app_id' => $appId])->find());
+
+        return $appId;
     }
 }

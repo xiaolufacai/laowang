@@ -51,17 +51,8 @@
 					<el-input v-model="ruleForm.name" placeholder="请输入包名称"></el-input>
 				</el-form-item>
 
-				<el-form-item label="APP ID" prop="app_id">
-					<el-input v-model="ruleForm.app_id" placeholder="请输入APP ID"></el-input>
-				</el-form-item>
-
-
 				<el-form-item label="仓库地址" prop="repository">
 					<el-input v-model="ruleForm.repository" placeholder="请输入仓库地址"></el-input>
-				</el-form-item>
-
-				<el-form-item label="打包平台地址" prop="package_url">
-					<el-input v-model="ruleForm.package_url" placeholder="请输入打包平台地址"></el-input>
 				</el-form-item>
 
 				<el-form-item label="广告ID" prop="ad_id">
@@ -72,10 +63,6 @@
 					<el-input v-model="ruleForm.ym_id" placeholder="请输入友盟ID"></el-input>
 				</el-form-item>
 
-				<el-form-item label="微信APP ID" prop="wx_id">
-					<el-input v-model="ruleForm.wx_id" placeholder="请输入微信APP ID"></el-input>
-				</el-form-item>
-
 				<el-form-item :label="set_secret === 1 ? '微信APP SECRET' : '微信APP SECRET'" prop="secret">
 					<el-input
 							v-model="ruleForm.secret"
@@ -83,12 +70,8 @@
 					></el-input>
 				</el-form-item>
 
-				<el-form-item label="APP签名" prop="app_sign">
-					<el-input v-model="ruleForm.secret" placeholder="请输入APP签名"></el-input>
-				</el-form-item>
-
-				<el-form-item label="SHA1" prop="sha1">
-					<el-input v-model="ruleForm.sha1" placeholder="请输入SHA1"></el-input>
+				<el-form-item label="SRC ID" prop="src_id">
+					<el-input v-model="ruleForm.src_id" placeholder="请输入SRC ID"></el-input>
 				</el-form-item>
 
 				<!-- 富文本 -->
@@ -116,14 +99,10 @@
 		project: '',
 		name: '',
 		repository: '',
-		package_url: '',
 		ad_id: '',
 		ym_id: '',
-		wx_id: '',
 		secret: '',
-		app_id: '',
-		app_sign: '',
-		sha1: '',
+		src_id: '',
 		description: ''
 	}
 	const _initForm = Object.assign({}, initForm);
@@ -138,26 +117,20 @@
 					'包名': '',
 					'项目名': '',
 					'coding仓库地址': "",
-					'打包平台地址': "",
 					'广告ID': "",
 					'友盟ID': "",
-					'微信APP ID': "",
-					'APP ID': "",
-					'APP签名':'',
-					'SHA1':''
+					'SRC ID': ""
 				},
 
 				ruleForm: { ...initForm },
 				rules: {
 					project: [{ required: true, message: '请输入项目名', trigger: 'change' }],
-					app_id: [{ required: true, message: '请输入APP ID', trigger: 'change' }],
 					name: [{ required: true, message: '请输入包名称', trigger: 'change' }],
-					repository: [{ required: true, message: '请输入仓库地址', trigger: 'change' }],
-					package_url: [{ required: false, message: '请输入打包平台地址', trigger: 'change' }],
-					ad_id: [{ required: true, message: '请输入广告ID', trigger: 'change' }],
-					ym_id: [{ required: true, message: '请输入友盟ID', trigger: 'change' }],
-					wx_id: [{ required: false, message: '请输入微信APP ID', trigger: 'change' }],
+					repository: [{ required: false, message: '请输入仓库地址', trigger: 'change' }],
+					ad_id: [{ required: false, message: '请输入广告ID', trigger: 'change' }],
+					ym_id: [{ required: false, message: '请输入友盟ID', trigger: 'change' }],
 					secret: [{ required: false, message: '请输入secret', trigger: 'change' }],
+					src_id: [{ required: false, message: '请输入SRC ID', trigger: 'change' }],
 					description: [{ required: false, message: '请输入APP描述', trigger: 'blur' }]
 				},
 
@@ -264,13 +237,9 @@
 						'包名': value.name,
 						'项目名': value.project,
 						'coding仓库地址': value.repository,
-						'打包平台地址': value.package_url,
 						'广告ID': value.ad_id,
 						'友盟ID': value.ym_id,
-						'微信APP ID': value.wx_id,
-						'APP ID': value.app_id,
-						'APP签名': value.app_sign,
-						'SHA1': value.sha1
+						'SRC ID': value.src_id
 					};
 				}
 			},
@@ -313,13 +282,9 @@
 						project: data.project,
 						name: data.name,
 						repository: data.repository,
-						package_url: data.package_url,
 						ad_id: data.ad_id,
 						ym_id: data.ym_id,
-						wx_id: data.wx_id,
-						app_id: data.app_id,
-						app_sign: data.app_sign,
-						sha1: data.sha1,
+						src_id: data.src_id,
 						description: data.description
 					};
 					this.set_secret = data.set_secret

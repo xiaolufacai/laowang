@@ -30,7 +30,8 @@
         "firebase/php-jwt": "^6.11",
         "yansongda/pay": "^3.7",
       "ext-curl": "*",
-        "topthink/think-queue": "^3.0.12"
+        "topthink/think-queue": "^3.0.12",
+      "ext-openssl": "*"
     },
     "require-dev": {
         "topthink/think-dumper": "^1.0",

@@ -3,6 +3,7 @@
 namespace app\common\services;
 
 
+use app\common\service\ReportData;
 use app\controller\api\user\User;
 use app\jobs\Queue;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -27,7 +28,7 @@ class OppoService {
      * @return mixed
      */
     public static function reportOppo($oaid, $pkgName, $reportType = 2) {
-        $userController = app()->make(User::class);
+        $userController = app()->make(ReportData::class);
         return $userController->reportoppo($oaid, $pkgName, $reportType);
     }
 

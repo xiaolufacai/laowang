@@ -3,6 +3,7 @@
 namespace app\common\services;
 
 
+use app\common\service\ReportData;
 use app\controller\api\user\User;
 use app\jobs\Queue;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -367,7 +368,7 @@ class VivoService {
         $clientId     = self::CLIENT_ID;
         $clientSecret = self::CLIENT_SECRET;
 
-        $userController  = app()->make(User::class);
+        $userController  = app()->make(ReportData::class);
         $oldRefreshToken = Db::name('user_vivodataconfig')->where('id', 1)->value('oldRefreshToken');
         $refreshToken    = $userController->refreshToken($clientId, $clientSecret, $oldRefreshToken);
         if (isset($refreshToken['access_token']) && isset($refreshToken['refresh_token'])) {
@@ -779,6 +780,6 @@ class VivoService {
      * @throws DbException
      */
     public static function activeUser($appId, $oaid) {
-        return self::db($appId, $oaid)->update(['avtime' => time()]);
+        return self::db($appId, $oaid)->update(['active_time' => time()]);
     }
 }

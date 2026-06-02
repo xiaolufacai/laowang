@@ -128,11 +128,8 @@ class AdStatService {
             ->whereIn('oaid', $oaids)
             ->where('action', 'adShow');
 
-        if ($startTime) {
+        if ($startTime && $endTime) {
             $query->where('created_at', '>', date('Y-m-d H:i:s', strtotime($startTime)));
-        }
-
-        if ($endTime) {
             $query->where('created_at', '<', date('Y-m-d H:i:s', strtotime($endTime . ' 23:59:59')));
         }
 

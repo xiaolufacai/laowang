@@ -1,10 +1,9 @@
 <?php
 
-namespace app\common\services;
+namespace app\common\service;
 
 
 use app\common\service\ReportData;
-use app\controller\api\user\User;
 use app\jobs\Queue;
 use Psr\SimpleCache\InvalidArgumentException;
 use think\db\exception\DataNotFoundException;

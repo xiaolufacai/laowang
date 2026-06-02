@@ -714,13 +714,13 @@ class VivoService {
      * @throws ModelNotFoundException
      */
     public static function setUser($oaid, $appId, $data) {
-        $user = Db::name('user')->where(['oaid' => $oaid, 'app_id' => $appId])->find();
+        $user = Db::name('users')->where(['oaid' => $oaid, 'app_id' => $appId])->find();
         if ($user) {
-            return Db::name('user')->where(['oaid' => $oaid, 'app_id' => $appId])->update($data);
+            return Db::name('users')->where(['oaid' => $oaid, 'app_id' => $appId])->update($data);
         }
 
         $data['oaid'] = $oaid;
-        return Db::name('user')->insert($data);
+        return Db::name('users')->insert($data);
     }
 
     /**
@@ -734,9 +734,9 @@ class VivoService {
      * @throws ModelNotFoundException
      */
     public static function updateUser($oaid, $appId, $data) {
-        $user = Db::name('user')->where(['oaid' => $oaid, 'app_id' => $appId])->find();
+        $user = Db::name('users')->where(['oaid' => $oaid, 'app_id' => $appId])->find();
         if ($user) {
-            return Db::name('user')->where(['oaid' => $oaid, 'app_id' => $appId])->update($data);
+            return Db::name('users')->where(['oaid' => $oaid, 'app_id' => $appId])->update($data);
         } else {
             return false;
         }

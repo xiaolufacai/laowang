@@ -33,13 +33,14 @@ class AdStat extends AdminBaseController {
      * @throws DbException
      */
     public function list(Request $request): Json {
+        $appId     = $request->get('app_id', null);
         $channel   = $request->get('channel', null);
         $startTime = $request->get('start_time', null);
         $endTime   = $request->get('end_time', null);
         $page      = $request->get('page', 1);
         $pageSize  = $request->get('page_size', 10);
 
-        $result = AdStatService::list($channel, $startTime, $endTime, $page, $pageSize);
+        $result = AdStatService::list($appId, $channel, $startTime, $endTime, $page, $pageSize);
         return json(['code' => 0, 'data' => $result]);
     }
 

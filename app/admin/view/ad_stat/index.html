@@ -5,6 +5,16 @@
         <el-header style="text-align: right; font-size: 12px">
             <el-form :inline="true" ref="searchForm" :model="formInline" class="demo-form-inline">
                 <el-form-item>
+                    <el-select v-model="formInline.app_id" placeholder="APP" clearable>
+                        <el-option
+                                v-for="(item, index) in apps"
+                                :key="index"
+                                :label="appOptionLabel(item)"
+                                :value="item.app_id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
                     <el-select v-model="formInline.channel" placeholder="投流渠道" clearable>
                         <el-option
                                 v-for="(item, key) in channels"
@@ -33,8 +43,9 @@
 
         <el-main>
             <div class="table-scroll">
-                <el-table class="ad-stat-table" :data="tableData" border :fit="false" style="width: 2020px">
+                <el-table class="ad-stat-table" :data="tableData" border :fit="false" style="width: 2180px">
                     <el-table-column align="center" prop="id" label="ID" width="80"></el-table-column>
+                    <el-table-column align="center" prop="app_id" label="APP ID" width="160"></el-table-column>
                     <el-table-column align="center" prop="channel_txt" label="投流渠道" width="110"></el-table-column>
                     <el-table-column align="center" prop="oaid" label="OAID" width="180">
                         <template slot-scope="scope">
@@ -139,9 +150,11 @@
         data() {
             return {
                 formInline: {
+                    app_id: '',
                     channel: '',
                     dateRange: []
                 },
+                apps: [],
                 channels: {},
                 tableData: [],
                 currentPage: 1,
@@ -150,6 +163,7 @@
             }
         },
         created() {
+            this.getApps();
             this.getChannels();
             this.getList();
         },
@@ -159,6 +173,7 @@
                 this.getList();
             },
             resetSearch() {
+                this.formInline.app_id = '';
                 this.formInline.channel = '';
                 this.formInline.dateRange = [];
                 this.currentPage = 1;
@@ -179,6 +194,7 @@
 
                 axios.get('/admin/ad_stat/list', {
                     params: {
+                        app_id: this.formInline.app_id,
                         channel: this.formInline.channel,
                         start_time: startTime,
                         end_time: endTime,
@@ -197,6 +213,23 @@
                 }).catch(() => {
                     _this.$message({ message: '数据获取失败', type: 'error' });
                 });
+            },
+            getApps() {
+                let _this = this;
+                axios.get('/admin/app/apps', {}).then(response => {
+                    if (response.data.code === 0) {
+                        _this.apps = response.data.data;
+                    }
+                }).catch(() => {
+                    _this.apps = [];
+                });
+            },
+            appOptionLabel(item) {
+                if (!item.project) {
+                    return item.app_id;
+                }
+
+                return item.project + '（' + item.app_id + '）';
             },
             getChannels() {
                 let _this = this;

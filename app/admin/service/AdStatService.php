@@ -12,6 +12,7 @@ class AdStatService {
     /**
      * 查询广告统计列表
      *
+     * @param string|null $appId
      * @param string|null $channel
      * @param string|null $startTime
      * @param string|null $endTime
@@ -21,7 +22,7 @@ class AdStatService {
      * @return array
      * @throws DbException
      */
-    public static function list($channel = null, $startTime = null, $endTime = null, $page = 1, $pageSize = 10): array {
+    public static function list($appId = null, $channel = null, $startTime = null, $endTime = null, $page = 1, $pageSize = 10): array {
         $query = Db::name('users')
             ->alias('u')
             ->leftJoin('app a', 'a.app_id = u.app_id')
@@ -34,6 +35,10 @@ class AdStatService {
                 'u.active_time',
                 'a.ad_id',
             ]);
+
+        if ($appId) {
+            $query->where('u.app_id', $appId);
+        }
 
         if ($channel) {
             $query->where('u.channel', $channel);

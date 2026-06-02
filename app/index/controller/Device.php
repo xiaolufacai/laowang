@@ -23,8 +23,8 @@ class Device {
             'app_id'    => Request::header('appId', ''),
             'cvType'    => Request::post('cvType', 2),
             'payAmount' => Request::post('payAmount', 0),
-            'action'    => Request::post('action', ''), // "adShow" 活 "adClick"
-            'ad_type'   => Request::post('adType', ''), // splash���� banner reward���� inter���� native��Ϣ��
+            'action'    => Request::post('action', ''), // "adShow" 或者 "adClick"
+            'ad_type'   => Request::post('adType', ''), // splash开屏 banner reward 激励 INTERSTITIAL插屏 native信息流
             'code_id'   => Request::post('codeId', 0), // 广告id
             'slot_id'   => Request::post('slotId', 0), // 广告位id
             'sdk_name'  => Request::post('sdkName', 0),

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace app\command;
 
-use app\common\services\OppoService;
-use app\common\services\VivoService;
+use app\common\service\OppoService;
+use app\common\service\VivoService;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;

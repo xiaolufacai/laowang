@@ -116,7 +116,7 @@ class AdStatService {
             return [];
         }
 
-        $query = Db::name('report_data')
+        $query = Db::name('report_vivo_data')
             ->field([
                 'app_id',
                 'oaid',

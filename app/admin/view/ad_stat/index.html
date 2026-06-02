@@ -253,9 +253,8 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    axios.post('/admin/ad_stat/report', {
-                        id: row.id,
-                        platform: row.report_platform
+                    axios.post('/admin/report/' + row.report_platform, {
+                        id: row.id
                     }).then(response => {
                         if (response.data.code === 0) {
                             _this.$message.success(response.data.message || '回传成功');

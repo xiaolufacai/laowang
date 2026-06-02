@@ -188,7 +188,7 @@ class VivoService {
 //        }
 
         // 实例化User 控制器
-        $userController  = app()->make(User::class);
+        $userController  = app()->make(ReportData::class);
         $oldRefreshToken = Db::name('user_vivodataconfig')->where('id', 1)->value('oldRefreshToken');
         $refreshToken    = $userController->refreshToken($clientId, $clientSecret, $oldRefreshToken);
         if (isset($refreshToken['access_token']) && isset($refreshToken['refresh_token'])) {

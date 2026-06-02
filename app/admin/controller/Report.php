@@ -5,8 +5,8 @@ namespace app\admin\controller;
 
 use app\AdminBaseController;
 use app\common\model\App as AppModel;
-use app\common\service\ReportData;
-use app\common\services\VivoService;
+use app\common\service\OppoService;
+use app\common\service\VivoService;
 use app\Request;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -85,8 +85,7 @@ class Report extends AdminBaseController {
             return json(['code' => 1, 'message' => 'APP不存在']);
         }
 
-        $userController = app()->make(ReportData::class);
-        $result         = $userController->reportoppo($user['oaid'], $app['name'], 2);
+        $result         = OppoService::reportOppo($user['oaid'], $app['name'], 2);
         if ($result) {
             Db::name('users')->where('id', $id)->update([
                 'is_report'   => 1,

@@ -1,0 +1,277 @@
+{include file="/layout/header" /}
+
+<div id="app" style="background-color: #ffffff">
+    <el-container>
+        <el-header style="text-align: right; font-size: 12px">
+            <el-form :inline="true" ref="searchForm" :model="formInline" class="demo-form-inline">
+                <el-form-item>
+                    <el-select v-model="formInline.app_id" placeholder="APP" clearable>
+                        <el-option
+                                v-for="(item, index) in apps"
+                                :key="index"
+                                :label="appOptionLabel(item)"
+                                :value="item.app_id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select v-model="formInline.channel" placeholder="投流渠道" clearable>
+                        <el-option
+                                v-for="(item, key) in channels"
+                                :key="key"
+                                :label="item"
+                                :value="key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-date-picker
+                            v-model="formInline.dateRange"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="search">搜索</el-button>
+                    <el-button @click="resetSearch">重置</el-button>
+                </el-form-item>
+            </el-form>
+        </el-header>
+
+        <el-main>
+            <div class="table-scroll">
+                <el-table class="ad-stat-table" :data="tableData" border :fit="false" style="width: 2180px">
+                    <el-table-column align="center" prop="id" label="ID" width="80"></el-table-column>
+                    <el-table-column align="center" prop="app_id" label="APP ID" width="160"></el-table-column>
+                    <el-table-column align="center" prop="channel_txt" label="投流渠道" width="110"></el-table-column>
+                    <el-table-column align="center" prop="oaid" label="OAID" width="180">
+                        <template slot-scope="scope">
+                            <el-popover
+                                    placement="top"
+                                    width="360"
+                                    trigger="hover"
+                                    popper-class="oaid-popover">
+                                <div class="oaid-full">{{scope.row.oaid}}</div>
+                                <span slot="reference" class="oaid-short">{{scope.row.oaid}}</span>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
+                    <el-table-column align="center" label="广告收入">
+                        <el-table-column align="center" prop="splash_income" label="开屏收入" width="100"></el-table-column>
+                        <el-table-column align="center" prop="interstitial_income" label="插屏收入" width="100"></el-table-column>
+                        <el-table-column align="center" prop="total_income" label="总收入" width="100"></el-table-column>
+                    </el-table-column>
+                    <el-table-column align="center" label="广告次数">
+                        <el-table-column align="center" prop="splash_count" label="开屏次数" width="100"></el-table-column>
+                        <el-table-column align="center" prop="interstitial_count" label="插屏次数" width="100"></el-table-column>
+                        <el-table-column align="center" prop="total_count" label="总次数" width="100"></el-table-column>
+                    </el-table-column>
+                    <el-table-column align="center" label="CPM">
+                        <el-table-column align="center" prop="splash_cpm" label="开屏CPM" width="100"></el-table-column>
+                        <el-table-column align="center" prop="interstitial_cpm" label="插屏CPM" width="100"></el-table-column>
+                    </el-table-column>
+                    <el-table-column align="center" prop="active_time_txt" label="激活时间" width="170"></el-table-column>
+                    <el-table-column align="center" prop="report_time_txt" label="回传时间" width="170"></el-table-column>
+                    <el-table-column align="center" prop="ad_id" label="广告ID" width="220"></el-table-column>
+                    <el-table-column align="center" label="回传状态" width="150">
+                        <template slot-scope="scope">
+                            <el-tag size="mini" :type="scope.row.report_status === 1 ? 'success' : 'info'">
+                                {{scope.row.report_status_txt}}
+                            </el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column align="center" label="手动回传" width="110">
+                        <template slot-scope="scope">
+                            <el-button
+                                    type="primary"
+                                    size="mini"
+                                    :disabled="scope.row.report_status === 1 || !scope.row.report_platform"
+                                    @click="manualReport(scope.row)">
+                                {{scope.row.report_status === 1 ? '已完成' : '回传'}}
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+
+            <el-pagination class="el-pagination-page"
+                           v-if="totalItems > 0"
+                           @current-change="handlePageChange"
+                           :current-page="currentPage"
+                           :page-size="pageSize"
+                           :total="totalItems"
+                           layout="total, prev, pager, next, jumper">
+            </el-pagination>
+        </el-main>
+
+    </el-container>
+</div>
+
+<style>
+    .demo-form-inline {
+        margin-top: 10px;
+    }
+    .el-header {
+        background-color: #e7ebf0;
+        color: #333;
+        line-height: 60px;
+    }
+    .el-pagination-page {
+        margin-top: 10px;
+    }
+    .table-scroll {
+        width: 100%;
+        overflow-x: auto;
+    }
+    .ad-stat-table .cell {
+        white-space: nowrap;
+    }
+    .oaid-short {
+        display: inline-block;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        white-space: nowrap;
+        cursor: text;
+    }
+    .oaid-full {
+        word-break: break-all;
+        user-select: text;
+        line-height: 20px;
+    }
+</style>
+
+<script type="module">
+    var Main = {
+        data() {
+            return {
+                formInline: {
+                    app_id: '',
+                    channel: '',
+                    dateRange: []
+                },
+                apps: [],
+                channels: {},
+                tableData: [],
+                currentPage: 1,
+                pageSize: 10,
+                totalItems: 0
+            }
+        },
+        created() {
+            this.getApps();
+            this.getChannels();
+            this.getList();
+        },
+        methods: {
+            search() {
+                this.currentPage = 1;
+                this.getList();
+            },
+            resetSearch() {
+                this.formInline.app_id = '';
+                this.formInline.channel = '';
+                this.formInline.dateRange = [];
+                this.currentPage = 1;
+                this.getList();
+            },
+            handlePageChange(page) {
+                this.currentPage = page;
+                this.getList();
+            },
+            getList() {
+                let _this = this;
+                let startTime = '';
+                let endTime = '';
+                if (this.formInline.dateRange && this.formInline.dateRange.length === 2) {
+                    startTime = this.formInline.dateRange[0];
+                    endTime = this.formInline.dateRange[1];
+                }
+
+                axios.get('/admin/ad_stat/list', {
+                    params: {
+                        app_id: this.formInline.app_id,
+                        channel: this.formInline.channel,
+                        start_time: startTime,
+                        end_time: endTime,
+                        page: this.currentPage,
+                        page_size: this.pageSize
+                    }
+                }).then(response => {
+                    const data = response.data.data;
+                    if (response.data.code === 0) {
+                        _this.tableData = data.data;
+                        _this.totalItems = data.total;
+                    } else {
+                        _this.tableData = [];
+                        _this.totalItems = 0;
+                    }
+                }).catch(() => {
+                    _this.$message({ message: '数据获取失败', type: 'error' });
+                });
+            },
+            getApps() {
+                let _this = this;
+                axios.get('/admin/app/apps', {}).then(response => {
+                    if (response.data.code === 0) {
+                        _this.apps = response.data.data;
+                    }
+                }).catch(() => {
+                    _this.apps = [];
+                });
+            },
+            appOptionLabel(item) {
+                if (!item.project) {
+                    return item.app_id;
+                }
+
+                return item.project + '（' + item.app_id + '）';
+            },
+            getChannels() {
+                let _this = this;
+                axios.get('/admin/ad_stat/channels', {}).then(response => {
+                    if (response.data.code === 0) {
+                        _this.channels = response.data.data;
+                    }
+                }).catch(() => {
+                    _this.channels = {};
+                });
+            },
+            manualReport(row) {
+                if (!row.report_platform) {
+                    this.$message.warning('当前渠道不支持手动回传');
+                    return;
+                }
+
+                let _this = this;
+                this.$confirm('确认手动回传该记录？', '提示', {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios.post('/admin/report/' + row.report_platform, {
+                        id: row.id
+                    }).then(response => {
+                        if (response.data.code === 0) {
+                            _this.$message.success(response.data.message || '回传成功');
+                            _this.getList();
+                        } else {
+                            _this.$message.error(response.data.message || '回传失败');
+                        }
+                    }).catch(() => {
+                        _this.$message.error('接口请求失败');
+                    });
+                }).catch(() => {});
+            }
+        }
+    }
+
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+</script>
+
+{include file="/layout/footer" /}

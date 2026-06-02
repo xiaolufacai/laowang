@@ -9,7 +9,7 @@
                         <el-option
                                 v-for="(item,index) in apps"
                                 :key="index"
-                                :label="item.name"
+                                :label="item.project"
                                 :value="item.id">
                         </el-option>
                     </el-select>
@@ -24,38 +24,38 @@
             <el-table
                     :data="tableData"
                     border
-                    style="width: 60%">
+                    style="width: 1151px">
                 <el-table-column
                         align="center"
                         prop="channel_txt"
                         label="渠道"
-                        width="150">
+                        width="150px">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="version_no"
                         label="版本号"
-                        width="150">
+                        width="150px">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="version_name"
                         label="版本名称"
-                        width="150">
+                        width="150px">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="list"
                         label="上架状态"
-                        width="150">
+                        width="150px">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="status_text"
                         label="审核状态"
-                        width="150">
+                        width="150px">
                 </el-table-column>
-                <el-table-column align="center" label="操作">
+                <el-table-column align="center" label="操作" width="400px">
                     <template slot-scope="scope">
                         <el-button
                                 size="mini"
@@ -66,7 +66,7 @@
                                 :type="scope.row.status === 1 ? 'danger' : 'primary'"
                                 :disabled="scope.row.update_status === 0"
                                 @click="handleSwitch(scope.$index, scope.row)">
-                            {{ scope.row.status === 1 ? '切换到审核模式' : '切换线上模式' }}
+                            {{ scope.row.status === 1 ? '切换到审核模式' : '切换到线上模式' }}
                         </el-button>
                         <el-button
                                 size="mini"
@@ -293,7 +293,6 @@
                 this.getAppChannels(id)
             },
             handleSwitch(index, obj) {
-                console.log(obj.id, obj.app_id, obj.channel)
                 let _this = this
                 axios.post('/admin/app/switch', {
                     id: obj.id,

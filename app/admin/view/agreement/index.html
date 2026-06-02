@@ -1,0 +1,283 @@
+{include file="/layout/header" /}
+
+<!-- Vue 2 + wangEditor 富文本编辑器 -->
+<div id="app" style="background-color: #ffffff">
+    <el-container >
+        <el-header style="text-align: right; font-size: 12px">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item>
+                    <el-select v-model="formInline.app" @change="select" placeholder="APP">
+                        <el-option
+                                v-for="(item, index) in apps"
+                                :key="index"
+                                :label="item.project"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+        </el-header>
+
+        <el-main>
+            <!-- Tabs 标签页 -->
+            <el-tabs v-model="activeTab">
+                <!-- 用户协议 Tab -->
+                <el-tab-pane label="用户协议" name="userAgreement">
+                    <el-form :model="formData">
+                        <el-form-item>
+                            <div ref="userAgreementEditor" style="height: 100%;"></div>
+                        </el-form-item>
+                        <!-- 提交按钮 -->
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm">提交修改</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+
+                <!-- 隐私协议 Tab -->
+                <el-tab-pane label="隐私协议" name="privacyAgreement">
+                    <el-form :model="formData">
+                        <el-form-item>
+                            <div ref="privacyAgreementEditor" style="height: 100%;"></div>
+                        </el-form-item>
+                        <!-- 提交按钮 -->
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm">提交修改</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+
+	            <!-- VIP协议 Tab -->
+	            <el-tab-pane label="VIP协议" name="vipAgreement">
+		            <el-form :model="formData">
+			            <el-form-item>
+				            <div ref="vipAgreementEditor" style="height: 100%;"></div>
+			            </el-form-item>
+			            <!-- 提交按钮 -->
+			            <el-form-item>
+				            <el-button type="primary" @click="submitForm">提交修改</el-button>
+			            </el-form-item>
+		            </el-form>
+	            </el-tab-pane>
+
+	            <!-- 第三方sdk信息共享清单 Tab -->
+	            <el-tab-pane label="第三方SDK信息共享清单" name="SDKList">
+		            <el-form :model="formData">
+			            <el-form-item>
+				            <div ref="SDKEditor" style="height: 100%;"></div>
+			            </el-form-item>
+			            <!-- 提交按钮 -->
+			            <el-form-item>
+				            <el-button type="primary" @click="submitForm">提交修改</el-button>
+			            </el-form-item>
+		            </el-form>
+	            </el-tab-pane>
+
+	            <!-- 收集个人信息清单 Tab -->
+	            <el-tab-pane label="收集个人信息清单" name="userCollect">
+		            <el-form :model="formData">
+			            <el-form-item>
+				            <div ref="userCollectEditor" style="height: 100%;"></div>
+			            </el-form-item>
+			            <!-- 提交按钮 -->
+			            <el-form-item>
+				            <el-button type="primary" @click="submitForm">提交修改</el-button>
+			            </el-form-item>
+		            </el-form>
+	            </el-tab-pane>
+            </el-tabs>
+
+
+        </el-main>
+    </el-container>
+</div>
+
+<style>
+    /* 其他样式保持不变 */
+
+    .el-header {
+        background-color: #e7ebf0;
+        color: #333;
+        line-height: 60px;
+        position: relative;  /* 添加 position */
+        z-index: 3;      /* 提高 z-index */
+    }
+
+    .demo-form-inline {
+        margin-top: 10px;
+        position: relative;  /* 添加 position */
+        z-index: 3000;      /* 提高 z-index */
+    }
+
+    /* 确保下拉菜单在最上层 */
+    .el-select-dropdown {
+        z-index: 3001 !important;
+    }
+
+    /* 编辑器容器样式 */
+    .w-e-toolbar {
+        z-index: 2 !important;
+    }
+
+    .w-e-text-container {
+        z-index: 1 !important;
+    }
+</style>
+<!-- 引入 wangEditor -->
+<script src="/static/admin/js/wangEditor.min.js"></script>
+
+<script type="module">
+    var Main = {
+        data() {
+            return {
+                formInline: {
+                    app: {}
+                },
+                activeTab: 'userAgreement',
+                formData: {
+                    userAgreement: '',
+                    privacyAgreement: '',
+	                SDKList:'',
+	                userCollect: '',
+	                vipAgreement: '',
+                },
+                apps: [],
+                editorUserAgreement: null,
+                editorPrivacyAgreement: null,
+	            editorSDKList: null,
+	            editorUserCollect: null,
+	            editorVipAgreement: null,
+            }
+        },
+        created() {
+            this.getApps();
+        },
+        mounted() {
+            this.$nextTick(() => {
+                this.initEditor();
+            });
+        },
+        methods: {
+            getApps() {
+                let _this = this
+                axios.get('/admin/agreement/apps', {})
+                    .then(response => {
+                        const data = response.data.data
+                        const code = response.data.code
+                        if (code !== 0) {
+                            _this.apps = [];
+                        } else {
+                            _this.apps = data;
+                            if (_this.apps.length > 0) {
+                                // 设置默认选择的应用
+                                let index = _this.apps.length - 1
+                                _this.formInline.app = _this.apps[index];
+                                _this.select(_this.apps[index].id);
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                        _this.$message({
+                            message: '数据获取失败',
+                            type: 'error'
+                        });
+                    })
+            },
+            initEditor() {
+                // 初始化用户协议的编辑器
+                this.editorUserAgreement = new wangEditor(this.$refs.userAgreementEditor);
+                this.editorUserAgreement.config.height = 700
+                this.editorUserAgreement.create();
+
+                // 初始化隐私协议的编辑器
+                this.editorPrivacyAgreement = new wangEditor(this.$refs.privacyAgreementEditor);
+                this.editorPrivacyAgreement.config.height = 700
+                this.editorPrivacyAgreement.create();
+
+	            // 初始化SDK清单编辑器
+	            this.editorSDKList = new wangEditor(this.$refs.SDKEditor);
+	            this.editorSDKList.config.height = 700
+	            this.editorSDKList.create();
+
+	            // 初始化用户信息搜集清单编辑器
+	            this.editorUserCollect = new wangEditor(this.$refs.userCollectEditor);
+	            this.editorUserCollect.config.height = 700
+	            this.editorUserCollect.create();
+
+	            // 初始化会员协议的编辑器
+	            this.editorVipAgreement = new wangEditor(this.$refs.vipAgreementEditor);
+	            this.editorVipAgreement.config.height = 700
+	            this.editorVipAgreement.create();
+            },
+            select(id) {
+                let value = this.apps.find(item => item.id === id);
+                if (value) {
+                    this.formInline.app = id;
+
+                    // 更新富文本内容
+                    this.formData.userAgreement = value.user_agreement || '';
+                    this.formData.privacyAgreement = value.privacy_agreement || '';
+	                this.formData.SDKList = value.sdk_list || '';
+	                this.formData.userCollect = value.user_collect || '';
+	                this.formData.vipAgreement = value.vip_agreement || '';
+
+                    // 更新编辑器内容（取消注释并修改）
+                    if (this.editorUserAgreement) {
+                        this.editorUserAgreement.txt.html(this.formData.userAgreement);
+                    }
+                    if (this.editorPrivacyAgreement) {
+                        this.editorPrivacyAgreement.txt.html(this.formData.privacyAgreement);
+                    }
+	                if (this.editorSDKList) {
+		                this.editorSDKList.txt.html(this.formData.SDKList);
+	                }
+	                if (this.editorUserCollect) {
+		                this.editorUserCollect.txt.html(this.formData.userCollect);
+	                }
+	                if (this.editorVipAgreement) {
+		                this.editorVipAgreement.txt.html(this.formData.vipAgreement);
+	                }
+                }
+            },
+            submitForm() {
+                if (!this.formInline.app) {
+                    this.$message.warning('请先选择平台');
+                    return;
+                }
+
+                // 获取富文本内容
+                const userAgreement = this.editorUserAgreement ? this.editorUserAgreement.txt.html() : '';
+                const privacyAgreement = this.editorPrivacyAgreement ? this.editorPrivacyAgreement.txt.html() : '';
+                const SDKList = this.editorSDKList ? this.editorSDKList.txt.html() : '';
+                const userCollect = this.editorUserCollect ? this.editorUserCollect.txt.html() : '';
+                const vipAgreement = this.editorVipAgreement ? this.editorVipAgreement.txt.html() : '';
+
+                // 提交数据
+                axios.post('/admin/agreement/update', {
+                    app_id: this.formInline.app,
+                    user_agreement: userAgreement,
+                    privacy_agreement: privacyAgreement,
+                    sdk_list: SDKList,
+                    user_collect: userCollect,
+	                vip_agreement: vipAgreement,
+                })
+                    .then(response => {
+                        if (response.data.code === 0) {
+                            this.$message.success('修改成功');
+							this.getApps()
+                        } else {
+                            this.$message.error(response.data.msg || '修改失败');
+                        }
+                    })
+                    .catch(error => {
+                        this.$message.error('请求失败：' + (error.message || '未知错误'));
+                    });
+            }
+        }
+    }
+
+    var Ctor = Vue.extend(Main);
+    new Ctor().$mount('#app');
+</script>
+
+{include file="/layout/footer" /}

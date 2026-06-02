@@ -1,5 +1,5 @@
 <?php
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace app\admin\controller;
 
@@ -10,24 +10,21 @@ use think\facade\Session;
 use think\facade\View;
 use think\Request;
 
-class Index extends AdminBaseController
-{
+class Index extends AdminBaseController {
     /**
      * 首页
-     * 
+     *
      * @return string
      */
-    public function index()
-    {
+    public function index() {
         return View::fetch();
     }
 
-    public function resetPassword(Request $request)
-    {
+    public function resetPassword(Request $request) {
         // 获取前端传过来的参数
-        $oldPw    = $request->post('old_pw');
-        $newPw    = $request->post('new_pw');
-        $userId   = Session::get('userId');
+        $oldPw  = $request->post('old_pw');
+        $newPw  = $request->post('new_pw');
+        $userId = Session::get('userId');
         // 获取当前管理员的密码（根据实际情况修改）
         $admin = Admin::where('id', $userId)->find();
 

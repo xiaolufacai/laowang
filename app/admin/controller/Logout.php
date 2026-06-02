@@ -1,4 +1,5 @@
 <?php
+
 namespace app\admin\controller;
 
 
@@ -13,15 +14,13 @@ use think\facade\Request;
 use think\facade\Validate;
 use think\response\Json;
 
-class Logout
-{
+class Logout {
     /**
      * 登录页
      *
      * @return string
      */
-    public function logout()
-    {
+    public function logout() {
         Session::clear();
         return redirect('/admin/login/index')->send();
     }

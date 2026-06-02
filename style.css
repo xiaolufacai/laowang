@@ -1,0 +1,9 @@
+.password-modal {
+  z-index: 9999;
+  position: fixed;
+  /* 确保弹窗位于其他元素上方 */
+}
+
+.modal {
+  z-index: 1050 !important;
+} 

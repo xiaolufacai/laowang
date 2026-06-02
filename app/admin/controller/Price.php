@@ -14,15 +14,13 @@ use think\facade\Config;
 use think\facade\View;
 use think\response\Json;
 
-class Price extends AdminBaseController
-{
+class Price extends AdminBaseController {
     /**
      * App 列表
      *
      * @return string
      */
-    public function index()
-    {
+    public function index(): string {
         return View::fetch();
     }
 
@@ -31,17 +29,15 @@ class Price extends AdminBaseController
      *
      * @return Json
      */
-    public function vips(): Json
-    {
+    public function vips(): Json {
         $channels = Config::get('app.vips');
         return json(['code' => 0, 'data' => $channels]);
     }
 
-    public function addVip(Request $request): Json
-    {
+    public function addVip(Request $request): Json {
         $post   = $request->post();
         $result = AppVipService::add($post);
-        return json(['code' => $result['error'],'message' => $result['message']]);
+        return json(['code' => $result['error'], 'message' => $result['message']]);
     }
 
     /**
@@ -50,8 +46,7 @@ class Price extends AdminBaseController
      * @param Request $request
      * @return Json
      */
-    public function appVips(Request $request): Json
-    {
+    public function appVips(Request $request): Json {
         $appId = $request->get('app_id');
         $data  = AppVipService::appVips($appId);
         return json(['code' => 0, 'data' => $data]);
@@ -66,10 +61,9 @@ class Price extends AdminBaseController
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function delete(Request $request): Json
-    {
-        $id = $request->post('id');
+    public function delete(Request $request): Json {
+        $id     = $request->post('id');
         $result = AppVipService::delete($id);
-        return json(['code' => $result['error'],'message' => $result['message']]);
+        return json(['code' => $result['error'], 'message' => $result['message']]);
     }
 }

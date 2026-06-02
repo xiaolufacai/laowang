@@ -33,6 +33,7 @@ class AdStatService {
                 'u.oaid',
                 'u.is_report',
                 'u.active_time',
+                'u.report_time',
                 'a.ad_id',
             ]);
 
@@ -77,7 +78,7 @@ class AdStatService {
             $item['report_status']      = self::getReportStatus($item);
             $item['report_status_txt']  = self::getReportStatusText($item);
             $item['active_time_txt']    = self::formatActiveTime($item);
-            $item['report_time_txt']    = '';
+            $item['report_time_txt']    = self::formatReportTime($item);
             $item['ad_id']              = $item['ad_id'] ?? '';
         }
 
@@ -227,7 +228,7 @@ class AdStatService {
             return '0.00';
         }
 
-        return number_format(($income / $count) * 1000, 2, '.', '');
+        return number_format($income / $count, 2, '.', '');
     }
 
     /**
@@ -305,5 +306,21 @@ class AdStatService {
         }
 
         return date('Y-m-d H:i:s', $time);
+    }
+
+    /**
+     * 格式化回传时间
+     *
+     * @param array $item
+     * @return string
+     */
+    private static function formatReportTime(array $item): string {
+        $time = trim((string)($item['report_time'] ?? ''));
+
+        if ($time === '' || $time === '0000-00-00 00:00:00') {
+            return '';
+        }
+
+        return $time;
     }
 }

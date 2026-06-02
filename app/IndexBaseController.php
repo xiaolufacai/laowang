@@ -95,7 +95,7 @@ abstract class IndexBaseController {
         $this->request = $this->app->request;
 
         $this->device      = $request->header('deviceNum');
-        $this->channel     = strtolower($request->header('channel'));
+        $this->channel     = strtolower($request->header('channel') ?? '');
         $this->appId       = $request->header('appId');
         $this->versionCode = $request->header('versionCode');
         $this->versionName = $request->header('versionName');

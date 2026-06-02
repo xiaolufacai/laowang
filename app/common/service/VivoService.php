@@ -748,7 +748,7 @@ class VivoService {
      * @return Db
      */
     public static function db($appId = '', $oaid = '') {
-        $db = Db::name('user');
+        $db = Db::name('users');
         if ($appId) {
             $db->where(['app_id' => $appId]);
         }

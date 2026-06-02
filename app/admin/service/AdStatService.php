@@ -57,18 +57,21 @@ class AdStatService {
 
         $data     = $users->items();
         $channels = config('app.channels');
+        $adStats  = self::getAdStats($data, $startTime, $endTime);
 
         foreach ($data as &$item) {
+            $statKey                    = self::getAdStatKey($item['app_id'] ?? '', $item['oaid'] ?? '');
+            $stat                       = $adStats[$statKey] ?? self::emptyAdStat();
             $channelKey                 = strtolower((string)($item['channel'] ?? ''));
             $item['channel_txt']        = $channels[$channelKey] ?? ($item['channel'] ?? '');
-            $item['splash_income']      = '0.00';
-            $item['interstitial_income'] = '0.00';
-            $item['total_income']       = '0.00';
-            $item['splash_count']       = 0;
-            $item['interstitial_count'] = 0;
-            $item['total_count']        = 0;
-            $item['splash_cpm']         = '0.00';
-            $item['interstitial_cpm']   = '0.00';
+            $item['splash_income']      = self::formatAmount($stat['splash_income']);
+            $item['interstitial_income'] = self::formatAmount($stat['interstitial_income']);
+            $item['total_income']       = self::formatAmount($stat['splash_income'] + $stat['interstitial_income']);
+            $item['splash_count']       = $stat['splash_count'];
+            $item['interstitial_count'] = $stat['interstitial_count'];
+            $item['total_count']        = $stat['splash_count'] + $stat['interstitial_count'];
+            $item['splash_cpm']         = self::formatCpm($stat['splash_income'], $stat['splash_count']);
+            $item['interstitial_cpm']   = self::formatCpm($stat['interstitial_income'], $stat['interstitial_count']);
             $item['report_platform']    = in_array($channelKey, ['vivo', 'oppo']) ? $channelKey : '';
             $item['report_platform_txt'] = $item['report_platform'] ? strtoupper($item['report_platform']) : '未知';
             $item['report_status']      = self::getReportStatus($item);
@@ -84,6 +87,150 @@ class AdStatService {
             'current_page' => $users->currentPage(),
             'last_page'    => $users->lastPage(),
         ];
+    }
+
+    /**
+     * 获取当前页广告展示统计
+     *
+     * @param array       $users
+     * @param string|null $startTime
+     * @param string|null $endTime
+     * @return array
+     * @throws DbException
+     */
+    private static function getAdStats(array $users, $startTime = null, $endTime = null): array {
+        $appIds = [];
+        $oaids  = [];
+
+        foreach ($users as $user) {
+            if (!empty($user['app_id']) && !empty($user['oaid'])) {
+                $appIds[] = $user['app_id'];
+                $oaids[]  = $user['oaid'];
+            }
+        }
+
+        $appIds = array_values(array_unique($appIds));
+        $oaids  = array_values(array_unique($oaids));
+
+        if (empty($appIds) || empty($oaids)) {
+            return [];
+        }
+
+        $query = Db::name('report_data')
+            ->field([
+                'app_id',
+                'oaid',
+                'ad_type',
+                'COUNT(*)'    => 'show_count',
+                'SUM(ecpm)'   => 'income',
+            ])
+            ->whereIn('app_id', $appIds)
+            ->whereIn('oaid', $oaids)
+            ->where('action', 'adShow');
+
+        if ($startTime) {
+            $query->where('created_at', '>', date('Y-m-d H:i:s', strtotime($startTime)));
+        }
+
+        if ($endTime) {
+            $query->where('created_at', '<', date('Y-m-d H:i:s', strtotime($endTime . ' 23:59:59')));
+        }
+
+        $rows = $query->group('app_id, oaid, ad_type')->select()->toArray();
+        $data = [];
+
+        foreach ($rows as $row) {
+            $adType = self::normalizeAdType($row['ad_type'] ?? '');
+            if (!in_array($adType, ['SPLASH', 'INTERSTITIAL'])) {
+                continue;
+            }
+
+            $key = self::getAdStatKey($row['app_id'] ?? '', $row['oaid'] ?? '');
+            if (!isset($data[$key])) {
+                $data[$key] = self::emptyAdStat();
+            }
+
+            if ($adType === 'SPLASH') {
+                $data[$key]['splash_income'] += self::convertEcpmIncome((float)($row['income'] ?? 0));
+                $data[$key]['splash_count']  += (int)($row['show_count'] ?? 0);
+                continue;
+            }
+
+            $data[$key]['interstitial_income'] += self::convertEcpmIncome((float)($row['income'] ?? 0));
+            $data[$key]['interstitial_count']  += (int)($row['show_count'] ?? 0);
+        }
+
+        return $data;
+    }
+
+    /**
+     * 空广告统计
+     *
+     * @return array
+     */
+    private static function emptyAdStat(): array {
+        return [
+            'splash_income'       => 0.00,
+            'interstitial_income' => 0.00,
+            'splash_count'        => 0,
+            'interstitial_count'  => 0,
+        ];
+    }
+
+    /**
+     * 广告统计键
+     *
+     * @param mixed $appId
+     * @param mixed $oaid
+     * @return string
+     */
+    private static function getAdStatKey($appId, $oaid): string {
+        return (string)$appId . '|' . (string)$oaid;
+    }
+
+    /**
+     * 格式化广告类型
+     *
+     * @param string $adType
+     * @return string
+     */
+    private static function normalizeAdType(string $adType): string {
+        return strtoupper(trim($adType, " \t\n\r\0\x0B,"));
+    }
+
+    /**
+     * 格式化金额
+     *
+     * @param float $amount
+     * @return string
+     */
+    private static function formatAmount(float $amount): string {
+        return number_format($amount, 2, '.', '');
+    }
+
+    /**
+     * eCPM转实际收入
+     *
+     * @param float $income
+     * @return float
+     */
+    private static function convertEcpmIncome(float $income): float {
+        return $income / 1000;
+    }
+
+    /**
+     * 格式化CPM
+     *
+     * @param float $income
+     * @param int   $count
+     * @return string
+     */
+    private static function formatCpm(float $income, int $count): string {
+        if ($count <= 0) {
+            return '0.00';
+        }
+
+        return number_format(($income / $count) * 1000, 2, '.', '');
     }
 
     /**

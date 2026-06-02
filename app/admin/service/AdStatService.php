@@ -73,7 +73,7 @@ class AdStatService {
             $item['total_count']        = $stat['splash_count'] + $stat['interstitial_count'];
             $item['splash_cpm']         = self::formatCpm($stat['splash_income'], $stat['splash_count']);
             $item['interstitial_cpm']   = self::formatCpm($stat['interstitial_income'], $stat['interstitial_count']);
-            $item['report_platform']    = in_array($channelKey, ['vivo', 'oppo']) ? $channelKey : '';
+            $item['report_platform']    = in_array($channelKey, self::getReportPlatforms()) ? $channelKey : '';
             $item['report_platform_txt'] = $item['report_platform'] ? strtoupper($item['report_platform']) : '未知';
             $item['report_status']      = self::getReportStatus($item);
             $item['report_status_txt']  = self::getReportStatusText($item);
@@ -245,7 +245,7 @@ class AdStatService {
         }
 
         $platform = strtolower($platform);
-        if (!in_array($platform, ['vivo', 'oppo'])) {
+        if (!in_array($platform, self::getReportPlatforms())) {
             return ['error' => 1, 'message' => '回传平台错误'];
         }
 
@@ -271,6 +271,15 @@ class AdStatService {
      */
     private static function getReportStatus(array $item): int {
         return (int)($item['is_report'] ?? 0);
+    }
+
+    /**
+     * 支持手动回传的平台
+     *
+     * @return array
+     */
+    private static function getReportPlatforms(): array {
+        return ['vivo', 'oppo', 'xiaomi', 'huawei', 'honor', 'rongyao'];
     }
 
     /**

@@ -29,7 +29,8 @@
         "topthink/think-captcha": "^3.0",
         "firebase/php-jwt": "^6.11",
         "yansongda/pay": "^3.7",
-      "ext-curl": "*"
+      "ext-curl": "*",
+        "topthink/think-queue": "^3.0.12"
     },
     "require-dev": {
         "topthink/think-dumper": "^1.0",

@@ -5,4 +5,5 @@ return array (
   0 => 'think\\captcha\\CaptchaService',
   1 => 'think\\app\\Service',
   2 => 'think\\trace\\Service',
+  3 => 'think\\queue\\Service',
 );
